@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full w-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Đường Đua Toán 5 – 3D | Endless Runner & Boss Battle GDPT 2018</title>
+  <meta name="description" content="Web game hành động 3D Endless Runner học Toán lớp 5 theo chương trình GDPT 2018 Kết nối tri thức. 60 FPS mượt mà, WebGL Three.js và Web Audio API.">
+
+  <!-- Google Font Nunito -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900;1000&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Three.js UMD ổn định (r128) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Custom Game CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            nunito: ['Nunito', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              cyan: '#06b6d4',
+              sky: '#0ea5e9',
+              amber: '#f59e0b',
+              emerald: '#10b981',
+              rose: '#f43f5e',
+              purple: '#a855f7',
+              dark: '#090d16'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-full w-full bg-slate-950 text-white font-nunito overflow-hidden select-none m-0 p-0 touch-none">
+
+  <!-- ========================================================================= -->
+  <!-- 1. 3D WEBGL CANVAS CONTAINER -->
+  <!-- ========================================================================= -->
+  <div id="game-container" class="absolute inset-0 w-full h-full z-0 pointer-events-none"></div>
+
+  <!-- HIỆU ỨNG TRÀN MÀN HÌNH (VIGNETTE & DAMAGE FLASH) -->
+  <div id="damage-overlay" class="absolute inset-0 z-10 pointer-events-none opacity-0 transition-opacity duration-150 bg-red-600/30"></div>
+  <div id="slowmo-overlay" class="absolute inset-0 z-10 pointer-events-none opacity-0 transition-opacity duration-300 slowmo-vignette"></div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. IN-GAME HUD (HEADS-UP DISPLAY) -->
+  <!-- ========================================================================= -->
+  <div id="hud-container" class="absolute inset-0 z-20 pointer-events-none flex flex-col justify-between p-3 sm:p-5 hidden">
+    
+    <!-- TOP SECTION: THÔNG SỐ VÀ THẺ CÂU HỎI TỐI ƯU MỌI THIẾT BỊ -->
+    <div class="w-full flex flex-col gap-2 pointer-events-none">
+      
+      <!-- DÒNG 1: TRÁI TIM, COMBO, XU, ĐIỂM, SLOW-MO, PAUSE -->
+      <div class="flex items-center justify-between w-full pointer-events-auto">
+        <!-- Cột Trái: Trái Tim & Combo Streak -->
+        <div class="flex items-center gap-2">
+          <!-- 3 Trái Tim -->
+          <div class="glass-panel px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl flex items-center gap-1.5 shadow-lg border border-white/20">
+            <span class="text-[10px] sm:text-xs font-black text-rose-300 mr-0.5 uppercase tracking-wider hidden sm:inline">Mạng</span>
+            <div id="hud-hearts" class="flex items-center gap-0.5 sm:gap-1 text-base sm:text-xl">
+              <span class="heart-icon animate-pulse text-rose-500">❤️</span>
+              <span class="heart-icon animate-pulse text-rose-500">❤️</span>
+              <span class="heart-icon animate-pulse text-rose-500">❤️</span>
+            </div>
+          </div>
+
+          <!-- Combo Streak & Turbo Badge -->
+          <div id="hud-combo-badge" class="glass-panel px-2.5 py-1 rounded-xl flex items-center gap-1 border border-amber-400/40 shadow-lg hidden">
+            <span class="text-sm sm:text-base animate-bounce">🔥</span>
+            <span id="hud-combo-text" class="text-[10px] sm:text-xs font-black text-amber-300 tracking-wider">COMBO x2</span>
+          </div>
+        </div>
+
+        <!-- Cột Phải: Xu, Điểm, Slow-Mo & Tạm Dừng -->
+        <div class="flex items-center gap-2">
+          <!-- Xu Vàng & Điểm -->
+          <div class="glass-panel px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl flex items-center gap-2 sm:gap-3 border border-white/20 shadow-lg">
+            <div class="flex items-center gap-1">
+              <span class="text-sm sm:text-base text-amber-400">🪙</span>
+              <span id="hud-coins" class="text-xs sm:text-sm font-black text-amber-200">0</span>
+            </div>
+            <div class="w-px h-3 bg-white/30"></div>
+            <div class="flex items-center gap-1">
+              <span class="text-[10px] sm:text-xs font-bold text-slate-300 hidden sm:inline">Điểm:</span>
+              <span id="hud-score" class="text-xs sm:text-sm font-black text-sky-300">0</span>
+            </div>
+          </div>
+
+          <!-- Thanh Năng Lượng Hãm Thời Gian (Slow-Mo Gauge) & Nút Tạm Dừng -->
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <!-- Nút Slow-Mo ảo (Mobile & PC) -->
+            <button id="btn-slowmo" class="glass-panel px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-cyan-400/50 hover:bg-cyan-500/20 active:scale-95 transition flex items-center gap-1 shadow-lg" title="Hãm Thời Gian (Phím Shift)">
+              <span class="text-xs sm:text-base animate-spin-slow">⏳</span>
+              <div class="flex flex-col items-start">
+                <div class="flex justify-between w-10 sm:w-14 text-[8px] sm:text-[9px] font-black text-cyan-300">
+                  <span>SLOW</span>
+                  <span id="hud-slowmo-pct">100%</span>
+                </div>
+                <div class="w-10 sm:w-14 bg-slate-800 rounded-full h-1 sm:h-1.5 overflow-hidden border border-cyan-400/40">
+                  <div id="hud-slowmo-bar" class="h-full bg-gradient-to-r from-cyan-400 to-sky-400 w-full transition-all duration-150"></div>
+                </div>
+              </div>
+            </button>
+
+            <!-- Nút Tạm Dừng -->
+            <button id="btn-pause" class="glass-panel p-1.5 sm:p-2 rounded-xl border border-white/20 hover:bg-white/10 active:scale-95 transition shadow-lg" title="Tạm Dừng (Phím P / Esc)">
+              <svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-200" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DÒNG 2: THẺ CHƯỚNG NGẠI VẬT TOÁN 5 (CÓ 1 PHÚT SUY NGHĨ) -->
+      <div class="w-full max-w-xl mx-auto pointer-events-auto relative">
+        
+        <!-- Toast thưởng điểm tốc độ khi vượt chướng ngại vật nhanh -->
+        <div id="hud-bonus-toast" class="absolute -top-12 left-1/2 -translate-x-1/2 pointer-events-none hidden z-30 flex flex-col items-center animate-bounce">
+          <div class="px-4 py-1.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-2xl border-2 border-white flex items-center gap-1.5 whitespace-nowrap">
+            <span>⚡</span> <span id="hud-bonus-toast-title">VƯỢT CHƯỚNG NGẠI VẬT XUẤT SẮC!</span>
+          </div>
+          <div id="hud-bonus-toast-sub" class="text-[10px] font-black text-amber-300 mt-0.5 drop-shadow">
+            +50s Thưởng Tốc Độ
+          </div>
+        </div>
+
+        <div id="hud-question-card" class="glass-panel-question px-3.5 py-2 sm:px-6 sm:py-3 rounded-2xl border-2 border-sky-400/60 shadow-2xl text-center space-y-1.5 relative overflow-hidden backdrop-blur-xl">
+          
+          <!-- Huy hiệu chặng, đồng hồ 1 phút & số chướng ngại vật -->
+          <div class="flex items-center justify-between text-[10px] sm:text-xs font-black">
+            <span id="hud-stage-name" class="text-sky-300 uppercase tracking-widest flex items-center gap-1">
+              <span>🌲</span> RỪNG PHÂN SỐ
+            </span>
+
+            <!-- ĐỒNG HỒ 1 PHÚT ĐẾM NGƯỢC (60s COUNTDOWN TIMER) -->
+            <div id="hud-timer-badge" class="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-inner">
+              <span class="text-xs">⏱️</span>
+              <span class="text-[9px] text-slate-300 uppercase hidden xs:inline">Còn:</span>
+              <span id="hud-question-timer" class="font-mono text-xs sm:text-sm font-black text-cyan-300">01:00</span>
+            </div>
+
+            <span id="hud-question-number" class="bg-sky-500/30 text-sky-200 px-2 py-0.5 rounded-full border border-sky-400/40">
+              Chướng ngại vật 1 / 8
+            </span>
+          </div>
+
+          <!-- Nội dung câu hỏi -->
+          <div id="hud-question-text" class="text-sm sm:text-base md:text-lg font-black text-white leading-snug drop-shadow-md">
+            Đang tải câu hỏi...
+          </div>
+
+          <!-- Khung SVG Minh Họa Hình Học (Chỉ hiện ở Chặng Hình Học) -->
+          <div id="hud-svg-container" class="hidden my-1 flex justify-center max-h-24 sm:max-h-28 overflow-hidden"></div>
+
+          <!-- 3 THẺ ĐÁP ÁN TƯƠNG TÁC (CHẠM ĐỂ CHỌN HOẶC ĐIỀU KHIỂN PHI THUYỀN) -->
+          <div id="hud-options-grid" class="grid grid-cols-3 gap-1.5 sm:gap-2.5 pt-1 pb-0.5">
+            
+            <!-- Cổng A (Trái) -->
+            <button id="hud-opt-0" onclick="game3D.selectLaneDirectly(0)" class="option-btn p-1.5 sm:p-2 rounded-xl border-2 border-sky-400/50 bg-sky-950/70 hover:bg-sky-500/25 active:scale-95 transition-all duration-150 flex flex-col items-center justify-center relative shadow-lg" title="Chọn Cổng A (Phím 1 hoặc A)">
+              <div class="flex items-center gap-1 mb-0.5 pointer-events-none">
+                <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-sky-500 text-[10px] sm:text-xs font-black text-white flex items-center justify-center shadow">A</span>
+                <span class="text-[9px] sm:text-[10px] text-sky-300 font-bold uppercase hidden xs:inline">Trái</span>
+              </div>
+              <div id="hud-opt-text-0" class="text-xs sm:text-sm md:text-base font-black text-white leading-snug pointer-events-none">--</div>
+              <div id="hud-opt-badge-0" class="hidden text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full bg-sky-400 text-slate-950 mt-0.5 animate-pulse pointer-events-none">ĐANG CHỌN</div>
+            </button>
+
+            <!-- Cổng B (Giữa) -->
+            <button id="hud-opt-1" onclick="game3D.selectLaneDirectly(1)" class="option-btn p-1.5 sm:p-2 rounded-xl border-2 border-amber-400/50 bg-amber-950/70 hover:bg-amber-500/25 active:scale-95 transition-all duration-150 flex flex-col items-center justify-center relative shadow-lg" title="Chọn Cổng B (Phím 2)">
+              <div class="flex items-center gap-1 mb-0.5 pointer-events-none">
+                <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-amber-500 text-[10px] sm:text-xs font-black text-slate-950 flex items-center justify-center shadow">B</span>
+                <span class="text-[9px] sm:text-[10px] text-amber-300 font-bold uppercase hidden xs:inline">Giữa</span>
+              </div>
+              <div id="hud-opt-text-1" class="text-xs sm:text-sm md:text-base font-black text-white leading-snug pointer-events-none">--</div>
+              <div id="hud-opt-badge-1" class="hidden text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-950 mt-0.5 animate-pulse pointer-events-none">ĐANG CHỌN</div>
+            </button>
+
+            <!-- Cổng C (Phải) -->
+            <button id="hud-opt-2" onclick="game3D.selectLaneDirectly(2)" class="option-btn p-1.5 sm:p-2 rounded-xl border-2 border-purple-400/50 bg-purple-950/70 hover:bg-purple-500/25 active:scale-95 transition-all duration-150 flex flex-col items-center justify-center relative shadow-lg" title="Chọn Cổng C (Phím 3 hoặc D)">
+              <div class="flex items-center gap-1 mb-0.5 pointer-events-none">
+                <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-purple-500 text-[10px] sm:text-xs font-black text-white flex items-center justify-center shadow">C</span>
+                <span class="text-[9px] sm:text-[10px] text-purple-300 font-bold uppercase hidden xs:inline">Phải</span>
+              </div>
+              <div id="hud-opt-text-2" class="text-xs sm:text-sm md:text-base font-black text-white leading-snug pointer-events-none">--</div>
+              <div id="hud-opt-badge-2" class="hidden text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full bg-purple-400 text-slate-950 mt-0.5 animate-pulse pointer-events-none">ĐANG CHỌN</div>
+            </button>
+
+          </div>
+
+          <!-- THANH TIẾN ĐỘ 60 GIÂY VÀ NÚT XÁC NHẬN VƯỢT CHƯỚNG NGẠI VẬT -->
+          <div class="pt-1.5 flex items-center justify-between gap-2.5">
+            <div class="flex-grow flex flex-col justify-center text-left">
+              <div class="flex justify-between items-center text-[9px] font-bold text-slate-300 px-0.5 mb-0.5">
+                <span class="flex items-center gap-1 text-slate-300">
+                  <span class="text-amber-400">⚡</span> <span>Hạn chót 1 phút:</span>
+                </span>
+                <span id="hud-timer-seconds" class="font-mono font-black text-cyan-300 text-[11px]">60s</span>
+              </div>
+              <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-white/20">
+                <div id="hud-question-timer-bar" class="h-full bg-gradient-to-r from-cyan-400 via-emerald-400 to-sky-400 w-full transition-all duration-100"></div>
+              </div>
+            </div>
+
+            <!-- NÚT VƯỢT NGAY (CHỐT ĐÁP ÁN SỚM ĐỂ NHẬN THƯỞNG TỐC ĐỘ) -->
+            <button id="btn-confirm-obstacle" onclick="game3D.confirmObstaclePass()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:brightness-110 active:scale-95 transition-all text-slate-950 font-black text-xs sm:text-sm flex items-center gap-1 shadow-lg shadow-orange-500/30 whitespace-nowrap cursor-pointer select-none" title="Chốt đáp án đang chọn để vượt chướng ngại vật ngay (+Điểm thưởng tốc độ)">
+              <span>🚀</span> <span>VƯỢT NGAY</span> <kbd class="text-[9px] bg-black/30 text-white px-1.5 py-0.2 rounded font-mono hidden sm:inline">Enter</kbd>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Thanh Máu Boss (Chỉ hiển thị khi vào trạng thái BOSS) -->
+        <div id="boss-hud" class="glass-panel px-4 py-2 rounded-2xl border-2 border-rose-500/80 shadow-2xl mt-1.5 hidden backdrop-blur-xl animate-pulse">
+          <div class="flex items-center justify-between mb-1 text-xs font-black">
+            <div class="flex items-center gap-2 text-rose-300">
+              <span id="boss-avatar" class="text-lg sm:text-xl">👾</span>
+              <span id="boss-name" class="tracking-wider uppercase text-[11px] sm:text-xs">ĐẠI BOSS VUA KHỈ 3D</span>
+            </div>
+            <span id="boss-hp-text" class="text-rose-400 font-bold text-xs">4 / 4 HP</span>
+          </div>
+          <div class="w-full bg-slate-900 rounded-full h-2.5 sm:h-3 border border-rose-500/40 overflow-hidden">
+            <div id="boss-hp-bar" class="h-full bg-gradient-to-r from-rose-600 via-amber-500 to-rose-400 w-full transition-all duration-300"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM ROW: ĐIỀU KHIỂN ĐA THIẾT BỊ (TOUCH BUTTONS & PC HINTS) -->
+    <div class="flex items-end justify-between pointer-events-none pb-1 sm:pb-2">
+      <!-- Nút ảo Sang Trái / Phải (Mobile & Laptop Touch) -->
+      <div class="flex items-center gap-2.5 pointer-events-auto">
+        <button id="btn-touch-left" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl glass-panel-btn border-2 border-sky-400/60 shadow-2xl flex items-center justify-center text-2xl active:scale-90 active:bg-sky-500/40 transition select-none" title="Sang Trái (Phím A / ◀)">
+          ◀
+        </button>
+        <button id="btn-touch-right" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl glass-panel-btn border-2 border-sky-400/60 shadow-2xl flex items-center justify-center text-2xl active:scale-90 active:bg-sky-500/40 transition select-none" title="Sang Phải (Phím D / ▶)">
+          ▶
+        </button>
+      </div>
+
+      <!-- Phím tắt PC ở giữa -->
+      <div class="glass-panel px-3 py-1.5 rounded-xl text-[10px] sm:text-xs font-bold text-slate-300 hidden md:flex items-center gap-2 shadow-lg">
+        <span>Chọn Cổng: <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-200">1</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-200">2</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-200">3</kbd></span>
+        <span>•</span>
+        <span>Làn: <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-200">A</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-200">D</kbd></span>
+        <span>•</span>
+        <span>Nhảy: <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-200">W</kbd> / <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-200">Space</kbd></span>
+        <span>•</span>
+        <span>Slow-Mo: <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-600 text-slate-200">Shift</kbd></span>
+      </div>
+
+      <!-- Nút ảo Nhảy & Slow-Mo (Mobile & Laptop Touch) -->
+      <div class="flex items-center gap-2.5 pointer-events-auto">
+        <button id="btn-touch-slowmo" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl glass-panel-btn border-2 border-cyan-400/60 shadow-2xl flex flex-col items-center justify-center active:scale-90 active:bg-cyan-500/40 transition select-none" title="Hãm Thời Gian (Shift)">
+          <span class="text-xl">⏳</span>
+          <span class="text-[8px] font-black text-cyan-300">SLOW</span>
+        </button>
+        <button id="btn-touch-jump" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl glass-panel-btn border-2 border-amber-400/60 shadow-2xl flex items-center justify-center text-2xl active:scale-90 active:bg-amber-500/40 transition select-none" title="Nhảy Lên (Phím W / Space)">
+          🚀
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. MÀN HÌNH CHÍNH (MENU SCREEN) -->
+  <!-- ========================================================================= -->
+  <div id="menu-screen" class="absolute inset-0 z-30 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+    <div class="max-w-xl w-full my-auto glass-panel p-5 sm:p-8 rounded-3xl border-2 border-sky-400/40 shadow-2xl text-center space-y-5 relative max-h-[92vh] overflow-y-auto">
+      
+      <!-- Logo Game 3D -->
+      <div class="space-y-1">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30 text-xs font-black tracking-widest uppercase">
+          <span>🎮</span> GDPT 2018 • KẾT NỐI TRI THỨC
+        </div>
+        <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-teal-300 to-amber-300 drop-shadow">
+          ĐƯỜNG ĐUA TOÁN 5 – 3D
+        </h1>
+        <p class="text-xs sm:text-sm font-bold text-slate-300">
+          Chạy 3D siêu tốc, chọn Cổng Năng Lượng đúng và hạ gục Đại Boss Toán học!
+        </p>
+      </div>
+
+      <!-- Bảng Thông tin Kỷ lục & Xu tích lũy -->
+      <div class="grid grid-cols-2 gap-3 max-w-sm mx-auto text-left">
+        <div class="glass-panel p-3 rounded-2xl border border-white/10">
+          <span class="text-[10px] font-black text-slate-400 uppercase">Kỷ lục Điểm:</span>
+          <div id="menu-high-score" class="text-lg font-black text-sky-400">0</div>
+        </div>
+        <div class="glass-panel p-3 rounded-2xl border border-white/10">
+          <span class="text-[10px] font-black text-slate-400 uppercase">Kho Xu Vàng:</span>
+          <div id="menu-total-coins" class="text-lg font-black text-amber-400 flex items-center gap-1">
+            <span>🪙</span> 0
+          </div>
+        </div>
+      </div>
+
+      <!-- Chọn 5 Chặng Toán 5 -->
+      <div class="space-y-2 text-left">
+        <div class="text-xs font-black text-slate-300 uppercase tracking-wider flex items-center justify-between">
+          <span>CHỌN CHẶNG THỬ THÁCH:</span>
+          <span class="text-[10px] text-sky-400">8 câu + Đấu Boss 3D</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <!-- Chặng 1 -->
+          <button onclick="game3D.selectStage(1)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-emerald-500/20 border-2 border-emerald-500/40 text-left transition flex items-center gap-3 active:scale-95">
+            <span class="text-2xl">🌲</span>
+            <div>
+              <div class="text-xs font-black text-emerald-300">Chặng 1: Rừng Phân Số</div>
+              <div class="text-[10px] text-slate-400">Rút gọn, so sánh, hỗn số, 4 phép tính</div>
+            </div>
+          </button>
+
+          <!-- Chặng 2 -->
+          <button onclick="game3D.selectStage(2)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-amber-500/20 border-2 border-amber-500/40 text-left transition flex items-center gap-3 active:scale-95">
+            <span class="text-2xl">🏜️</span>
+            <div>
+              <div class="text-xs font-black text-amber-300">Chặng 2: Sa Mạc Thập Phân</div>
+              <div class="text-[10px] text-slate-400">Cộng, trừ, nhân, chia, tính nhẩm 10/0,1</div>
+            </div>
+          </button>
+
+          <!-- Chặng 3 -->
+          <button onclick="game3D.selectStage(3)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-purple-500/20 border-2 border-purple-500/40 text-left transition flex items-center gap-3 active:scale-95">
+            <span class="text-2xl">🏙️</span>
+            <div>
+              <div class="text-xs font-black text-purple-300">Chặng 3: Thành Phố Phần Trăm</div>
+              <div class="text-[10px] text-slate-400">Tỉ số %, tìm a% của số, bài toán giảm giá</div>
+            </div>
+          </button>
+
+          <!-- Chặng 4 -->
+          <button onclick="game3D.selectStage(4)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-cyan-500/20 border-2 border-cyan-500/40 text-left transition flex items-center gap-3 active:scale-95">
+            <span class="text-2xl">🔷</span>
+            <div>
+              <div class="text-xs font-black text-cyan-300">Chặng 4: Thung Lũng Hình Học</div>
+              <div class="text-[10px] text-slate-400">Đổi đơn vị, tam giác, thang, tròn, khối hộp</div>
+            </div>
+          </button>
+
+          <!-- Chặng 5 -->
+          <button onclick="game3D.selectStage(5)" class="stage-select-btn sm:col-span-2 p-3 rounded-2xl glass-panel hover:bg-rose-500/20 border-2 border-rose-500/40 text-left transition flex items-center gap-3 active:scale-95">
+            <span class="text-2xl">🚀</span>
+            <div>
+              <div class="text-xs font-black text-rose-300">Chặng 5: Đường Hầm Chuyển Động</div>
+              <div class="text-[10px] text-slate-400">Vận tốc, quãng đường, thời gian, bài toán hai xe ngược/cùng chiều</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Nút Chế độ Vô Tận & Nút Mở Cửa Hàng Skin -->
+      <div class="flex flex-col sm:flex-row gap-3 pt-2">
+        <button onclick="game3D.startEndlessMode()" class="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 font-black text-base shadow-lg shadow-orange-500/30 hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-2">
+          <span>⚡</span> <span>ĐUA VÔ TẬN (ENDLESS SPEED)</span>
+        </button>
+        <button onclick="game3D.openSkinShop()" class="py-3.5 px-6 rounded-2xl glass-panel border border-amber-400/50 hover:bg-amber-400/20 font-black text-sm text-amber-300 transition flex items-center justify-center gap-2 active:scale-95">
+          <span>🚀</span> <span>ĐỔI SKIN 3D</span>
+        </button>
+      </div>
+
+      <!-- Tùy chọn Âm thanh & Trợ giúp -->
+      <div class="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/10">
+        <button id="menu-sound-btn" onclick="game3D.toggleSound()" class="flex items-center gap-1.5 hover:text-white transition">
+          <span id="menu-sound-icon">🔊</span> <span id="menu-sound-text">Âm thanh: BẬT</span>
+        </button>
+        <span class="text-[11px]">Three.js 60 FPS • Web Audio API</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 4. MODAL: GIẢI THÍCH TỨC THÌ (EXPLAIN STATE) -->
+  <!-- ========================================================================= -->
+  <div id="explain-modal" class="absolute inset-0 z-40 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden">
+    <div class="max-w-lg w-full glass-panel p-5 sm:p-7 rounded-3xl border-2 border-rose-500/60 shadow-2xl space-y-3.5 text-center animate-fade-in max-h-[90vh] overflow-y-auto">
+      
+      <div id="explain-icon" class="w-14 h-14 mx-auto rounded-2xl bg-rose-500/20 border-2 border-rose-400 text-rose-300 flex items-center justify-center text-3xl shadow-lg">
+        ❌
+      </div>
+
+      <div class="space-y-1">
+        <h3 id="explain-title" class="text-xl sm:text-2xl font-black text-rose-400">CỔNG NĂNG LƯỢNG CHƯA ĐÚNG!</h3>
+        <p id="explain-subtitle" class="text-xs font-bold text-slate-300">Đừng nản lòng, bạn được bất tử 1.5s để chạy tiếp. Hãy xem công thức chuẩn:</p>
+      </div>
+
+      <!-- Chi tiết đáp án đúng & Lời giải -->
+      <div class="bg-slate-900/90 rounded-2xl p-4 text-left border border-white/10 space-y-3">
+        <div>
+          <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Câu hỏi:</span>
+          <div id="explain-question" class="text-sm font-bold text-white mt-0.5">Nội dung câu hỏi...</div>
+        </div>
+
+        <div id="explain-svg" class="hidden flex justify-center py-1"></div>
+
+        <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+          <span class="text-[10px] font-black text-emerald-400 uppercase tracking-wider">Đáp án chính xác:</span>
+          <div id="explain-correct-answer" class="text-base font-black text-emerald-300 mt-0.5">...</div>
+        </div>
+
+        <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
+          <span class="text-[10px] font-black text-amber-400 uppercase tracking-wider flex items-center gap-1">
+            <span>💡</span> CÔNG THỨC GHI NHỚ:
+          </span>
+          <div id="explain-formula" class="text-xs font-black text-amber-200 mt-0.5 font-mono">...</div>
+        </div>
+
+        <div>
+          <span class="text-[10px] font-black text-sky-400 uppercase tracking-wider">Các bước giải:</span>
+          <div id="explain-steps" class="text-xs font-bold text-slate-300 mt-0.5 leading-relaxed">...</div>
+        </div>
+      </div>
+
+      <!-- Nút Tiếp Tục -->
+      <button id="btn-explain-continue" onclick="game3D.resumeAfterExplain()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 font-black text-base shadow-lg shadow-emerald-500/30 hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-2">
+        <span>TIẾP TỤC CHẠY</span> <kbd class="text-xs bg-black/20 px-2 py-0.5 rounded text-white/90">Space / Enter</kbd>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 5. MODAL: CHIẾN THẮNG & HẠ BOSS (VICTORY STATE) -->
+  <!-- ========================================================================= -->
+  <div id="victory-modal" class="absolute inset-0 z-40 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden">
+    <div class="max-w-md w-full glass-panel p-5 sm:p-8 rounded-3xl border-2 border-amber-400/60 shadow-2xl text-center space-y-4 animate-fade-in max-h-[90vh] overflow-y-auto">
+      
+      <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-400 to-yellow-300 text-slate-950 flex items-center justify-center text-4xl shadow-xl shadow-amber-400/30 animate-bounce">
+        👑
+      </div>
+
+      <div class="space-y-1">
+        <h3 class="text-2xl sm:text-3xl font-black text-amber-300 tracking-tight">HẠ GỤC ĐẠI BOSS!</h3>
+        <p id="victory-stage-name" class="text-xs font-bold text-slate-300">Bạn đã hoàn thành xuất sắc chặng đua</p>
+      </div>
+
+      <!-- Thống kê điểm & Xu -->
+      <div class="grid grid-cols-2 gap-3 bg-slate-900/80 p-4 rounded-2xl border border-white/10 text-left">
+        <div>
+          <span class="text-[10px] font-black text-slate-400 uppercase">Điểm chặng:</span>
+          <div id="victory-score" class="text-xl font-black text-sky-400">+500</div>
+        </div>
+        <div>
+          <span class="text-[10px] font-black text-slate-400 uppercase">Xu thưởng:</span>
+          <div id="victory-coins" class="text-xl font-black text-amber-400 flex items-center gap-1">
+            <span>🪙</span> +30
+          </div>
+        </div>
+      </div>
+
+      <!-- Nút hành động -->
+      <div class="space-y-2">
+        <button id="btn-victory-next" onclick="game3D.nextStage()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 font-black text-base shadow-lg shadow-emerald-500/30 hover:brightness-110 active:scale-95 transition">
+          CHẶNG TIẾP THEO ➔
+        </button>
+        <button id="btn-victory-menu" onclick="game3D.backToMenu()" class="w-full py-3 rounded-2xl glass-panel border border-white/20 font-bold text-sm text-slate-300 hover:text-white transition">
+          Về Menu Chính
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 6. MODAL: HẾT MẠNG (GAMEOVER STATE) -->
+  <!-- ========================================================================= -->
+  <div id="gameover-modal" class="absolute inset-0 z-40 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md hidden">
+    <div class="max-w-md w-full glass-panel p-5 sm:p-8 rounded-3xl border-2 border-rose-500/60 shadow-2xl text-center space-y-4 animate-fade-in max-h-[90vh] overflow-y-auto">
+      
+      <div class="w-16 h-16 mx-auto rounded-3xl bg-rose-500/20 text-rose-400 border border-rose-500/40 flex items-center justify-center text-3xl shadow-lg">
+        💔
+      </div>
+
+      <div class="space-y-1">
+        <h3 class="text-2xl sm:text-3xl font-black text-rose-400 tracking-tight">HẾT MẠNG RỒI!</h3>
+        <p class="text-xs font-bold text-slate-300">Đừng nản chí! Luyện tập lại sẽ giúp bạn thuộc công thức và phản xạ nhanh hơn.</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 bg-slate-900/80 p-4 rounded-2xl border border-white/10 text-left">
+        <div>
+          <span class="text-[10px] font-black text-slate-400 uppercase">Điểm đạt được:</span>
+          <div id="gameover-score" class="text-lg font-black text-sky-400">0</div>
+        </div>
+        <div>
+          <span class="text-[10px] font-black text-slate-400 uppercase">Xu thu thập:</span>
+          <div id="gameover-coins" class="text-lg font-black text-amber-400 flex items-center gap-1">
+            <span>🪙</span> 0
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <button id="btn-gameover-retry" onclick="game3D.retryStage()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 font-black text-base shadow-lg shadow-sky-500/30 hover:brightness-110 active:scale-95 transition">
+          THỬ LẠI NGAY 🔄
+        </button>
+        <button id="btn-gameover-menu" onclick="game3D.backToMenu()" class="w-full py-3 rounded-2xl glass-panel border border-white/20 font-bold text-sm text-slate-300 hover:text-white transition">
+          Về Menu Chính
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 7. MODAL: TẠM DỪNG (PAUSED STATE) -->
+  <!-- ========================================================================= -->
+  <div id="pause-modal" class="absolute inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md hidden">
+    <div class="max-w-xs w-full glass-panel p-6 rounded-3xl border border-white/20 shadow-2xl text-center space-y-4">
+      <h3 class="text-xl font-black text-white uppercase tracking-wider">ĐANG TẠM DỪNG</h3>
+      <div class="space-y-2.5">
+        <button id="btn-pause-resume" onclick="game3D.resumeGame()" class="w-full py-3 rounded-2xl bg-sky-500 font-black text-sm hover:bg-sky-400 transition">
+          Tiếp Tục Chạy ▶
+        </button>
+        <button id="btn-pause-restart" onclick="game3D.retryStage()" class="w-full py-3 rounded-2xl glass-panel border border-white/20 font-bold text-sm hover:bg-white/10 transition">
+          Chơi Lại Chặng 🔄
+        </button>
+        <button id="btn-pause-menu" onclick="game3D.backToMenu()" class="w-full py-3 rounded-2xl glass-panel border border-white/20 font-bold text-sm text-rose-300 hover:bg-rose-500/20 transition">
+          Về Menu Chính
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 8. MODAL: CỬA HÀNG SKIN NHÂN VẬT 3D (SKIN SHOP) -->
+  <!-- ========================================================================= -->
+  <div id="shop-modal" class="absolute inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden overflow-y-auto">
+    <div class="max-w-md w-full glass-panel p-6 sm:p-7 rounded-3xl border border-amber-400/40 shadow-2xl space-y-5 text-center max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 class="text-xl font-black text-amber-300 flex items-center gap-2">
+          <span>🚀</span> CỬA HÀNG PHI THUYỀN 3D
+        </h3>
+        <button onclick="game3D.closeSkinShop()" class="w-8 h-8 rounded-full glass-panel flex items-center justify-center text-slate-400 hover:text-white">✕</button>
+      </div>
+
+      <!-- Danh sách 3 Skin -->
+      <div class="space-y-3" id="shop-items-container">
+        <!-- Render động từ game3d.js -->
+      </div>
+
+      <div class="text-[11px] font-bold text-slate-400">
+        Thu thập xu vàng trên đường đua để mở khóa các mẫu phi thuyền 3D độc quyền!
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 9. SCRIPTS LIÊN KẾT (NẠP ĐÚNG THỨ TỰ) -->
+  <!-- ========================================================================= -->
+  <script src="mathEngine.js"></script>
+  <script src="game3d.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trợ lý Giải toán có lời văn Lớp 5 - Sách Kết nối tri thức</title>
+  <!-- Google Fonts: Nunito & Be Vietnam Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            nunito: ['Nunito', 'Segoe UI', '-apple-system', 'BlinkMacSystemFont', 'Roboto', 'sans-serif'],
+            vietnam: ['Be Vietnam Pro', 'Nunito', 'Segoe UI', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              blue: '#0284c7',
+              sky: '#38bdf8',
+              orange: '#f97316',
+              amber: '#f59e0b',
+              green: '#10b981',
+              emerald: '#059669',
+            }
+          },
+          boxShadow: {
+            'comic': '0 4px 0 0 rgba(0,0,0,0.15)',
+            'comic-lg': '0 6px 0 0 rgba(0,0,0,0.15)',
+            'notebook': '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Nunito', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background-color: #f8fafc;
+      background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+      background-size: 28px 28px;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Hiệu ứng giấy vở ô ly tiểu học chuẩn Việt Nam */
+    .notebook-paper {
+      background-color: #ffffff;
+      background-image: 
+        linear-gradient(rgba(186, 230, 253, 0.45) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(186, 230, 253, 0.45) 1px, transparent 1px);
+      background-size: 20px 20px;
+      border-left: 4px solid #ef4444;
+      position: relative;
+    }
+    .notebook-paper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 36px;
+      width: 1.5px;
+      background-color: rgba(239, 68, 68, 0.4);
+      pointer-events: none;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-4 border-brand-orange shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row items-center justify-between gap-3">
+      
+      <!-- Tựa đề và Logo -->
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 flex-shrink-0 animate-float cursor-pointer" onclick="playRobotVoice()" title="Bấm vào Rô-bốt để nghe chào hỏi!">
+          <!-- SVG Robot EdTech -->
+          <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+            <rect x="18" y="24" width="64" height="56" rx="16" fill="#0284c7" stroke="#0369a1" stroke-width="3"/>
+            <line x1="50" y1="24" x2="50" y2="8" stroke="#f59e0b" stroke-width="4" stroke-linecap="round"/>
+            <circle cx="50" cy="8" r="6" fill="#ef4444"/>
+            <rect x="26" y="32" width="48" height="40" rx="10" fill="#0f172a"/>
+            <circle cx="40" cy="50" r="7" fill="#38bdf8"/>
+            <circle cx="40" cy="50" r="2.5" fill="#ffffff"/>
+            <circle cx="60" cy="50" r="7" fill="#38bdf8"/>
+            <circle cx="60" cy="50" r="2.5" fill="#ffffff"/>
+            <path d="M 42 63 Q 50 71 58 63" fill="none" stroke="#22c55e" stroke-width="3.5" stroke-linecap="round"/>
+            <rect x="10" y="44" width="8" height="16" rx="3" fill="#f59e0b"/>
+            <rect x="82" y="44" width="8" height="16" rx="3" fill="#f59e0b"/>
+          </svg>
+        </div>
+
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="bg-orange-500 text-white font-extrabold text-[11px] px-2.5 py-0.5 rounded-full uppercase">
+              Chuyên đề Lớp 5
+            </span>
+            <span class="text-xs font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded border border-sky-300">
+              Kết nối tri thức với cuộc sống
+            </span>
+          </div>
+          <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+            TRỢ LÝ GIẢI TOÁN CÓ LỜI VĂN & VẼ SƠ ĐỒ ĐOẠN THẲNG
+          </h1>
+        </div>
+      </div>
+
+      <!-- Nút điều hướng quay lại trang tổng quan & Bật âm thanh -->
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-black bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 transition text-slate-700 shadow-comic flex items-center gap-1.5">
+          <span>🏠</span> Về Trang Chủ Toán 5
+        </a>
+        <button id="sound-btn" onclick="toggleSound()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 transition text-slate-700 shadow-comic" title="Bật/Tắt âm thanh">
+          <span id="sound-icon">🔊</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== NỘI DUNG CHÍNH ==================== -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Thanh chuyển đổi 3 Dạng Toán Trọng Tâm -->
+    <div class="bg-white rounded-2xl p-3 border-2 border-slate-200 shadow-comic flex flex-col md:flex-row items-center justify-between gap-3">
+      <span class="text-xs font-black text-slate-500 uppercase tracking-wider px-2 flex items-center gap-1.5">
+        <span>📚</span> CHỌN DẠNG TOÁN CẦN GIẢI:
+      </span>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full md:w-auto">
+        <button onclick="switchMathType('ratio')" id="btn-type-ratio" class="px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm transition duration-150 border-2 border-sky-600 bg-sky-500 text-white shadow-comic flex items-center justify-center gap-1.5">
+          <span>🔵</span> Dạng 1: Tổng - Tỉ & Hiệu - Tỉ
+        </button>
+        <button onclick="switchMathType('percent')" id="btn-type-percent" class="px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm transition duration-150 border-2 border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic flex items-center justify-center gap-1.5">
+          <span>🟠</span> Dạng 2: Tỉ số % & Giảm giá
+        </button>
+        <button onclick="switchMathType('motion')" id="btn-type-motion" class="px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm transition duration-150 border-2 border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic flex items-center justify-center gap-1.5">
+          <span>🟢</span> Dạng 3: Toán Chuyển động đều
+        </button>
+      </div>
+    </div>
+
+    <!-- KHUNG TƯƠNG TÁC 2 CỘT: CỘT NHẬP DỮ LIỆU & CỘT BÀI GIẢI MẪU + SƠ ĐỒ -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- ==================== CỘT TRÁI: ĐIỀU KHIỂN & NHẬP LIỆU ==================== -->
+      <div class="lg:col-span-5 space-y-5">
+        
+        <!-- Khung nhập dữ liệu bài toán -->
+        <div class="bg-white rounded-2xl p-5 border-2 border-slate-200 shadow-comic space-y-4">
+          <div class="flex items-center justify-between border-b pb-3">
+            <h3 id="panel-input-title" class="font-black text-slate-900 text-base flex items-center gap-2">
+              <span>⚙️</span> Nhập số liệu đề bài
+            </h3>
+            <button onclick="loadSampleProblem()" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold px-3 py-1.5 rounded-lg border border-amber-300 transition flex items-center gap-1">
+              <span>🎲</span> Thử ví dụ SGK
+            </button>
+          </div>
+
+          <!-- Các trường nhập dữ liệu động theo Dạng Toán -->
+          <div id="dynamic-inputs-area" class="space-y-3.5">
+            <!-- Nạp qua JS -->
+          </div>
+
+          <!-- Nút hành động tính toán -->
+          <div class="pt-2">
+            <button onclick="calculateAndRender()" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-sm rounded-xl shadow-comic transition transform active:scale-98 flex items-center justify-center gap-2">
+              <span>✨</span> TỰ ĐỘNG VẼ SƠ ĐỒ & XUẤT BÀI GIẢI
+            </button>
+          </div>
+        </div>
+
+        <!-- Góc Rô-bốt mách nước phương pháp giải -->
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border-2 border-amber-200 shadow-comic space-y-2">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-amber-400 text-slate-900 flex items-center justify-center font-black text-lg">🤖</div>
+            <h4 class="font-black text-slate-900 text-xs sm:text-sm uppercase tracking-wide">Góc Rô-bốt hướng dẫn tư duy:</h4>
+          </div>
+          <div id="robot-guidance-text" class="text-xs text-slate-700 leading-relaxed font-medium">
+            <!-- Hướng dẫn phương pháp giải động -->
+          </div>
+        </div>
+
+        <!-- Nhân vật hỗ trợ đối chiếu -->
+        <div class="bg-white rounded-2xl p-3.5 border-2 border-slate-200 shadow-comic flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <div class="w-9 h-9 rounded-full bg-blue-500 text-white font-black text-xs flex items-center justify-center shadow-sm">Việt</div>
+            <div class="w-9 h-9 rounded-full bg-pink-500 text-white font-black text-xs flex items-center justify-center shadow-sm">Mai</div>
+            <div class="w-9 h-9 rounded-full bg-orange-500 text-white font-black text-xs flex items-center justify-center shadow-sm">Nam</div>
+            <div class="w-9 h-9 rounded-full bg-amber-400 text-slate-900 font-black text-xs flex items-center justify-center shadow-sm">Mi</div>
+          </div>
+          <span class="text-[11px] font-bold text-slate-500 italic">Chuẩn hóa cách trình bày vở Lớp 5</span>
+        </div>
+
+      </div>
+
+      <!-- ==================== CỘT PHẢI: SƠ ĐỒ ĐOẠN THẲNG & TRANG VỞ BÀI TẬP Ô LY ==================== -->
+      <div class="lg:col-span-7 space-y-5">
+        
+        <!-- PHẦN 1: KHUNG SƠ ĐỒ TRỰC QUAN (SVG ĐOẠN THẲNG / SƠ ĐỒ CHUYỂN ĐỘNG) -->
+        <div class="bg-white rounded-2xl p-5 border-2 border-slate-200 shadow-comic space-y-3">
+          <div class="flex items-center justify-between border-b pb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-sky-500 text-white flex items-center justify-center font-bold text-xs">📐</span>
+              <h3 class="font-black text-slate-900 text-sm sm:text-base">SƠ ĐỒ TRỰC QUAN (CHUẨN TRÌNH BÀY TIỂU HỌC)</h3>
+            </div>
+            <span class="text-[11px] bg-sky-100 text-sky-800 font-bold px-2 py-0.5 rounded">Tự động dựng hình SVG</span>
+          </div>
+
+          <div id="diagram-container" class="bg-slate-50 p-4 rounded-xl border border-slate-200 overflow-x-auto min-h-[160px] flex items-center justify-center">
+            <!-- Dynamic SVG Diagram -->
+          </div>
+        </div>
+
+        <!-- PHẦN 2: BÀI GIẢI MẪU TRÌNH BÀY TRÊN GIẤY Ô LY TIỂU HỌC -->
+        <div class="bg-white rounded-2xl p-5 border-2 border-slate-200 shadow-notebook space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2 border-b pb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-xs">📝</span>
+              <h3 class="font-black text-slate-900 text-sm sm:text-base">BÀI GIẢI MẪU ĐỐI CHIẾU TRÌNH BÀY VỞ</h3>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="copySolutionToClipboard()" id="btn-copy-sol" class="px-3 py-1 rounded-lg text-xs font-black bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 shadow-sm transition flex items-center gap-1">
+                <span>📋</span> Sao chép bài giải
+              </button>
+            </div>
+          </div>
+
+          <!-- Trang vở ô ly mô phỏng vở học sinh -->
+          <div id="notebook-container" class="notebook-paper p-6 sm:p-8 rounded-xl font-vietnam text-slate-900 shadow-inner min-h-[260px] space-y-4">
+            <!-- Solution steps rendered here -->
+          </div>
+
+          <!-- Lời nhắc sư phạm -->
+          <div class="text-[11px] text-slate-500 italic flex items-center justify-between">
+            <span>* Lưu ý: Tên đơn vị trong phép tính đặt trong dấu ngoặc đơn (...), phép tính cuối ghi đáp số rõ ràng.</span>
+            <span class="font-bold text-emerald-600">Đúng chuẩn SGK 2018</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="mt-12 bg-white border-t-2 border-slate-200 py-5 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div>Module: <strong>Trợ lý Giải toán có lời văn Lớp 5</strong> • Sách Kết nối tri thức với cuộc sống</div>
+      <div class="text-slate-400">Thiết kế bởi Chuyên gia EdTech Tiểu học & Full-stack Developer</div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT LOGIC ĐẦY ĐỦ 100% -->
+  <!-- ========================================================================= -->
+  <script>
+    /* =========================================================================
+       0. TỰ ĐỘNG CUNG CẤP FALLBACK CONFETTI
+       ========================================================================= */
+    if (typeof window.confetti !== 'function') {
+      window.confetti = function(opts) {
+        try {
+          const count = (opts && opts.particleCount) || 35;
+          const canvas = document.createElement('canvas');
+          canvas.style.position = 'fixed';
+          canvas.style.top = '0';
+          canvas.style.left = '0';
+          canvas.style.width = '100vw';
+          canvas.style.height = '100vh';
+          canvas.style.pointerEvents = 'none';
+          canvas.style.zIndex = '9999';
+          document.body.appendChild(canvas);
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          const ctx = canvas.getContext('2d');
+          const colors = ['#38bdf8', '#f59e0b', '#10b981', '#ec4899', '#8b5cf6'];
+          const particles = [];
+          for (let i = 0; i < count; i++) {
+            particles.push({
+              x: canvas.width * 0.5 + (Math.random() - 0.5) * 160,
+              y: canvas.height * ((opts && opts.origin && opts.origin.y) || 0.6),
+              vx: (Math.random() - 0.5) * 10,
+              vy: -Math.random() * 10 - 3,
+              size: Math.random() * 8 + 4,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              alpha: 1
+            });
+          }
+          let frame = 0;
+          function anim() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+              p.x += p.vx;
+              p.y += p.vy;
+              p.vy += 0.35;
+              p.alpha -= 0.016;
+              ctx.fillStyle = p.color;
+              ctx.globalAlpha = Math.max(0, p.alpha);
+              ctx.fillRect(p.x, p.y, p.size, p.size);
+            });
+            frame++;
+            if (frame < 65) requestAnimationFrame(anim);
+            else canvas.remove();
+          }
+          anim();
+        } catch(e) {}
+      };
+    }
+
+    /* =========================================================================
+       1. HỆ THỐNG ÂM THANH WEB AUDIO API (AN TOÀN)
+       ========================================================================= */
+    let audioCtx = null;
+    let isSoundOn = true;
+
+    function getAudioCtx() {
+      if (!audioCtx) {
+        const AudioClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioClass) audioCtx = new AudioClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function toggleSound() {
+      isSoundOn = !isSoundOn;
+      document.getElementById('sound-icon').textContent = isSoundOn ? '🔊' : '🔇';
+      if (isSoundOn) playClickSound();
+    }
+
+    function playClickSound() {
+      if (!isSoundOn) return;
+      try {
+        const ctx = getAudioCtx();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(520, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.06);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.06);
+      } catch (e) {}
+    }
+
+    function playSuccessChime() {
+      if (!isSoundOn) return;
+      try {
+        const ctx = getAudioCtx();
+        if (!ctx) return;
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.07);
+          gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.07);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.07 + 0.22);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + i * 0.07);
+          osc.stop(ctx.currentTime + i * 0.07 + 0.22);
+        });
+      } catch (e) {}
+    }
+
+    function playRobotVoice() {
+      playSuccessChime();
+      if (typeof window.confetti === 'function') {
+        window.confetti({ particleCount: 30, spread: 60, origin: { y: 0.2, x: 0.1 } });
+      }
+    }
+
+    /* =========================================================================
+       2. TRẠNG THÁI MODULE (STATE)
+       ========================================================================= */
+    const state = {
+      currentType: 'ratio', // 'ratio' | 'percent' | 'motion'
+      
+      // Dạng 1: Tỉ số
+      ratio: {
+        subtype: 'sum', // 'sum' | 'diff'
+        labelObj1: 'Số thứ nhất (số bé)',
+        labelObj2: 'Số thứ hai (số lớn)',
+        val: 45,
+        part1: 2,
+        part2: 3,
+        unit: 'viên bi'
+      },
+
+      // Dạng 2: Phần trăm
+      percent: {
+        subtype: 'discount', // 'discount' (giảm giá) | 'interest' (lãi suất) | 'calcPercent' (tìm giá trị %)
+        originalVal: 500000,
+        rate: 15,
+        unit: 'đồng',
+        itemName: 'chiếc áo thể thao'
+      },
+
+      // Dạng 3: Chuyển động đều
+      motion: {
+        subtype: 'opposite', // 'opposite' (ngược chiều gặp nhau) | 'same' (cùng chiều đuổi nhau) | 'single' (đơn)
+        distance: 180,
+        v1: 50,
+        v2: 40,
+        name1: 'Ô tô đi từ A',
+        name2: 'Xe máy đi từ B',
+        unitDist: 'km',
+        unitSpeed: 'km/h'
+      }
+    };
+
+    /* =========================================================================
+       3. CHUYỂN ĐỔI DẠNG TOÁN CHÍNH
+       ========================================================================= */
+    function switchMathType(type) {
+      playClickSound();
+      state.currentType = type;
+
+      const types = ['ratio', 'percent', 'motion'];
+      types.forEach(t => {
+        const btn = document.getElementById(`btn-type-${t}`);
+        if (t === type) {
+          btn.className = "px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm transition duration-150 border-2 border-sky-600 bg-sky-500 text-white shadow-comic flex items-center justify-center gap-1.5";
+        } else {
+          btn.className = "px-4 py-2.5 rounded-xl font-black text-xs sm:text-sm transition duration-150 border-2 border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic flex items-center justify-center gap-1.5";
+        }
+      });
+
+      renderInputControls();
+      calculateAndRender();
+    }
+
+    /* =========================================================================
+       4. KHO ĐỀ MẪU CHUẨN SGK KẾT NỐI TRI THỨC VỚI CUỘC SỐNG
+       ========================================================================= */
+    const SAMPLE_PROBLEMS = {
+      ratio: [
+        { subtype: 'sum', label1: 'Số bi của Việt', label2: 'Số bi của Nam', val: 45, p1: 2, p2: 3, unit: 'viên bi' },
+        { subtype: 'diff', label1: 'Cây cam', label2: 'Cây xoài', val: 24, p1: 2, p2: 5, unit: 'cây' },
+        { subtype: 'sum', label1: 'Chiều rộng', label2: 'Chiều dài', val: 72, p1: 1, p2: 3, unit: 'm' },
+        { subtype: 'diff', label1: 'Tuổi em Mi', label2: 'Tuổi anh Nam', val: 6, p1: 1, p2: 3, unit: 'tuổi' }
+      ],
+      percent: [
+        { subtype: 'discount', original: 240000, rate: 20, unit: 'đồng', item: 'đôi giày thể thao' },
+        { subtype: 'interest', original: 50000000, rate: 0.6, unit: 'đồng', item: 'sổ tiết kiệm 1 tháng' },
+        { subtype: 'calcPercent', original: 1200, rate: 35, unit: 'cây', item: 'vườn cây đã trồng' },
+        { subtype: 'discount', original: 150000, rate: 10, unit: 'đồng', item: 'bộ sách giáo khoa' }
+      ],
+      motion: [
+        { subtype: 'opposite', s: 180, v1: 50, v2: 40, n1: 'Ô tô từ A', n2: 'Ô tô từ B', unitD: 'km', unitV: 'km/h' },
+        { subtype: 'same', s: 30, v1: 45, v2: 30, n1: 'Xe máy đuổi theo', n2: 'Xe đạp đi trước', unitD: 'km', unitV: 'km/h' },
+        { subtype: 'single', s: 105, v1: 42, v2: 0, n1: 'Xe máy', n2: '', unitD: 'km', unitV: 'km/h' }
+      ]
+    };
+
+    function loadSampleProblem() {
+      playClickSound();
+      const list = SAMPLE_PROBLEMS[state.currentType];
+      const pick = list[Math.floor(Math.random() * list.length)];
+
+      if (state.currentType === 'ratio') {
+        state.ratio.subtype = pick.subtype;
+        state.ratio.labelObj1 = pick.label1;
+        state.ratio.labelObj2 = pick.label2;
+        state.ratio.val = pick.val;
+        state.ratio.part1 = pick.p1;
+        state.ratio.part2 = pick.p2;
+        state.ratio.unit = pick.unit;
+      } else if (state.currentType === 'percent') {
+        state.percent.subtype = pick.subtype;
+        state.percent.originalVal = pick.original;
+        state.percent.rate = pick.rate;
+        state.percent.unit = pick.unit;
+        state.percent.itemName = pick.item;
+      } else if (state.currentType === 'motion') {
+        state.motion.subtype = pick.subtype;
+        state.motion.distance = pick.s;
+        state.motion.v1 = pick.v1;
+        state.motion.v2 = pick.v2;
+        state.motion.name1 = pick.n1;
+        state.motion.name2 = pick.n2;
+      }
+
+      renderInputControls();
+      calculateAndRender();
+      if (typeof window.confetti === 'function') {
+        window.confetti({ particleCount: 25, spread: 50, origin: { y: 0.4 } });
+      }
+    }
+
+    /* =========================================================================
+       5. RENDER BẢNG ĐIỀU KHIỂN & HƯỚNG DẪN TƯ DUY
+       ========================================================================= */
+    function renderInputControls() {
+      const container = document.getElementById('dynamic-inputs-area');
+      const title = document.getElementById('panel-input-title');
+      const guide = document.getElementById('robot-guidance-text');
+
+      container.innerHTML = '';
+
+      if (state.currentType === 'ratio') {
+        title.innerHTML = '<span>⚙️</span> Nhập số liệu: Tổng - Tỉ & Hiệu - Tỉ';
+        guide.innerHTML = `
+          <strong>Quy tắc 4 bước vàng:</strong><br>
+          1. <em>Vẽ sơ đồ đoạn thẳng:</em> Xác định đại lượng bé, đại lượng lớn tương ứng với số phần bằng nhau.<br>
+          2. <em>Tìm tổng (hoặc hiệu) số phần bằng nhau:</em> Thực hiện phép cộng (với Tổng - Tỉ) hoặc phép trừ (với Hiệu - Tỉ).<br>
+          3. <em>Tìm giá trị 1 phần</em> rồi nhân với số phần tương ứng.<br>
+          4. <em>Ghi đáp số</em> đầy đủ cả hai số!
+        `;
+
+        container.innerHTML = `
+          <div class="flex gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+            <button onclick="setRatioSubtype('sum')" class="flex-1 py-1.5 text-xs font-black rounded-lg transition ${state.ratio.subtype === 'sum' ? 'bg-sky-500 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'}">
+              1. Biết Tổng & Tỉ số
+            </button>
+            <button onclick="setRatioSubtype('diff')" class="flex-1 py-1.5 text-xs font-black rounded-lg transition ${state.ratio.subtype === 'diff' ? 'bg-sky-500 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'}">
+              2. Biết Hiệu & Tỉ số
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Tên đại lượng 1 (Số bé):</label>
+              <input type="text" id="inp-ratio-name1" value="${state.ratio.labelObj1}" oninput="syncInputs()" class="w-full px-3 py-1.5 text-xs font-bold border border-slate-300 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Tên đại lượng 2 (Số lớn):</label>
+              <input type="text" id="inp-ratio-name2" value="${state.ratio.labelObj2}" oninput="syncInputs()" class="w-full px-3 py-1.5 text-xs font-bold border border-slate-300 rounded-lg">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-black text-slate-700 mb-1">${state.ratio.subtype === 'sum' ? 'Tổng hai số' : 'Hiệu hai số'}:</label>
+              <input type="number" id="inp-ratio-val" value="${state.ratio.val}" min="1" step="any" oninput="syncInputs()" class="w-full px-3 py-1.5 text-sm font-black border-2 border-sky-300 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-xs font-black text-slate-700 mb-1">Số phần bé:</label>
+              <input type="number" id="inp-ratio-p1" value="${state.ratio.part1}" min="1" max="15" oninput="syncInputs()" class="w-full px-3 py-1.5 text-sm font-black border-2 border-sky-300 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-xs font-black text-slate-700 mb-1">Số phần lớn:</label>
+              <input type="number" id="inp-ratio-p2" value="${state.ratio.part2}" min="2" max="15" oninput="syncInputs()" class="w-full px-3 py-1.5 text-sm font-black border-2 border-sky-300 rounded-lg">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Đơn vị tính (ví dụ: viên bi, cây, kg, m):</label>
+            <input type="text" id="inp-ratio-unit" value="${state.ratio.unit}" oninput="syncInputs()" class="w-full px-3 py-1.5 text-xs font-bold border border-slate-300 rounded-lg">
+          </div>
+        `;
+
+      } else if (state.currentType === 'percent') {
+        title.innerHTML = '<span>⚙️</span> Nhập số liệu: Tỉ số phần trăm';
+        guide.innerHTML = `
+          <strong>Bí kíp giải toán Tỉ số phần trăm:</strong><br>
+          • <em>Quy tắc:</em> Toàn thể luôn tương ứng với <strong>100%</strong>.<br>
+          • <em>Số tiền giảm giá:</em> Giá ban đầu × Tỉ lệ phần trăm giảm : 100.<br>
+          • <em>Số tiền phải trả:</em> Giá ban đầu - Số tiền được giảm.<br>
+          • <em>Tiền gửi tiết kiệm:</em> Tiền lãi nhận được = Tiền gửi × Lãi suất : 100.
+        `;
+
+        container.innerHTML = `
+          <div class="flex gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+            <button onclick="setPercentSubtype('discount')" class="flex-1 py-1.5 text-xs font-black rounded-lg transition ${state.percent.subtype === 'discount' ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'}">
+              1. Giảm giá (Khuyến mãi)
+            </button>
+            <button onclick="setPercentSubtype('interest')" class="flex-1 py-1.5 text-xs font-black rounded-lg transition ${state.percent.subtype === 'interest' ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'}">
+              2. Tiền gửi tiết kiệm
+            </button>
+            <button onclick="setPercentSubtype('calcPercent')" class="flex-1 py-1.5 text-xs font-black rounded-lg transition ${state.percent.subtype === 'calcPercent' ? 'bg-orange-500 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'}">
+              3. Tìm a% của số B
+            </button>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Tên mặt hàng / Đối tượng:</label>
+            <input type="text" id="inp-pct-item" value="${state.percent.itemName}" oninput="syncInputs()" class="w-full px-3 py-1.5 text-xs font-bold border border-slate-300 rounded-lg">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-black text-slate-700 mb-1">Giá trị ban đầu (100%):</label>
+              <input type="number" id="inp-pct-orig" value="${state.percent.originalVal}" min="1" step="any" oninput="syncInputs()" class="w-full px-3 py-1.5 text-sm font-black border-2 border-orange-300 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-xs font-black text-slate-700 mb-1">Tỉ lệ phần trăm (%):</label>
+              <input type="number" id="inp-pct-rate" value="${state.percent.rate}" min="0.1" max="100" step="any" oninput="syncInputs()" class="w-full px-3 py-1.5 text-sm font-black border-2 border-orange-300 rounded-lg">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Đơn vị (ví dụ: đồng, kg, học sinh, m):</label>
+            <input type="text" id="inp-pct-unit" value="${state.percent.unit}" oninput="syncInputs()" class="w-full px-3 py-1.5 text-xs font-bold border border-slate-300 rounded-lg">
+          </div>
+        `;
+
+      } else if (state.currentType === 'motion') {
+        title.innerHTML = '<span>⚙️</span> Nhập số liệu: Toán Chuyển động đều';
+        guide.innerHTML = `
+          <strong>Bí kíp vàng giải toán Chuyển động:</strong><br>
+          • <em>Công thức:</em> Vận tốc v = s : t; Quãng đường s = v × t; Thời gian t = s : v.<br>
+          • <em>Hai xe ngược chiều gặp nhau:</em> Thời gian gặp nhau = Quãng đường ban đầu : (Tổng vận tốc v₁ + v₂).<br>
+          • <em>Hai xe cùng chiều đuổi nhau:</em> Thời gian đuổi kịp = Khoảng cách ban đầu : (Hiệu vận tốc v₁ - v₂).
+        `;
+
+        container.innerHTML = `
+          <div class="flex gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+            <button onclick="setMotionSubtype('opposite')" class="flex-1 py-1.5 text-xs font-black rounded-lg transition ${state.motion.subtype === 'opposite' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'}">
+              1. Ngược chiều gặp nhau
+            </button>
+            <button onclick="setMotionSubtype('same')" class="flex-1 py-1.5 text-xs font-black rounded-lg transition ${state.motion.subtype === 'same' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'}">
+              2. Cùng chiều đuổi nhau
+            </button>
+            <button onclick="setMotionSubtype('single')" class="flex-1 py-1.5 text-xs font-black rounded-lg transition ${state.motion.subtype === 'single' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'}">
+              3. Chuyển động 1 xe
+            </button>
+          </div>
+
+          <div>
+            <label class="block text-xs font-black text-slate-700 mb-1">
+              ${state.motion.subtype === 'same' ? 'Khoảng cách ban đầu giữa hai xe (km):' : 'Quãng đường AB (km):'}
+            </label>
+            <input type="number" id="inp-mot-dist" value="${state.motion.distance}" min="1" step="any" oninput="syncInputs()" class="w-full px-3 py-1.5 text-sm font-black border-2 border-emerald-300 rounded-lg">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Vận tốc xe 1 (km/h):</label>
+              <input type="number" id="inp-mot-v1" value="${state.motion.v1}" min="1" step="any" oninput="syncInputs()" class="w-full px-3 py-1.5 text-sm font-black border border-slate-300 rounded-lg">
+            </div>
+            <div id="wrapper-v2" class="${state.motion.subtype === 'single' ? 'hidden' : ''}">
+              <label class="block text-xs font-bold text-slate-600 mb-1">Vận tốc xe 2 (km/h):</label>
+              <input type="number" id="inp-mot-v2" value="${state.motion.v2}" min="1" step="any" oninput="syncInputs()" class="w-full px-3 py-1.5 text-sm font-black border border-slate-300 rounded-lg">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Tên xe 1:</label>
+              <input type="text" id="inp-mot-n1" value="${state.motion.name1}" oninput="syncInputs()" class="w-full px-3 py-1.5 text-xs font-bold border border-slate-300 rounded-lg">
+            </div>
+            <div id="wrapper-n2" class="${state.motion.subtype === 'single' ? 'hidden' : ''}">
+              <label class="block text-xs font-bold text-slate-600 mb-1">Tên xe 2:</label>
+              <input type="text" id="inp-mot-n2" value="${state.motion.name2}" oninput="syncInputs()" class="w-full px-3 py-1.5 text-xs font-bold border border-slate-300 rounded-lg">
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function setRatioSubtype(sub) {
+      playClickSound();
+      state.ratio.subtype = sub;
+      renderInputControls();
+      calculateAndRender();
+    }
+
+    function setPercentSubtype(sub) {
+      playClickSound();
+      state.percent.subtype = sub;
+      renderInputControls();
+      calculateAndRender();
+    }
+
+    function setMotionSubtype(sub) {
+      playClickSound();
+      state.motion.subtype = sub;
+      renderInputControls();
+      calculateAndRender();
+    }
+
+    function syncInputs() {
+      if (state.currentType === 'ratio') {
+        state.ratio.labelObj1 = document.getElementById('inp-ratio-name1').value || 'Số bé';
+        state.ratio.labelObj2 = document.getElementById('inp-ratio-name2').value || 'Số lớn';
+        state.ratio.val = parseFloat(document.getElementById('inp-ratio-val').value) || 0;
+        state.ratio.part1 = parseInt(document.getElementById('inp-ratio-p1').value) || 1;
+        state.ratio.part2 = parseInt(document.getElementById('inp-ratio-p2').value) || 2;
+        state.ratio.unit = document.getElementById('inp-ratio-unit').value || 'đơn vị';
+      } else if (state.currentType === 'percent') {
+        state.percent.itemName = document.getElementById('inp-pct-item').value || 'mặt hàng';
+        state.percent.originalVal = parseFloat(document.getElementById('inp-pct-orig').value) || 0;
+        state.percent.rate = parseFloat(document.getElementById('inp-pct-rate').value) || 0;
+        state.percent.unit = document.getElementById('inp-pct-unit').value || 'đồng';
+      } else if (state.currentType === 'motion') {
+        state.motion.distance = parseFloat(document.getElementById('inp-mot-dist').value) || 0;
+        state.motion.v1 = parseFloat(document.getElementById('inp-mot-v1').value) || 0;
+        if (state.motion.subtype !== 'single') {
+          state.motion.v2 = parseFloat(document.getElementById('inp-mot-v2').value) || 0;
+          state.motion.name2 = document.getElementById('inp-mot-n2').value || 'Xe 2';
+        }
+        state.motion.name1 = document.getElementById('inp-mot-n1').value || 'Xe 1';
+      }
+      calculateAndRender();
+    }
+
+    function formatNumberVi(num) {
+      if (isNaN(num)) return '0';
+      const rounded = Number(num.toFixed(4));
+      return rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ').replace('.', ',');
+    }
+
+    function formatHoursToMinutes(decimalHours) {
+      const hours = Math.floor(decimalHours);
+      const minutes = Math.round((decimalHours - hours) * 60);
+      if (minutes === 0) return `${hours} giờ`;
+      if (hours === 0) return `${minutes} phút`;
+      return `${hours} giờ ${minutes} phút (${formatNumberVi(decimalHours)} giờ)`;
+    }
+
+    /* =========================================================================
+       6. HÀM TÍNH TOÁN & XUẤT SƠ ĐỒ ĐOẠN THẲNG + BÀI GIẢI MẪU
+       ========================================================================= */
+    function calculateAndRender() {
+      if (state.currentType === 'ratio') {
+        renderRatioProblem();
+      } else if (state.currentType === 'percent') {
+        renderPercentProblem();
+      } else if (state.currentType === 'motion') {
+        renderMotionProblem();
+      }
+    }
+
+    /* -------------------------------------------------------------
+       XỬ LÝ DẠNG 1: TỔNG - TỈ & HIỆU - TỈ
+       ------------------------------------------------------------- */
+    function renderRatioProblem() {
+      const r = state.ratio;
+      const isSum = r.subtype === 'sum';
+      let p1 = Math.max(1, r.part1);
+      let p2 = Math.max(p1 + 1, r.part2);
+      const diffOrSumParts = isSum ? (p1 + p2) : (p2 - p1);
+      const unitValue = r.val / diffOrSumParts;
+      const num1 = unitValue * p1;
+      const num2 = unitValue * p2;
+
+      // 1. TỰ ĐỘNG DỰNG SƠ ĐỒ ĐOẠN THẲNG SVG ĐÚNG CHUẨN TIỂU HỌC
+      const container = document.getElementById('diagram-container');
+      const boxW = 38;
+      const boxH = 22;
+      const startX = 130;
+      const y1 = 40;
+      const y2 = 100;
+      const maxParts = Math.max(p1, p2);
+      const svgW = Math.max(520, startX + maxParts * boxW + 150);
+      const svgH = 160;
+
+      let rects1 = '';
+      for (let i = 0; i < p1; i++) {
+        rects1 += `<rect x="${startX + i * boxW}" y="${y1}" width="${boxW}" height="${boxH}" fill="#bae6fd" stroke="#0284c7" stroke-width="2" rx="2"/>`;
+      }
+      let rects2 = '';
+      for (let i = 0; i < p2; i++) {
+        rects2 += `<rect x="${startX + i * boxW}" y="${y2}" width="${boxW}" height="${boxH}" fill="#fed7aa" stroke="#ea580c" stroke-width="2" rx="2"/>`;
+      }
+
+      let extraAnnotation = '';
+      if (isSum) {
+        // Dấu ngoặc nhọn tổng hai số
+        const braceX = startX + maxParts * boxW + 14;
+        extraAnnotation = `
+          <path d="M ${braceX} ${y1 + 2} Q ${braceX + 18} 80 ${braceX + 32} 80 Q ${braceX + 18} 80 ${braceX} ${y2 + boxH - 2}" fill="none" stroke="#334155" stroke-width="2.5"/>
+          <text x="${braceX + 42}" y="85" fill="#0f172a" font-weight="900" font-size="13">Tổng: ${formatNumberVi(r.val)} ${r.unit}</text>
+        `;
+      } else {
+        // Biểu thị hiệu số phần hơn kém
+        const diffX1 = startX + p1 * boxW;
+        const diffX2 = startX + p2 * boxW;
+        extraAnnotation = `
+          <line x1="${diffX1}" y1="${y1 + boxH + 4}" x2="${diffX1}" y2="${y2 - 4}" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <line x1="${diffX1}" y1="130" x2="${diffX2}" y2="130" stroke="#dc2626" stroke-width="2"/>
+          <line x1="${diffX1}" y1="125" x2="${diffX1}" y2="135" stroke="#dc2626" stroke-width="2"/>
+          <line x1="${diffX2}" y1="125" x2="${diffX2}" y2="135" stroke="#dc2626" stroke-width="2"/>
+          <text x="${(diffX1 + diffX2) / 2}" y="148" fill="#dc2626" font-weight="bold" font-size="12" text-anchor="middle">Hiệu: ${formatNumberVi(r.val)} ${r.unit}</text>
+        `;
+      }
+
+      container.innerHTML = `
+        <svg viewBox="0 0 ${svgW} ${svgH}" class="w-full h-auto min-w-[480px]">
+          <!-- Label 1 -->
+          <text x="10" y="${y1 + 16}" fill="#0369a1" font-weight="bold" font-size="12">${r.labelObj1} (?):</text>
+          ${rects1}
+          <text x="${startX + p1 * boxW + 8}" y="${y1 + 16}" fill="#0284c7" font-weight="bold" font-size="11">(${p1} phần)</text>
+          
+          <!-- Label 2 -->
+          <text x="10" y="${y2 + 16}" fill="#c2410c" font-weight="bold" font-size="12">${r.labelObj2} (?):</text>
+          ${rects2}
+          <text x="${startX + p2 * boxW + 8}" y="${y2 + 16}" fill="#ea580c" font-weight="bold" font-size="11">(${p2} phần)</text>
+          
+          ${extraAnnotation}
+        </svg>
+      `;
+
+      // 2. XUẤT BÀI GIẢI MẪU CHUẨN QUY CÁCH VỞ Ô LY TIỂU HỌC
+      const notebook = document.getElementById('notebook-container');
+      const stepPartText = isSum ? "tổng số phần bằng nhau" : "hiệu số phần bằng nhau";
+      const partCalc = isSum ? `${p1} + ${p2} = ${diffOrSumParts} (phần)` : `${p2} - ${p1} = ${diffOrSumParts} (phần)`;
+
+      notebook.innerHTML = `
+        <div class="text-center font-black text-lg text-red-600 tracking-wide mb-3 underline decoration-red-300">
+          Bài giải
+        </div>
+
+        <div class="space-y-3 leading-relaxed text-sm sm:text-base font-medium">
+          <p class="font-semibold text-slate-800">
+            Theo sơ đồ, ${stepPartText} là:
+          </p>
+          <p class="pl-8 font-bold text-indigo-900 font-mono">
+            ${partCalc}
+          </p>
+
+          <p class="font-semibold text-slate-800">
+            Giá trị của một phần bằng nhau là:
+          </p>
+          <p class="pl-8 font-bold text-indigo-900 font-mono">
+            ${formatNumberVi(r.val)} : ${diffOrSumParts} = ${formatNumberVi(unitValue)} (${r.unit})
+          </p>
+
+          <p class="font-semibold text-slate-800">
+            ${r.labelObj1} là:
+          </p>
+          <p class="pl-8 font-bold text-emerald-800 font-mono">
+            ${formatNumberVi(unitValue)} × ${p1} = ${formatNumberVi(num1)} (${r.unit})
+          </p>
+
+          <p class="font-semibold text-slate-800">
+            ${r.labelObj2} là:
+          </p>
+          <p class="pl-8 font-bold text-emerald-800 font-mono">
+            ${isSum ? `${formatNumberVi(r.val)} - ${formatNumberVi(num1)} = ${formatNumberVi(num2)}` : `${formatNumberVi(num1)} + ${formatNumberVi(r.val)} = ${formatNumberVi(num2)}`} (${r.unit})
+          </p>
+
+          <div class="pt-2 text-right font-black text-slate-900 space-y-0.5">
+            <div>Đáp số: ${r.labelObj1}: ${formatNumberVi(num1)} ${r.unit};</div>
+            <div class="pr-12">${r.labelObj2}: ${formatNumberVi(num2)} ${r.unit}.</div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* -------------------------------------------------------------
+       XỬ LÝ DẠNG 2: TỈ SỐ PHẦN TRĂM & GIẢM GIÁ
+       ------------------------------------------------------------- */
+    function renderPercentProblem() {
+      const p = state.percent;
+      const orig = p.originalVal;
+      const rate = p.rate;
+      const pctValue = (orig * rate) / 100;
+      const remainingVal = orig - pctValue;
+
+      // 1. DỰNG SƠ ĐỒ THANH TỈ LỆ % (PERCENTAGE BAR DIAGRAM)
+      const container = document.getElementById('diagram-container');
+      const barW = 340;
+      const barH = 34;
+      const startX = 60;
+      const y = 55;
+      const subPartW = (barW * rate) / 100;
+
+      container.innerHTML = `
+        <svg viewBox="0 0 460 160" class="w-full h-auto min-w-[440px]">
+          <!-- Toàn bộ 100% -->
+          <rect x="${startX}" y="${y}" width="${barW}" height="${barH}" fill="#e2e8f0" stroke="#475569" stroke-width="2" rx="4"/>
+          <!-- Phần trăm xác định -->
+          <rect x="${startX}" y="${y}" width="${subPartW}" height="${barH}" fill="#fb923c" stroke="#ea580c" stroke-width="2" rx="4"/>
+          
+          <!-- Label 100% -->
+          <text x="${startX + barW / 2}" y="${y - 12}" fill="#1e293b" font-weight="900" font-size="12" text-anchor="middle">
+            Toàn bộ giá gốc (100%): ${formatNumberVi(orig)} ${p.unit}
+          </text>
+          
+          <!-- Ngoặc trên -->
+          <line x1="${startX}" y1="${y - 4}" x2="${startX + barW}" y2="${y - 4}" stroke="#475569" stroke-width="1.5"/>
+          <line x1="${startX}" y1="${y - 8}" x2="${startX}" y2="${y}" stroke="#475569" stroke-width="1.5"/>
+          <line x1="${startX + barW}" y1="${y - 8}" x2="${startX + barW}" y2="${y}" stroke="#475569" stroke-width="1.5"/>
+
+          <!-- Label Phần trăm -->
+          <text x="${startX + subPartW / 2}" y="${y + 22}" fill="#ffffff" font-weight="900" font-size="11" text-anchor="middle">
+            ${rate}%
+          </text>
+          
+          <!-- Label kết quả phần trăm -->
+          <text x="${startX + subPartW / 2}" y="${y + 55}" fill="#ea580c" font-weight="bold" font-size="11" text-anchor="middle">
+            ${formatNumberVi(pctValue)} ${p.unit}
+          </text>
+
+          <!-- Phần còn lại -->
+          <text x="${startX + subPartW + (barW - subPartW) / 2}" y="${y + 55}" fill="#059669" font-weight="bold" font-size="11" text-anchor="middle">
+            Còn lại (${100 - rate}%): ${formatNumberVi(remainingVal)} ${p.unit}
+          </text>
+        </svg>
+      `;
+
+      // 2. BÀI GIẢI MẪU VỞ Ô LY
+      const notebook = document.getElementById('notebook-container');
+      
+      let step1Label = "";
+      let step2Label = "";
+      let ansLabel = "";
+
+      if (p.subtype === 'discount') {
+        step1Label = `Số tiền được giảm giá (hoặc khuyến mãi ${rate}%) khi mua ${p.itemName} là:`;
+        step2Label = `Số tiền thực tế học sinh/khách hàng phải trả là:`;
+        ansLabel = `Đáp số: ${formatNumberVi(remainingVal)} ${p.unit}.`;
+      } else if (p.subtype === 'interest') {
+        step1Label = `Số tiền lãi nhận được sau một kỳ hạn gửi tiết kiệm (${rate}%) là:`;
+        step2Label = `Tổng số tiền cả gốc và lãi nhận được là:`;
+        ansLabel = `Đáp số: Tiền lãi: ${formatNumberVi(pctValue)} ${p.unit}; Tổng cả gốc và lãi: ${formatNumberVi(orig + pctValue)} ${p.unit}.`;
+      } else {
+        step1Label = `Giá trị tương ứng với ${rate}% của ${p.itemName} là:`;
+        step2Label = `Giá trị phần còn lại là:`;
+        ansLabel = `Đáp số: ${formatNumberVi(pctValue)} ${p.unit}.`;
+      }
+
+      notebook.innerHTML = `
+        <div class="text-center font-black text-lg text-red-600 tracking-wide mb-3 underline decoration-red-300">
+          Bài giải
+        </div>
+
+        <div class="space-y-3 leading-relaxed text-sm sm:text-base font-medium">
+          <p class="font-semibold text-slate-800">
+            ${step1Label}
+          </p>
+          <p class="pl-8 font-bold text-indigo-900 font-mono">
+            ${formatNumberVi(orig)} × ${rate} : 100 = ${formatNumberVi(pctValue)} (${p.unit})
+          </p>
+
+          ${p.subtype === 'interest' ? `
+            <p class="font-semibold text-slate-800">
+              ${step2Label}
+            </p>
+            <p class="pl-8 font-bold text-emerald-800 font-mono">
+              ${formatNumberVi(orig)} + ${formatNumberVi(pctValue)} = ${formatNumberVi(orig + pctValue)} (${p.unit})
+            </p>
+          ` : p.subtype === 'discount' ? `
+            <p class="font-semibold text-slate-800">
+              ${step2Label}
+            </p>
+            <p class="pl-8 font-bold text-emerald-800 font-mono">
+              ${formatNumberVi(orig)} - ${formatNumberVi(pctValue)} = ${formatNumberVi(remainingVal)} (${p.unit})
+            </p>
+          ` : `
+            <p class="font-semibold text-slate-800">
+              ${step2Label}
+            </p>
+            <p class="pl-8 font-bold text-emerald-800 font-mono">
+              ${formatNumberVi(orig)} - ${formatNumberVi(pctValue)} = ${formatNumberVi(remainingVal)} (${p.unit})
+            </p>
+          `}
+
+          <div class="pt-2 text-right font-black text-slate-900">
+            ${ansLabel}
+          </div>
+        </div>
+      `;
+    }
+
+    /* -------------------------------------------------------------
+       XỬ LÝ DẠNG 3: TOÁN CHUYỂN ĐỘNG ĐỀU
+       ------------------------------------------------------------- */
+    function renderMotionProblem() {
+      const m = state.motion;
+      const isOpposite = m.subtype === 'opposite';
+      const isSame = m.subtype === 'same';
+      const isSingle = m.subtype === 'single';
+
+      const s = m.distance;
+      const v1 = m.v1;
+      const v2 = m.v2;
+
+      let timeNeeded = 0;
+      let meetDistA = 0;
+
+      if (isOpposite) {
+        const sumV = v1 + v2;
+        timeNeeded = s / sumV;
+        meetDistA = v1 * timeNeeded;
+      } else if (isSame) {
+        const diffV = Math.abs(v1 - v2) || 1;
+        timeNeeded = s / diffV;
+      } else {
+        timeNeeded = s / v1;
+      }
+
+      // 1. DỰNG SƠ ĐỒ CHUYỂN ĐỘNG SVG
+      const container = document.getElementById('diagram-container');
+      const roadStartX = 50;
+      const roadEndX = 430;
+      const roadY = 90;
+
+      let carsAndArrows = '';
+      if (isOpposite) {
+        const meetRatio = v1 / (v1 + v2);
+        const meetX = roadStartX + (roadEndX - roadStartX) * meetRatio;
+        carsAndArrows = `
+          <!-- Xe 1 từ A sang phải -->
+          <circle cx="${roadStartX}" cy="${roadY}" r="7" fill="#0284c7"/>
+          <text x="${roadStartX}" y="${roadY - 14}" fill="#0284c7" font-weight="900" font-size="12">A (${m.name1})</text>
+          <line x1="${roadStartX}" y1="${roadY}" x2="${roadStartX + 60}" y2="${roadY}" stroke="#0284c7" stroke-width="3" marker-end="url(#arrow)"/>
+          <text x="${roadStartX + 10}" y="${roadY + 20}" fill="#0369a1" font-weight="bold" font-size="11">v1 = ${v1} km/h ➔</text>
+
+          <!-- Xe 2 từ B sang trái -->
+          <circle cx="${roadEndX}" cy="${roadY}" r="7" fill="#ea580c"/>
+          <text x="${roadEndX}" y="${roadY - 14}" fill="#ea580c" font-weight="900" font-size="12" text-anchor="end">B (${m.name2})</text>
+          <line x1="${roadEndX}" y1="${roadY}" x2="${roadEndX - 60}" y2="${roadY}" stroke="#ea580c" stroke-width="3" marker-end="url(#arrow)"/>
+          <text x="${roadEndX - 10}" y="${roadY + 20}" fill="#c2410c" font-weight="bold" font-size="11" text-anchor="end">⬅ v2 = ${v2} km/h</text>
+
+          <!-- Điểm gặp nhau C -->
+          <line x1="${meetX}" y1="${roadY - 25}" x2="${meetX}" y2="${roadY + 25}" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
+          <circle cx="${meetX}" cy="${roadY}" r="5" fill="#ef4444"/>
+          <text x="${meetX}" y="${roadY - 30}" fill="#dc2626" font-weight="900" font-size="12" text-anchor="middle">🚩 Điểm gặp nhau</text>
+        `;
+      } else if (isSame) {
+        carsAndArrows = `
+          <!-- Xe đuổi theo A -->
+          <circle cx="${roadStartX}" cy="${roadY}" r="7" fill="#0284c7"/>
+          <text x="${roadStartX}" y="${roadY - 14}" fill="#0284c7" font-weight="900" font-size="12">A: ${m.name1}</text>
+          <line x1="${roadStartX}" y1="${roadY}" x2="${roadStartX + 65}" y2="${roadY}" stroke="#0284c7" stroke-width="3" marker-end="url(#arrow)"/>
+          <text x="${roadStartX}" y="${roadY + 20}" fill="#0369a1" font-weight="bold" font-size="11">v1 = ${v1} km/h ➔</text>
+
+          <!-- Xe đi trước B -->
+          <circle cx="${roadStartX + 180}" cy="${roadY}" r="7" fill="#ea580c"/>
+          <text x="${roadStartX + 180}" y="${roadY - 14}" fill="#ea580c" font-weight="900" font-size="12">B: ${m.name2}</text>
+          <line x1="${roadStartX + 180}" y1="${roadY}" x2="${roadStartX + 230}" y2="${roadY}" stroke="#ea580c" stroke-width="3" marker-end="url(#arrow)"/>
+          <text x="${roadStartX + 180}" y="${roadY + 20}" fill="#c2410c" font-weight="bold" font-size="11">v2 = ${v2} km/h ➔</text>
+
+          <!-- Điểm đuổi kịp -->
+          <circle cx="${roadEndX}" cy="${roadY}" r="5" fill="#ef4444"/>
+          <text x="${roadEndX}" y="${roadY - 14}" fill="#dc2626" font-weight="900" font-size="12" text-anchor="end">🚩 Chỗ đuổi kịp</text>
+        `;
+      } else {
+        carsAndArrows = `
+          <!-- Xe đơn -->
+          <circle cx="${roadStartX}" cy="${roadY}" r="7" fill="#0284c7"/>
+          <text x="${roadStartX}" y="${roadY - 14}" fill="#0284c7" font-weight="900" font-size="12">Điểm A</text>
+          <line x1="${roadStartX}" y1="${roadY}" x2="${roadEndX}" y2="${roadY}" stroke="#0284c7" stroke-width="3" marker-end="url(#arrow)"/>
+          <text x="${(roadStartX + roadEndX) / 2}" y="${roadY + 20}" fill="#0369a1" font-weight="bold" font-size="11" text-anchor="middle">v = ${v1} km/h ➔</text>
+          <circle cx="${roadEndX}" cy="${roadY}" r="7" fill="#10b981"/>
+          <text x="${roadEndX}" y="${roadY - 14}" fill="#059669" font-weight="900" font-size="12" text-anchor="end">Điểm B</text>
+        `;
+      }
+
+      container.innerHTML = `
+        <svg viewBox="0 0 480 160" class="w-full h-auto min-w-[460px]">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+            </marker>
+          </defs>
+
+          <!-- Quãng đường AB -->
+          <line x1="${roadStartX}" y1="${roadY}" x2="${roadEndX}" y2="${roadY}" stroke="#cbd5e1" stroke-width="8" stroke-linecap="round"/>
+          <line x1="${roadStartX}" y1="${roadY}" x2="${roadEndX}" y2="${roadY}" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,6"/>
+
+          <!-- Label quãng đường trên cùng -->
+          <text x="${(roadStartX + roadEndX) / 2}" y="35" fill="#0f172a" font-weight="900" font-size="13" text-anchor="middle">
+            Quãng đường s = ${formatNumberVi(s)} km
+          </text>
+          <line x1="${roadStartX}" y1="42" x2="${roadEndX}" y2="42" stroke="#475569" stroke-width="1.5"/>
+
+          ${carsAndArrows}
+        </svg>
+      `;
+
+      // 2. BÀI GIẢI MẪU VỞ Ô LY
+      const notebook = document.getElementById('notebook-container');
+
+      if (isOpposite) {
+        const sumV = v1 + v2;
+        notebook.innerHTML = `
+          <div class="text-center font-black text-lg text-red-600 tracking-wide mb-3 underline decoration-red-300">
+            Bài giải
+          </div>
+
+          <div class="space-y-3 leading-relaxed text-sm sm:text-base font-medium">
+            <p class="font-semibold text-slate-800">
+              Sau mỗi giờ, cả hai xe đi được quãng đường là (tổng vận tốc):
+            </p>
+            <p class="pl-8 font-bold text-indigo-900 font-mono">
+              ${v1} + ${v2} = ${sumV} (km)
+            </p>
+
+            <p class="font-semibold text-slate-800">
+              Thời gian để hai xe gặp nhau là:
+            </p>
+            <p class="pl-8 font-bold text-indigo-900 font-mono">
+              ${formatNumberVi(s)} : ${sumV} = ${formatHoursToMinutes(timeNeeded)}
+            </p>
+
+            <p class="font-semibold text-slate-800">
+              Chỗ hai xe gặp nhau cách điểm xuất phát A là:
+            </p>
+            <p class="pl-8 font-bold text-emerald-800 font-mono">
+              ${v1} × ${formatNumberVi(timeNeeded)} = ${formatNumberVi(meetDistA)} (km)
+            </p>
+
+            <div class="pt-2 text-right font-black text-slate-900 space-y-0.5">
+              <div>Đáp số: Sau ${formatHoursToMinutes(timeNeeded)};</div>
+              <div class="pr-6">Cách A: ${formatNumberVi(meetDistA)} km.</div>
+            </div>
+          </div>
+        `;
+      } else if (isSame) {
+        const diffV = Math.abs(v1 - v2);
+        notebook.innerHTML = `
+          <div class="text-center font-black text-lg text-red-600 tracking-wide mb-3 underline decoration-red-300">
+            Bài giải
+          </div>
+
+          <div class="space-y-3 leading-relaxed text-sm sm:text-base font-medium">
+            <p class="font-semibold text-slate-800">
+              Sau mỗi giờ, xe đi từ A gần hơn xe đi từ B quãng đường là (hiệu vận tốc):
+            </p>
+            <p class="pl-8 font-bold text-indigo-900 font-mono">
+              ${v1} - ${v2} = ${diffV} (km)
+            </p>
+
+            <p class="font-semibold text-slate-800">
+              Thời gian để xe đi từ A đuổi kịp xe đi từ B là:
+            </p>
+            <p class="pl-8 font-bold text-emerald-800 font-mono">
+              ${formatNumberVi(s)} : ${diffV} = ${formatHoursToMinutes(timeNeeded)}
+            </p>
+
+            <div class="pt-2 text-right font-black text-slate-900">
+              Đáp số: Sau ${formatHoursToMinutes(timeNeeded)} thì đuổi kịp.
+            </div>
+          </div>
+        `;
+      } else {
+        notebook.innerHTML = `
+          <div class="text-center font-black text-lg text-red-600 tracking-wide mb-3 underline decoration-red-300">
+            Bài giải
+          </div>
+
+          <div class="space-y-3 leading-relaxed text-sm sm:text-base font-medium">
+            <p class="font-semibold text-slate-800">
+              Thời gian xe đi hết quãng đường ${formatNumberVi(s)} km là:
+            </p>
+            <p class="pl-8 font-bold text-indigo-900 font-mono">
+              ${formatNumberVi(s)} : ${v1} = ${formatHoursToMinutes(timeNeeded)}
+            </p>
+
+            <div class="pt-2 text-right font-black text-slate-900">
+              Đáp số: ${formatHoursToMinutes(timeNeeded)}.
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    /* =========================================================================
+       7. TIỆN ÍCH SAO CHÉP BÀI GIẢI
+       ========================================================================= */
+    function copySolutionToClipboard() {
+      playClickSound();
+      const notebook = document.getElementById('notebook-container');
+      const textToCopy = notebook.innerText;
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        const btn = document.getElementById('btn-copy-sol');
+        const oldHtml = btn.innerHTML;
+        btn.innerHTML = `<span class="text-emerald-600 font-black">✓ Đã sao chép!</span>`;
+        if (typeof window.confetti === 'function') {
+          window.confetti({ particleCount: 20, spread: 40, origin: { y: 0.6 } });
+        }
+        setTimeout(() => {
+          btn.innerHTML = oldHtml;
+        }, 2000);
+      }).catch(err => {
+        alert("Đã sao chép nội dung bài giải!");
+      });
+    }
+
+    /* =========================================================================
+       8. KHỞI TẠO (INIT)
+       ========================================================================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderInputControls();
+      calculateAndRender();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,3792 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toán Lớp 5 - Kết nối tri thức với cuộc sống</title>
+  <!-- Google Font Nunito -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            nunito: ['Nunito', 'Segoe UI', '-apple-system', 'BlinkMacSystemFont', 'Roboto', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              blue: '#0284c7',
+              sky: '#38bdf8',
+              orange: '#f97316',
+              amber: '#f59e0b',
+              green: '#10b981',
+              emerald: '#059669',
+              yellow: '#facc15',
+              dark: '#1e293b'
+            }
+          },
+          boxShadow: {
+            'comic': '0 4px 0 0 rgba(0,0,0,0.15)',
+            'comic-lg': '0 6px 0 0 rgba(0,0,0,0.15)',
+            'comic-btn': '0 4px 0 0 #0369a1',
+            'comic-orange': '0 4px 0 0 #c2410c',
+            'comic-green': '0 4px 0 0 #047857',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Nunito', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background-color: #f0fdf4;
+      background-image: radial-gradient(#bae6fd 1.2px, transparent 1.2px), radial-gradient(#fed7aa 1.2px, #f8fafc 1.2px);
+      background-size: 48px 48px;
+      background-position: 0 0, 24px 24px;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @keyframes floatBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-float {
+      animation: floatBob 3s ease-in-out infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+    .animate-glow {
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col custom-scrollbar">
+
+  <!-- ==================== HEADER TRANG ==================== -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b-4 border-brand-sky shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        
+        <!-- Logo & Tựa đề sách -->
+        <div class="flex items-center space-x-3">
+          <div class="relative w-12 h-12 flex-shrink-0 animate-float cursor-pointer" onclick="playRobotHello()" title="Bấm vào Rô-bốt để nghe chào hỏi!">
+            <!-- SVG Rô-bốt Avatar -->
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+              <circle cx="50" cy="50" r="46" fill="#38bdf8" stroke="#0284c7" stroke-width="4"/>
+              <!-- Antenna -->
+              <line x1="50" y1="20" x2="50" y2="8" stroke="#f59e0b" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="50" cy="8" r="6" fill="#ef4444"/>
+              <!-- Ears -->
+              <rect x="14" y="42" width="6" height="18" rx="3" fill="#f59e0b"/>
+              <rect x="80" y="42" width="6" height="18" rx="3" fill="#f59e0b"/>
+              <!-- Face Screen -->
+              <rect x="22" y="24" width="56" height="52" rx="14" fill="#0f172a" stroke="#e2e8f0" stroke-width="3"/>
+              <!-- Eyes -->
+              <circle cx="38" cy="48" r="8" fill="#38bdf8"/>
+              <circle cx="38" cy="48" r="3" fill="#ffffff"/>
+              <circle cx="62" cy="48" r="8" fill="#38bdf8"/>
+              <circle cx="62" cy="48" r="3" fill="#ffffff"/>
+              <!-- Smile -->
+              <path d="M 40 62 Q 50 72 60 62" fill="none" stroke="#22c55e" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+            <span class="absolute -bottom-1 -right-1 bg-amber-400 text-[10px] font-black px-1.5 py-0.5 rounded-full text-slate-900 border border-white">5</span>
+          </div>
+
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="bg-gradient-to-r from-sky-600 to-blue-700 text-white font-extrabold text-xs px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                Toán Lớp 5
+              </span>
+              <span class="text-xs font-semibold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md border border-emerald-300">
+                Chương trình GDPT 2018
+              </span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-1.5">
+              <span>KẾT NỐI TRI THỨC VỚI CUỘC SỐNG</span>
+            </h1>
+          </div>
+        </div>
+
+        <!-- Thanh nhân vật và Tiện ích (Âm thanh, Sao, Streak) -->
+        <div class="flex items-center justify-between md:justify-end gap-3 flex-wrap">
+          
+          <!-- Bạn đồng hành (Avatar nhóm) -->
+          <div class="hidden sm:flex items-center bg-slate-100/90 rounded-full px-3 py-1 border border-slate-200 shadow-inner">
+            <span class="text-xs font-bold text-slate-600 mr-2 flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Bạn học:
+            </span>
+            <div class="flex -space-x-1.5 overflow-hidden" title="Rô-bốt, Việt, Nam, Mai, Mi">
+              <!-- Việt -->
+              <div class="w-7 h-7 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center text-white text-[10px] font-black shadow-sm" title="Bạn Việt (Mũ lưỡi trai xanh)">Việt</div>
+              <!-- Nam -->
+              <div class="w-7 h-7 rounded-full bg-orange-500 border-2 border-white flex items-center justify-center text-white text-[10px] font-black shadow-sm" title="Bạn Nam (Yêu thể thao)">Nam</div>
+              <!-- Mai -->
+              <div class="w-7 h-7 rounded-full bg-pink-500 border-2 border-white flex items-center justify-center text-white text-[10px] font-black shadow-sm" title="Bạn Mai (Cột tóc nơ)">Mai</div>
+              <!-- Mi -->
+              <div class="w-7 h-7 rounded-full bg-amber-400 border-2 border-white flex items-center justify-center text-slate-900 text-[10px] font-black shadow-sm" title="Em Mi (Đáng yêu)">Mi</div>
+            </div>
+          </div>
+
+          <!-- Bảng điểm Sao & Streak -->
+          <div class="flex items-center gap-2">
+            <!-- Điểm sao -->
+            <div class="flex items-center space-x-1.5 bg-amber-50 border-2 border-amber-300 px-3 py-1 rounded-xl shadow-comic">
+              <span class="text-amber-500 text-lg">⭐</span>
+              <span id="star-count" class="font-black text-amber-800 text-sm md:text-base">0 / 12</span>
+            </div>
+
+            <!-- Chuỗi Streak -->
+            <div class="flex items-center space-x-1.5 bg-orange-50 border-2 border-orange-300 px-3 py-1 rounded-xl shadow-comic">
+              <span class="text-orange-500 text-lg">🔥</span>
+              <span id="streak-count" class="font-black text-orange-800 text-sm md:text-base">0</span>
+            </div>
+
+            <!-- Nút bật tắt âm thanh -->
+            <button id="sound-btn" onclick="toggleSound()" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 transition text-slate-700 shadow-comic active:translate-y-0.5" title="Bật/Tắt âm thanh">
+              <svg id="sound-icon-on" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+              </svg>
+              <svg id="sound-icon-off" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+              </svg>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ==================== THANH ĐIỀU HƯỚNG TABS ==================== -->
+      <nav class="mt-4 flex space-x-2 border-t pt-3 overflow-x-auto pb-1" aria-label="Tabs">
+        <button onclick="switchTab('tab-theory')" id="nav-btn-theory" class="tab-button flex items-center gap-2 px-4 py-2 font-black text-sm rounded-xl transition duration-150 shadow-comic bg-sky-500 text-white border-2 border-sky-600 whitespace-nowrap">
+          <span class="text-base">📘</span> Tab 1: Khám phá & Ghi nhớ
+        </button>
+        <button onclick="switchTab('tab-lab')" id="nav-btn-lab" class="tab-button flex items-center gap-2 px-4 py-2 font-black text-sm rounded-xl transition duration-150 shadow-comic bg-white text-slate-700 hover:bg-slate-100 border-2 border-slate-300 whitespace-nowrap">
+          <span class="text-base">🔬</span> Tab 2: Phòng thí nghiệm Toán học
+        </button>
+        <button onclick="switchTab('tab-quiz')" id="nav-btn-quiz" class="tab-button flex items-center gap-2 px-4 py-2 font-black text-sm rounded-xl transition duration-150 shadow-comic bg-white text-slate-700 hover:bg-slate-100 border-2 border-slate-300 whitespace-nowrap">
+          <span class="text-base">🏆</span> Tab 3: Luyện tập cùng Rô-bốt
+        </button>
+        <a href="tro-ly-giai-toan.html" class="tab-button flex items-center gap-2 px-4 py-2 font-black text-sm rounded-xl transition duration-150 shadow-comic bg-amber-400 hover:bg-amber-300 text-slate-900 border-2 border-amber-500 whitespace-nowrap">
+          <span class="text-base">✨</span> Trợ lý Giải toán lời văn (Vẽ sơ đồ)
+        </a>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- ==================== NỘI DUNG CHÍNH ==================== -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ==================== BANNER LỜI CHÀO RÔ-BỐT ==================== -->
+    <section class="bg-gradient-to-r from-sky-500 via-teal-500 to-emerald-500 rounded-2xl p-5 mb-8 text-white shadow-comic-lg relative overflow-hidden">
+      <!-- Decorative pattern -->
+      <div class="absolute -right-8 -bottom-8 opacity-15 pointer-events-none">
+        <svg width="220" height="220" viewBox="0 0 100 100" fill="currentColor">
+          <polygon points="50 0, 100 50, 50 100, 0 50" />
+        </svg>
+      </div>
+
+      <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm p-1.5 flex-shrink-0 border-2 border-white/40 shadow-inner flex items-center justify-center">
+            <!-- Cute Robot SVG -->
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+              <circle cx="50" cy="50" r="44" fill="#f8fafc"/>
+              <rect x="24" y="28" width="52" height="46" rx="10" fill="#0284c7"/>
+              <circle cx="40" cy="50" r="6" fill="#facc15"/>
+              <circle cx="60" cy="50" r="6" fill="#facc15"/>
+              <path d="M 42 63 Q 50 70 58 63" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+              <line x1="50" y1="28" x2="50" y2="14" stroke="#f97316" stroke-width="4"/>
+              <circle cx="50" cy="12" r="5" fill="#ef4444"/>
+            </svg>
+          </div>
+          <div>
+            <div class="inline-block bg-amber-400 text-slate-900 font-extrabold text-xs px-2.5 py-0.5 rounded-full mb-1">
+              Góc Rô-bốt đồng hành
+            </div>
+            <h2 class="text-xl md:text-2xl font-black">Chào các bạn học sinh Lớp 5 thân yêu!</h2>
+            <p class="text-white/90 text-sm md:text-base mt-0.5">
+              Rô-bốt, Việt, Nam, Mai và Mi sẽ cùng bạn chinh phục 12 chủ đề Toán 5 Kết nối tri thức thật dễ dàng và hào hứng!
+            </p>
+          </div>
+        </div>
+
+        <div class="flex gap-2 flex-wrap">
+          <a href="tro-ly-giai-toan.html" class="bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold px-3.5 py-2 rounded-xl text-xs sm:text-sm shadow-comic-orange transition transform active:scale-95 flex items-center gap-1.5">
+            <span>📝</span> Trợ lý Giải toán (Sơ đồ đoạn thẳng)
+          </a>
+          <button onclick="quickJumpToConverter()" class="bg-white/20 hover:bg-white/30 text-white font-extrabold px-3.5 py-2 rounded-xl text-xs sm:text-sm shadow-comic border border-white/40 transition transform active:scale-95 flex items-center gap-1.5">
+            <span>⚡</span> Đổi đơn vị nhanh
+          </button>
+          <button onclick="switchTab('tab-quiz')" class="bg-white hover:bg-slate-100 text-sky-700 font-extrabold px-3.5 py-2 rounded-xl text-xs sm:text-sm shadow-comic transition transform active:scale-95 flex items-center gap-1.5">
+            <span>🎯</span> 12 Thử thách
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: KHÁM PHÁ & GHI NHỚ (12 CHỦ ĐỀ VÀ BẢNG CHUYỂN ĐỔI ĐƠN VỊ) -->
+    <!-- ========================================================================= -->
+    <section id="tab-theory" class="tab-pane space-y-8">
+      
+      <!-- Bộ lọc Học kỳ -->
+      <div class="bg-white rounded-2xl p-4 border-2 border-slate-200 shadow-comic flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center space-x-2">
+          <span class="text-lg">📚</span>
+          <span class="font-black text-slate-800 text-base">CHỌN HỌC KỲ & CHỦ ĐỀ SÁCH:</span>
+        </div>
+        <div class="flex gap-2 w-full md:w-auto flex-wrap">
+          <button id="btn-sem-all" onclick="filterSemester('all')" class="flex-1 md:flex-none px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black transition border-2 border-sky-600 bg-sky-500 text-white shadow-comic">
+            Tất cả 12 CĐ
+          </button>
+          <button id="btn-sem-1" onclick="filterSemester(1)" class="flex-1 md:flex-none px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black transition border-2 border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic">
+            Học kỳ 1 (Tập 1)
+          </button>
+          <button id="btn-sem-2" onclick="filterSemester(2)" class="flex-1 md:flex-none px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black transition border-2 border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic">
+            Học kỳ 2 (Tập 2)
+          </button>
+          <button onclick="openHandbookModal()" class="flex-1 md:flex-none px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-black transition border-2 border-emerald-600 bg-emerald-500 hover:bg-emerald-600 text-white shadow-comic flex items-center justify-center gap-1.5">
+            <span>📖</span> Sổ tay Kiến thức 2018
+          </button>
+        </div>
+      </div>
+
+      <!-- Máy chuyển đổi đơn vị đo lường tương tác trực tiếp -->
+      <div id="unit-converter-box" class="bg-gradient-to-br from-amber-50 to-orange-50 border-3 border-amber-300 rounded-2xl p-5 shadow-comic relative">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-amber-400 text-slate-900 flex items-center justify-center font-black text-xl shadow-sm">📐</span>
+            <div>
+              <h3 class="font-black text-slate-900 text-lg">BẢNG CHUYỂN ĐỔI ĐƠN VỊ ĐO TỰ ĐỘNG</h3>
+              <p class="text-xs text-slate-600">Hỗ trợ Diện tích (km², ha, m², dm², cm²) và Thể tích (m³, dm³, cm³)</p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="setConverterType('area')" id="conv-type-area" class="px-3 py-1 rounded-lg text-xs font-black bg-amber-500 text-white shadow-sm border border-amber-600">Đo diện tích</button>
+            <button onclick="setConverterType('volume')" id="conv-type-volume" class="px-3 py-1 rounded-lg text-xs font-black bg-white text-slate-700 hover:bg-amber-100 shadow-sm border border-slate-300">Đo thể tích</button>
+          </div>
+        </div>
+
+        <!-- Khung nhập và chuyển đổi -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center bg-white p-4 rounded-xl border border-amber-200">
+          <div class="md:col-span-5">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nhập giá trị cần đổi:</label>
+            <div class="flex gap-2">
+              <input type="number" id="converter-input-val" value="2.5" step="any" oninput="runUnitConvert()" class="w-full px-3 py-2 border-2 border-amber-300 rounded-xl font-black text-lg text-slate-800 focus:outline-none focus:border-amber-500">
+              <select id="converter-from-unit" onchange="runUnitConvert()" class="px-3 py-2 border-2 border-amber-300 rounded-xl font-bold bg-amber-50 text-slate-800 focus:outline-none">
+                <!-- Sẽ nạp qua JS -->
+              </select>
+            </div>
+          </div>
+
+          <div class="md:col-span-2 text-center flex justify-center">
+            <div class="w-10 h-10 rounded-full bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-amber-700 font-black">
+              ➜
+            </div>
+          </div>
+
+          <div class="md:col-span-5">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Kết quả quy đổi tương đương:</label>
+            <div id="converter-result-list" class="grid grid-cols-2 gap-2 text-xs font-bold">
+              <!-- Nạp kết quả qua JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Mẹo Rô-bốt về quy tắc đổi -->
+        <div class="mt-3 flex items-start gap-2 text-xs text-amber-900 bg-amber-100/70 p-2.5 rounded-lg border border-amber-200">
+          <span class="text-base flex-shrink-0">🤖</span>
+          <p id="converter-robot-tip">
+            <strong>Góc Rô-bốt mách nhỏ:</strong> 1 héc-ta (ha) = 10 000 m². Mỗi đơn vị đo diện tích liền kề gấp hoặc kém nhau 100 lần (thêm hoặc bớt 2 chữ số 0)!
+          </p>
+        </div>
+      </div>
+
+      <!-- DANH SÁCH 12 CHỦ ĐỀ CHI TIẾT -->
+      <div id="topics-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 12 Cards Chủ đề sẽ được JavaScript render hoàn chỉnh 100% -->
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: PHÒNG THÍ NGHIỆM TOÁN HỌC (MÔ PHỎNG & GIẢI TOÁN SƠ ĐỒ ĐOẠN THẲNG) -->
+    <!-- ========================================================================= -->
+    <section id="tab-lab" class="tab-pane hidden space-y-8">
+      
+      <!-- TIÊU ĐỀ LAB -->
+      <div class="bg-white rounded-2xl p-5 border-2 border-slate-200 shadow-comic flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-xl bg-purple-500 text-white flex items-center justify-center text-2xl font-black shadow-comic">
+            🧪
+          </div>
+          <div>
+            <h2 class="text-xl font-black text-slate-900">PHÒNG THÍ NGHIỆM TOÁN HỌC TƯƠNG TÁC</h2>
+            <p class="text-xs text-slate-600">Trực quan hóa hình học & Máy giải tự động vẽ sơ đồ đoạn thẳng chuẩn SGK Lớp 5</p>
+          </div>
+        </div>
+        
+        <!-- Chọn công cụ Lab -->
+        <div class="flex gap-2">
+          <button onclick="setLabTool('geometry')" id="lab-tool-geo-btn" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-purple-600 text-white shadow-comic border-2 border-purple-700">
+            📐 Máy tính Hình học trực quan
+          </button>
+          <button onclick="setLabTool('diagram')" id="lab-tool-diag-btn" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic border-2 border-slate-300">
+            📊 Giải toán Tổng - Tỉ & Hiệu - Tỉ
+          </button>
+        </div>
+      </div>
+
+      <!-- PHẦN 1: MÁY TÍNH HÌNH HỌC TRỰC QUAN (Hình thang, Hình tròn, Hình hộp chữ nhật) -->
+      <div id="lab-geometry-section" class="bg-white rounded-2xl p-6 border-2 border-slate-200 shadow-comic space-y-6">
+        
+        <div class="flex items-center justify-between flex-wrap gap-3 border-b pb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-slate-700">Chọn hình khảo sát:</span>
+            <div class="flex gap-1.5">
+              <button onclick="selectShape('trapezoid')" id="shape-btn-trapezoid" class="px-3 py-1.5 rounded-lg text-xs font-black bg-sky-500 text-white shadow-sm border border-sky-600">
+                1. Hình thang
+              </button>
+              <button onclick="selectShape('circle')" id="shape-btn-circle" class="px-3 py-1.5 rounded-lg text-xs font-black bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-sm border border-slate-300">
+                2. Hình tròn
+              </button>
+              <button onclick="selectShape('box')" id="shape-btn-box" class="px-3 py-1.5 rounded-lg text-xs font-black bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-sm border border-slate-300">
+                3. Hình hộp chữ nhật
+              </button>
+            </div>
+          </div>
+          <span class="text-xs bg-emerald-100 text-emerald-800 font-extrabold px-2.5 py-1 rounded-md border border-emerald-300">
+            Thay đổi kích thước để hình vẽ và công thức cập nhật tức thì!
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          
+          <!-- Bảng điều khiển tham số (Inputs) -->
+          <div class="lg:col-span-5 space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <h4 id="shape-input-title" class="font-black text-slate-800 text-base flex items-center gap-2">
+              <span>⚙️</span> Thông số Hình thang
+            </h4>
+
+            <div id="shape-inputs-container" class="space-y-3">
+              <!-- Render inputs qua JS -->
+            </div>
+
+            <!-- Công thức & Các bước thế số -->
+            <div class="bg-white p-3.5 rounded-xl border-2 border-sky-200 text-xs space-y-2">
+              <div class="font-extrabold text-sky-800 flex items-center gap-1.5">
+                <span>📝</span> Công thức áp dụng:
+              </div>
+              <div id="shape-formula-text" class="font-mono bg-sky-50 p-2 rounded text-sky-900 font-bold">
+                <!-- Formula -->
+              </div>
+              <div id="shape-calculation-steps" class="text-slate-700 leading-relaxed">
+                <!-- Steps -->
+              </div>
+            </div>
+
+            <!-- Kết quả nổi bật -->
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-4 rounded-xl shadow-comic-green">
+              <div class="text-xs font-bold uppercase tracking-wider text-emerald-100">KẾT QUẢ TÍNH TOÁN:</div>
+              <div id="shape-final-result" class="text-2xl font-black mt-1">
+                <!-- Result -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Khung Canvas/SVG hình vẽ trực quan -->
+          <div class="lg:col-span-7 flex flex-col items-center justify-center p-4 bg-slate-900/5 rounded-2xl border-2 border-dashed border-slate-300 min-h-[320px]">
+            <div class="text-xs font-bold text-slate-500 mb-2">Hình vẽ minh họa theo tỉ lệ thực tế:</div>
+            
+            <div id="shape-svg-wrapper" class="w-full flex justify-center items-center">
+              <!-- SVG trực quan cập nhật động -->
+            </div>
+
+            <div class="mt-3 text-[11px] text-slate-500 italic text-center">
+              💡 Chú thích: Nét liền thể hiện các cạnh, nét đứt đỏ thể hiện chiều cao/đường kính.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- PHẦN 2: CÔNG CỤ GIẢI NHANH TỔNG - TỈ & HIỆU - TỈ VỚI SƠ ĐỒ ĐOẠN THẲNG TỰ ĐỘNG -->
+      <div id="lab-diagram-section" class="hidden bg-white rounded-2xl p-6 border-2 border-slate-200 shadow-comic space-y-6">
+        
+        <div class="flex items-center justify-between flex-wrap gap-3 border-b pb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center font-bold text-sm">📊</span>
+            <h3 class="font-black text-slate-900 text-lg">CÔNG CỤ GIẢI TOÁN & VẼ TỰ ĐỘNG SƠ ĐỒ ĐOẠN THẲNG</h3>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="setRatioProblemType('sum')" id="ratio-btn-sum" class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-orange-500 text-white shadow-comic-orange border border-orange-600">
+              🔵 Tìm hai số khi biết Tổng và Tỉ số
+            </button>
+            <button onclick="setRatioProblemType('diff')" id="ratio-btn-diff" class="px-3.5 py-1.5 rounded-xl text-xs font-black bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic border border-slate-300">
+              🟠 Tìm hai số khi biết Hiệu và Tỉ số
+            </button>
+          </div>
+        </div>
+
+        <!-- Khung nhập dữ liệu -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-orange-50/70 p-5 rounded-2xl border border-orange-200">
+          <div>
+            <label id="ratio-val-label" class="block text-xs font-black text-orange-950 mb-1">Tổng của hai số:</label>
+            <input type="number" id="ratio-total-val" value="45" min="1" step="any" oninput="solveRatioProblem()" class="w-full px-3 py-2 border-2 border-orange-300 rounded-xl font-black text-slate-800 focus:outline-none focus:border-orange-500">
+          </div>
+          <div>
+            <label class="block text-xs font-black text-orange-950 mb-1">Số phần của Số bé:</label>
+            <input type="number" id="ratio-part-small" value="2" min="1" max="15" oninput="solveRatioProblem()" class="w-full px-3 py-2 border-2 border-orange-300 rounded-xl font-black text-slate-800 focus:outline-none focus:border-orange-500">
+          </div>
+          <div>
+            <label class="block text-xs font-black text-orange-950 mb-1">Số phần của Số lớn:</label>
+            <input type="number" id="ratio-part-big" value="3" min="2" max="15" oninput="solveRatioProblem()" class="w-full px-3 py-2 border-2 border-orange-300 rounded-xl font-black text-slate-800 focus:outline-none focus:border-orange-500">
+          </div>
+          <div class="flex items-end">
+            <button onclick="randomizeRatioProblem()" class="w-full py-2.5 px-4 bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold text-xs rounded-xl shadow-comic transition flex items-center justify-center gap-1.5">
+              <span>🎲</span> Đổi bài toán mẫu
+            </button>
+          </div>
+        </div>
+
+        <!-- Vẽ sơ đồ đoạn thẳng động (SVG) -->
+        <div class="bg-slate-50 p-5 rounded-2xl border-2 border-slate-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black uppercase text-slate-700 tracking-wider flex items-center gap-1.5">
+              <span>📌</span> SƠ ĐỒ ĐOẠN THẲNG TRỰC QUAN:
+            </span>
+            <span class="text-[11px] text-slate-500">Mỗi ô chữ nhật biểu thị 1 phần bằng nhau</span>
+          </div>
+
+          <div id="ratio-svg-container" class="bg-white p-4 rounded-xl border border-slate-300 overflow-x-auto">
+            <!-- SVG tự động vẽ qua JS -->
+          </div>
+        </div>
+
+        <!-- Các bước giải mẫu chi tiết chuẩn Tiểu học -->
+        <div class="bg-amber-50/50 p-5 rounded-2xl border-2 border-amber-200 space-y-3">
+          <div class="flex items-center gap-2">
+            <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-black">✓</div>
+            <h4 class="font-black text-slate-900 text-base">BÀI GIẢI CHI TIẾT THEO 4 BƯỚC:</h4>
+          </div>
+
+          <div id="ratio-solution-steps" class="space-y-2.5 text-sm font-semibold text-slate-800 bg-white p-4 rounded-xl border border-amber-200">
+            <!-- Nạp các bước giải qua JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: LUYỆN TẬP & THI THỬ THÔNG MINH (NGÂN HÀNG 100.000+ CÂU HỎI) -->
+    <!-- ========================================================================= -->
+    <section id="tab-quiz" class="tab-pane hidden space-y-6">
+      
+      <!-- Khung Điều khiển Ngân hàng đề thi thông minh -->
+      <div class="bg-white rounded-2xl p-5 border-2 border-slate-200 shadow-comic space-y-4">
+        
+        <!-- Header & Mã đề -->
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="bg-gradient-to-r from-rose-500 to-pink-500 text-white text-xs font-black px-2.5 py-0.5 rounded-full uppercase shadow-sm">
+                Ngân hàng 100.000+ Câu hỏi
+              </span>
+              <span id="quiz-exam-badge" class="bg-sky-100 text-sky-800 text-xs font-extrabold px-2.5 py-0.5 rounded-full border border-sky-300">
+                Mã đề: #KNTT-2026-AUTO
+              </span>
+              <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full">
+                ✨ Không trùng lặp
+              </span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1">LUYỆN TẬP & THI THỬ TOÁN 5 KẾT NỐI TRI THỨC</h2>
+            <p class="text-xs text-slate-600">Đầy đủ ôn tập theo từng phần (Chủ đề 1 đến 12), đề thi Giữa kì và Cuối kì chuẩn Thông tư 27.</p>
+          </div>
+
+          <!-- Nút Đổi đề mới -->
+          <div class="flex items-center gap-2 w-full md:w-auto">
+            <button onclick="generateNewExam()" class="w-full md:w-auto px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black text-xs sm:text-sm rounded-xl shadow-comic transition transform active:scale-95 flex items-center justify-center gap-2">
+              <span>🎲</span> Đổi đề mới ngay
+            </button>
+          </div>
+        </div>
+
+        <!-- Bộ lọc Chế độ thi & Cấu hình -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
+          <!-- Chọn nội dung / Chế độ -->
+          <div>
+            <label class="block text-xs font-black text-slate-700 mb-1">🎯 Chọn nội dung ôn tập / Đề thi:</label>
+            <select id="exam-mode-select" onchange="onExamModeChanged()" class="w-full text-xs font-bold bg-slate-50 border-2 border-slate-300 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-sky-500 transition">
+              <optgroup label="📋 Đề thi định kỳ chuẩn GDPT 2018">
+                <option value="cuoi-nam" selected>🎓 Đề Kiểm tra Cuối năm / Chuyển cấp (CĐ 1 - 12)</option>
+                <option value="giua-ky-1">📝 Đề Ôn tập Giữa học kì 1 (CĐ 1, 2, 3)</option>
+                <option value="cuoi-ky-1">🏆 Đề Kiểm tra Cuối học kì 1 (CĐ 1 - 6)</option>
+                <option value="giua-ky-2">📝 Đề Ôn tập Giữa học kì 2 (CĐ 7, 8, 9)</option>
+              </optgroup>
+              <optgroup label="📖 Luyện tập theo từng phần (Chủ đề riêng biệt)">
+                <option value="topic-1">Chủ đề 1: Ôn tập và bổ sung (Bài 1 - 9)</option>
+                <option value="topic-2">Chủ đề 2: Số thập phân (Bài 10 - 14)</option>
+                <option value="topic-3">Chủ đề 3: Đơn vị đo diện tích km², ha (Bài 15 - 18)</option>
+                <option value="topic-4">Chủ đề 4: Các phép tính với số thập phân (Bài 19 - 24)</option>
+                <option value="topic-5">Chủ đề 5: Hình phẳng, chu vi & diện tích (Bài 25 - 29)</option>
+                <option value="topic-6">Chủ đề 6: Ôn tập học kì 1 (Bài 30 - 35)</option>
+                <option value="topic-7">Chủ đề 7: Tỉ số, Tỉ số %, Tổng-Tỉ, Hiệu-Tỉ (Bài 36 - 44)</option>
+                <option value="topic-8">Chủ đề 8: Thể tích. Đơn vị đo thể tích cm³, dm³, m³ (Bài 45 - 48)</option>
+                <option value="topic-9">Chủ đề 9: Khai triển, Diện tích & thể tích hình khối (Bài 49 - 55)</option>
+                <option value="topic-10">Chủ đề 10: Thời gian, Vận tốc, Chuyển động đều (Bài 56 - 62)</option>
+                <option value="topic-11">Chủ đề 11: Biểu đồ quạt tròn, Xác suất thực nghiệm (Bài 63 - 66)</option>
+                <option value="topic-12">Chủ đề 12: Ôn tập cuối năm toàn diện (Bài 67 - 71)</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Số lượng câu trong đề -->
+          <div>
+            <label class="block text-xs font-black text-slate-700 mb-1">🔢 Số lượng câu hỏi trong đề:</label>
+            <select id="exam-length-select" onchange="onExamLengthChanged()" class="w-full text-xs font-bold bg-slate-50 border-2 border-slate-300 rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:border-sky-500 transition">
+              <option value="10">10 câu hỏi (Luyện nhanh 15 phút)</option>
+              <option value="12">12 câu hỏi (Trải đều 12 Chủ đề)</option>
+              <option value="20" selected>20 câu hỏi (Chuẩn đề thi Thông tư 27 - 35 phút)</option>
+            </select>
+          </div>
+
+          <!-- Tóm tắt tiến độ & Điểm số -->
+          <div class="sm:col-span-2 lg:col-span-1 flex items-center justify-between bg-sky-50 border border-sky-200 rounded-xl px-3.5 py-2">
+            <div>
+              <span class="text-[11px] font-bold text-sky-700 block">Tiến độ làm bài:</span>
+              <span id="quiz-progress-text" class="text-xs font-black text-slate-800">Đã làm: 0/20 câu</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[11px] font-bold text-emerald-700 block">Điểm hiện tại:</span>
+              <span id="quiz-score-badge" class="text-xs font-black text-amber-600">⭐ 0 Điểm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Thanh chọn nhanh số câu (Pills) -->
+        <div class="border-t border-slate-100 pt-3 flex items-center gap-1.5 flex-wrap">
+          <span class="text-xs font-bold text-slate-500 mr-1">Danh sách câu:</span>
+          <div id="quiz-question-pills" class="flex gap-1 flex-wrap">
+            <!-- Dynamic pills rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Khung Câu hỏi chính -->
+      <div class="bg-white rounded-2xl border-3 border-sky-400 p-6 shadow-comic-lg space-y-6 relative overflow-hidden">
+        
+        <!-- Header câu hỏi -->
+        <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-200 pb-3">
+          <div class="flex items-center gap-2">
+            <span id="quiz-badge-topic" class="bg-sky-100 text-sky-800 font-extrabold text-xs px-3 py-1 rounded-lg border border-sky-300">
+              Chủ đề 1: Ôn tập và bổ sung
+            </span>
+            <span id="quiz-badge-semester" class="bg-emerald-100 text-emerald-800 font-bold text-xs px-2.5 py-1 rounded-lg">
+              Học kỳ 1
+            </span>
+            <span id="quiz-badge-level" class="bg-purple-100 text-purple-800 font-bold text-xs px-2.5 py-1 rounded-lg">
+              Mức 1 (Nhận biết)
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-500">Độ khó:</span>
+            <span id="quiz-stars-rating" class="text-amber-500 font-black text-xs">⭐⭐⭐☆☆</span>
+          </div>
+        </div>
+
+        <!-- Thẻ tình huống nhân vật (Việt, Nam, Mai, Mi, Rô-bốt) -->
+        <div id="quiz-character-box" class="flex items-start gap-3 bg-gradient-to-r from-sky-50 to-indigo-50 p-3.5 rounded-xl border border-sky-200">
+          <div id="quiz-character-avatar" class="w-11 h-11 rounded-full bg-blue-500 flex items-center justify-center text-white font-black text-xs flex-shrink-0 shadow-sm border-2 border-white">
+            Việt
+          </div>
+          <div>
+            <div id="quiz-character-name" class="font-black text-xs text-sky-800 uppercase tracking-wide">Bạn Việt đố bạn:</div>
+            <div id="quiz-question-prompt" class="text-slate-800 font-bold text-base md:text-lg mt-0.5 leading-snug">
+              <!-- Question text -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Khung đáp án (Trắc nghiệm 4 lựa chọn) -->
+        <div id="quiz-answers-area" class="space-y-3">
+          <!-- Dynamic Answer Options -->
+        </div>
+
+        <!-- Nút Nộp câu trả lời & Chuyển câu -->
+        <div class="flex items-center justify-between pt-4 border-t border-slate-200 flex-wrap gap-3">
+          <button id="quiz-prev-btn" onclick="prevQuizQuestion()" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold text-slate-700 bg-slate-100 hover:bg-slate-200 border-2 border-slate-300 shadow-comic transition flex items-center gap-1.5">
+            <span>⬅️</span> Câu trước
+          </button>
+
+          <div class="flex gap-2">
+            <button id="quiz-submit-btn" onclick="submitQuizAnswer()" class="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-500 border-2 border-emerald-700 shadow-comic-green transition transform active:scale-95 flex items-center gap-2">
+              <span>🚀</span> Nộp bài & Xem giải
+            </button>
+            <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold text-white bg-sky-600 hover:bg-sky-500 border-2 border-sky-700 shadow-comic transition flex items-center gap-1.5">
+              Câu tiếp <span>➡️</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- KHUNG LỜI GIẢI CHI TIẾT & NHẬN XÉT CỦA RÔ-BỐT -->
+        <div id="quiz-feedback-box" class="hidden rounded-2xl p-5 border-2 transition-all duration-300 space-y-4">
+          <!-- Feedback status -->
+          <div class="flex items-center gap-3">
+            <div id="quiz-feedback-icon" class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-black flex-shrink-0 shadow-sm">
+              <!-- Icon -->
+            </div>
+            <div>
+              <h4 id="quiz-feedback-title" class="font-black text-lg">
+                <!-- Title -->
+              </h4>
+              <p id="quiz-robot-comment" class="text-xs sm:text-sm font-semibold">
+                <!-- Comment -->
+              </p>
+            </div>
+          </div>
+
+          <!-- Lời giải từng bước chi tiết -->
+          <div class="bg-white/90 p-4 rounded-xl border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-black text-xs uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <span>📖</span> BÀI GIẢI CHI TIẾT CHUẨN SÁCH GIÁO KHOA:
+              </span>
+              <span class="text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded">Rô-bốt đồng hành</span>
+            </div>
+            <div id="quiz-solution-content" class="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium space-y-1.5">
+              <!-- Solution content -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BẢNG TỔNG KẾT KẾT QUẢ ĐỀ THI -->
+      <div id="quiz-congrats-card" class="hidden bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400 rounded-2xl p-6 text-slate-900 border-3 border-amber-500 shadow-comic-lg text-center space-y-4">
+        <div class="text-5xl animate-bounce">🏆</div>
+        <div>
+          <span class="bg-white/90 text-slate-900 text-xs font-black px-3 py-1 rounded-full uppercase shadow-sm">
+            Báo cáo kết quả bài thi
+          </span>
+          <h3 id="quiz-result-title" class="text-2xl sm:text-3xl font-black mt-1">
+            XUẤT SẮC! BẠN ĐÃ HOÀN THÀNH BÀI THI!
+          </h3>
+          <p id="quiz-result-summary" class="text-sm font-bold max-w-xl mx-auto mt-1">
+            Điểm số của bạn: 10/10 điểm (20/20 câu đúng)
+          </p>
+        </div>
+
+        <div class="flex items-center justify-center gap-3 flex-wrap">
+          <button onclick="resetCurrentExam()" class="px-5 py-2.5 bg-white hover:bg-slate-100 text-slate-900 font-black rounded-xl text-xs sm:text-sm shadow-comic border-2 border-slate-300">
+            🔄 Làm lại đề này
+          </button>
+          <button onclick="generateNewExam()" class="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-black rounded-xl text-xs sm:text-sm shadow-comic border-2 border-slate-950 flex items-center gap-2">
+            <span>✨</span> Tạo ngay đề mới khác (Không trùng lặp)
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="mt-12 bg-white border-t-2 border-slate-200 py-6 text-slate-600 text-center text-xs">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3">
+      <div class="flex items-center space-x-2">
+        <span class="font-black text-sky-600 text-sm">Toán 5 - Kết nối tri thức với cuộc sống</span>
+        <span>•</span>
+        <span>Học tập EdTech Tiểu học 2018</span>
+      </div>
+      <div>
+        <span>Bạn đồng hành: <strong>Rô-bốt</strong>, <strong>Việt</strong>, <strong>Nam</strong>, <strong>Mai</strong>, <strong>Mi</strong></span>
+      </div>
+      <div class="text-slate-400">
+        Mã nguồn hoàn chỉnh 1 file index.html • HTML5, Tailwind CSS & Pure JS
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODAL SỔ TAY KIẾN THỨC 2018 ==================== -->
+  <div id="handbook-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-5" role="dialog" aria-modal="true" aria-labelledby="handbook-modal-title">
+    <div class="w-full max-w-4xl max-h-[92vh] flex flex-col bg-white rounded-3xl border-4 border-slate-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 px-5 py-4 text-white flex items-center justify-between border-b-4 border-slate-900">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-2xl shadow-inner">📖</div>
+          <div>
+            <h3 id="handbook-modal-title" class="text-base sm:text-lg font-black tracking-tight leading-tight">
+              SỔ TAY TOÀN TẬP KIẾN THỨC TOÁN LỚP 5
+            </h3>
+            <p class="text-xs text-emerald-100 font-semibold">
+              Bộ sách "Kết nối tri thức với cuộc sống" • Chuẩn GDPT 2018 (NXB Giáo dục Việt Nam)
+            </p>
+          </div>
+        </div>
+        <button onclick="closeHandbookModal()" aria-label="Đóng sổ tay" class="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/30 active:scale-95 transition flex items-center justify-center text-white font-black text-lg">
+          ✕
+        </button>
+      </div>
+
+      <!-- Quick Section Navigator Inside Modal -->
+      <div class="bg-slate-100 border-b border-slate-200 px-4 py-2 flex items-center gap-2 overflow-x-auto text-xs font-bold shrink-0">
+        <a href="#hb-sec-new" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:text-emerald-700 whitespace-nowrap shadow-sm">⭐ 1. Điểm mới GDPT 2018</a>
+        <a href="#hb-sec-syllabus" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:text-emerald-700 whitespace-nowrap shadow-sm">📚 2. Mục lục 12 Chủ đề & 71 Bài</a>
+        <a href="#hb-sec-formulas" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:text-emerald-700 whitespace-nowrap shadow-sm">📐 3. Bảng Vàng Công Thức</a>
+        <a href="#hb-sec-traps" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-700 hover:text-emerald-700 whitespace-nowrap shadow-sm">⚠️ 4. Bẫy Thường Gặp & Mẹo Rô-bốt</a>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="overflow-y-auto p-4 sm:p-6 space-y-6 text-slate-800 text-sm">
+        
+        <!-- SECTION 1: ĐIỂM MỚI GDPT 2018 -->
+        <section id="hb-sec-new" class="space-y-3">
+          <div class="flex items-center gap-2 border-b-2 border-emerald-500 pb-2">
+            <span class="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-black text-xs">01</span>
+            <h4 class="font-black text-slate-900 text-base sm:text-lg">BẢNG ĐỐI CHIẾU ĐIỂM MỚI CỐT LÕI (TRÁNH LỖI SAI SO VỚI CHƯƠNG TRÌNH CŨ)</h4>
+          </div>
+          <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+            <table class="w-full text-left text-xs sm:text-sm border-collapse">
+              <thead>
+                <tr class="bg-emerald-50 text-emerald-950 font-black border-b border-emerald-200">
+                  <th class="p-3">Kiến thức / Nội dung</th>
+                  <th class="p-3">Chương trình cũ (2006)</th>
+                  <th class="p-3 bg-emerald-100/60">Chương trình 2018 (Kết nối tri thức)</th>
+                  <th class="p-3">Lưu ý giáo viên & học sinh</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200">
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-extrabold text-slate-900">Toán Tổng - Tỉ & Hiệu - Tỉ</td>
+                  <td class="p-3 text-slate-500 line-through">Dạy ở Lớp 4</td>
+                  <td class="p-3 font-bold text-emerald-800 bg-emerald-50/50">Dạy chính thức ở Lớp 5 - Tập 2 (Chủ đề 7: Bài 38, 39)</td>
+                  <td class="p-3 text-amber-800 text-xs">Nhiều tài liệu cũ ghi nhầm lớp 4. Sách KNTT đưa vào Học kỳ 2 lớp 5 để gắn kết với Tỉ số và Tỉ số phần trăm.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-extrabold text-slate-900">Hình khối & Khai triển</td>
+                  <td class="p-3 text-slate-500">Chỉ sơ lược hộp chữ nhật, lập phương</td>
+                  <td class="p-3 font-bold text-emerald-800 bg-emerald-50/50">Bổ sung Hình trụ & Hình khai triển của hộp chữ nhật, lập phương, hình trụ (Bài 49)</td>
+                  <td class="p-3 text-amber-800 text-xs">Mở mặt xung quanh hình trụ được một hình chữ nhật có chiều dài bằng chu vi đáy, chiều rộng bằng chiều cao.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-extrabold text-slate-900">Xác suất thực nghiệm</td>
+                  <td class="p-3 text-slate-500">Chưa học ở Tiểu học</td>
+                  <td class="p-3 font-bold text-emerald-800 bg-emerald-50/50">Học "Tỉ số của số lần lặp lại một sự kiện so với tổng số lần thực hiện" (Bài 65)</td>
+                  <td class="p-3 text-amber-800 text-xs">Viết dưới dạng phân số tối giản: (Số lần sự kiện xảy ra) / (Tổng số lần thực hiện).</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-extrabold text-slate-900">Biểu đồ hình quạt tròn</td>
+                  <td class="p-3 text-slate-500">Chỉ giới thiệu sơ lược</td>
+                  <td class="p-3 font-bold text-emerald-800 bg-emerald-50/50">Đọc, phân tích và tính đại lượng cụ thể ứng với 100% (Bài 64)</td>
+                  <td class="p-3 text-amber-800 text-xs">Cả hình tròn luôn là 100%. Tìm số lượng = Tổng × Tỉ lệ % : 100.</td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-extrabold text-slate-900">Máy tính cầm tay</td>
+                  <td class="p-3 text-slate-500">Không có bài riêng</td>
+                  <td class="p-3 font-bold text-emerald-800 bg-emerald-50/50">Có bài thực hành chính thức (Bài 42, 43)</td>
+                  <td class="p-3 text-amber-800 text-xs">Học sinh được hướng dẫn dùng máy tính kiểm tra phép tính cộng trừ nhân chia số thập phân và %.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SECTION 2: MỤC LỤC 12 CHỦ ĐỀ & 71 BÀI HỌC -->
+        <section id="hb-sec-syllabus" class="space-y-3">
+          <div class="flex items-center gap-2 border-b-2 border-sky-500 pb-2">
+            <span class="w-7 h-7 rounded-lg bg-sky-500 text-white flex items-center justify-center font-black text-xs">02</span>
+            <h4 class="font-black text-slate-900 text-base sm:text-lg">MỤC LỤC CHUẨN 12 CHỦ ĐỀ & 71 BÀI HỌC TOÁN 5 KẾT NỐI TRI THỨC</h4>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- HỌC KỲ 1 -->
+            <div class="bg-sky-50/60 border-2 border-sky-200 rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between border-b border-sky-300 pb-2">
+                <span class="font-black text-sky-900 text-sm">HỌC KỲ 1 (TẬP 1) • BÀI 1 ĐẾN 35</span>
+                <span class="px-2 py-0.5 rounded-full bg-sky-200 text-sky-800 font-bold text-xs">6 Chủ đề</span>
+              </div>
+              <ul class="text-xs space-y-2 text-slate-700">
+                <li class="p-2 bg-white rounded-xl border border-sky-100 shadow-sm">
+                  <strong class="text-sky-700">Chủ đề 1 (Bài 1 - 9):</strong> Ôn tập & bổ sung (Phân số thập phân, Hỗn số, Tỉ số).
+                </li>
+                <li class="p-2 bg-white rounded-xl border border-sky-100 shadow-sm">
+                  <strong class="text-sky-700">Chủ đề 2 (Bài 10 - 14):</strong> Số thập phân (Khái niệm, hàng, so sánh, làm tròn).
+                </li>
+                <li class="p-2 bg-white rounded-xl border border-sky-100 shadow-sm">
+                  <strong class="text-sky-700">Chủ đề 3 (Bài 15 - 18):</strong> Một số đơn vị đo diện tích (km², ha - héc-ta).
+                </li>
+                <li class="p-2 bg-white rounded-xl border border-sky-100 shadow-sm">
+                  <strong class="text-sky-700">Chủ đề 4 (Bài 19 - 24):</strong> Các phép tính với số thập phân (Cộng, trừ, nhân, chia; tính nhẩm).
+                </li>
+                <li class="p-2 bg-white rounded-xl border border-sky-100 shadow-sm">
+                  <strong class="text-sky-700">Chủ đề 5 (Bài 25 - 29):</strong> Hình phẳng: Hình tam giác, Hình thang, Hình tròn.
+                </li>
+                <li class="p-2 bg-white rounded-xl border border-sky-100 shadow-sm">
+                  <strong class="text-sky-700">Chủ đề 6 (Bài 30 - 35):</strong> Ôn tập Học kì 1.
+                </li>
+              </ul>
+            </div>
+
+            <!-- HỌC KỲ 2 -->
+            <div class="bg-amber-50/60 border-2 border-amber-200 rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between border-b border-amber-300 pb-2">
+                <span class="font-black text-amber-900 text-sm">HỌC KỲ 2 (TẬP 2) • BÀI 36 ĐẾN 71</span>
+                <span class="px-2 py-0.5 rounded-full bg-amber-200 text-amber-800 font-bold text-xs">6 Chủ đề</span>
+              </div>
+              <ul class="text-xs space-y-2 text-slate-700">
+                <li class="p-2 bg-white rounded-xl border border-amber-100 shadow-sm">
+                  <strong class="text-amber-700">Chủ đề 7 (Bài 36 - 44):</strong> Tỉ số, Tỉ số %, Tổng - Tỉ, Hiệu - Tỉ, Tỉ lệ bản đồ, Máy tính cầm tay.
+                </li>
+                <li class="p-2 bg-white rounded-xl border border-amber-100 shadow-sm">
+                  <strong class="text-amber-700">Chủ đề 8 (Bài 45 - 48):</strong> Thể tích. Đơn vị đo thể tích (cm³, dm³, m³; 1 dm³ = 1 lít).
+                </li>
+                <li class="p-2 bg-white rounded-xl border border-amber-100 shadow-sm">
+                  <strong class="text-amber-700">Chủ đề 9 (Bài 49 - 55):</strong> Khai triển hình khối; Diện tích & thể tích (Hình hộp CN, Lập phương, Hình trụ).
+                </li>
+                <li class="p-2 bg-white rounded-xl border border-amber-100 shadow-sm">
+                  <strong class="text-amber-700">Chủ đề 10 (Bài 56 - 62):</strong> Thời gian, Vận tốc. Toán chuyển động đều (ngược chiều, cùng chiều).
+                </li>
+                <li class="p-2 bg-white rounded-xl border border-amber-100 shadow-sm">
+                  <strong class="text-amber-700">Chủ đề 11 (Bài 63 - 66):</strong> Thống kê và xác suất (Biểu đồ quạt tròn 100%, tỉ số xác suất thực nghiệm).
+                </li>
+                <li class="p-2 bg-white rounded-xl border border-amber-100 shadow-sm">
+                  <strong class="text-amber-700">Chủ đề 12 (Bài 67 - 71):</strong> Ôn tập cuối năm toàn diện chuẩn bị vào Lớp 6.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3: BẢNG VÀNG CÔNG THỨC TOÁN 5 -->
+        <section id="hb-sec-formulas" class="space-y-3">
+          <div class="flex items-center gap-2 border-b-2 border-purple-500 pb-2">
+            <span class="w-7 h-7 rounded-lg bg-purple-500 text-white flex items-center justify-center font-black text-xs">03</span>
+            <h4 class="font-black text-slate-900 text-base sm:text-lg">BẢNG VÀNG CÔNG THỨC TRỌNG TÂM CẦN HỌC THUỘC</h4>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            
+            <!-- Thẻ 1: Hình phẳng -->
+            <div class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-3.5 space-y-2">
+              <h5 class="font-black text-indigo-900 text-xs flex items-center gap-1.5">
+                <span>📐</span> Hình phẳng: Tam giác, Thang, Tròn
+              </h5>
+              <div class="text-xs space-y-1.5 text-slate-700 font-medium">
+                <p>• <strong>Tam giác:</strong> <span class="bg-white px-2 py-0.5 rounded border border-indigo-200 font-bold">S = (a × h) : 2</span></p>
+                <p>• <strong>Hình thang:</strong> <span class="bg-white px-2 py-0.5 rounded border border-indigo-200 font-bold">S = (a + b) × h : 2</span></p>
+                <p>• <strong>Chu vi tròn:</strong> <span class="bg-white px-2 py-0.5 rounded border border-indigo-200 font-bold">C = d × 3,14 = r × 2 × 3,14</span></p>
+                <p>• <strong>Diện tích tròn:</strong> <span class="bg-white px-2 py-0.5 rounded border border-indigo-200 font-bold text-rose-700">S = r × r × 3,14</span></p>
+              </div>
+            </div>
+
+            <!-- Thẻ 2: Hình khối -->
+            <div class="bg-teal-50 border-2 border-teal-200 rounded-2xl p-3.5 space-y-2">
+              <h5 class="font-black text-teal-900 text-xs flex items-center gap-1.5">
+                <span>📦</span> Hình khối: Hộp chữ nhật, Lập phương
+              </h5>
+              <div class="text-xs space-y-1.5 text-slate-700 font-medium">
+                <p>• <strong>Hộp CN Sxq:</strong> <span class="bg-white px-1.5 py-0.5 rounded border border-teal-200 font-bold">(a + b) × 2 × c</span></p>
+                <p>• <strong>Hộp CN V:</strong> <span class="bg-white px-1.5 py-0.5 rounded border border-teal-200 font-bold">V = a × b × c</span></p>
+                <p>• <strong>Lập phương Sxq:</strong> <span class="bg-white px-1.5 py-0.5 rounded border border-teal-200 font-bold">a × a × 4</span></p>
+                <p>• <strong>Lập phương Stp:</strong> <span class="bg-white px-1.5 py-0.5 rounded border border-teal-200 font-bold">a × a × 6</span></p>
+                <p>• <strong>Lập phương V:</strong> <span class="bg-white px-1.5 py-0.5 rounded border border-teal-200 font-bold">V = a × a × a</span></p>
+              </div>
+            </div>
+
+            <!-- Thẻ 3: Chuyển động đều -->
+            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3.5 space-y-2">
+              <h5 class="font-black text-amber-900 text-xs flex items-center gap-1.5">
+                <span>🚗</span> Toán Chuyển động đều
+              </h5>
+              <div class="text-xs space-y-1.5 text-slate-700 font-medium">
+                <p>• <strong>Vận tốc:</strong> <span class="bg-white px-2 py-0.5 rounded border border-amber-200 font-bold">v = s : t</span></p>
+                <p>• <strong>Quãng đường:</strong> <span class="bg-white px-2 py-0.5 rounded border border-amber-200 font-bold">s = v × t</span></p>
+                <p>• <strong>Thời gian:</strong> <span class="bg-white px-2 py-0.5 rounded border border-amber-200 font-bold">t = s : v</span></p>
+                <p>• <strong>Gặp nhau (ngược chiều):</strong> <span class="bg-white px-1 py-0.5 rounded border border-amber-200 font-bold">t = s : (v1 + v2)</span></p>
+                <p>• <strong>Đuổi kịp (cùng chiều):</strong> <span class="bg-white px-1 py-0.5 rounded border border-amber-200 font-bold">t = s : (v1 - v2)</span></p>
+              </div>
+            </div>
+
+            <!-- Thẻ 4: Đơn vị đo diện tích & thể tích -->
+            <div class="bg-rose-50 border-2 border-rose-200 rounded-2xl p-3.5 space-y-2">
+              <h5 class="font-black text-rose-900 text-xs flex items-center gap-1.5">
+                <span>📏</span> Đổi đơn vị đo quan trọng
+              </h5>
+              <div class="text-xs space-y-1.5 text-slate-700 font-medium">
+                <p>• <strong>1 ha = 10 000 m²</strong> (1 héc-ta bằng một vạn mét vuông)</p>
+                <p>• <strong>1 km² = 100 ha = 1 000 000 m²</strong></p>
+                <p>• Diện tích: 2 đơn vị liền nhau hơn kém nhau <strong>100 lần</strong>.</p>
+                <p>• <strong>1 dm³ = 1 lít = 1000 cm³</strong></p>
+                <p>• <strong>1 m³ = 1000 dm³ = 1 000 000 cm³</strong></p>
+                <p>• Thể tích: 2 đơn vị liền nhau hơn kém nhau <strong>1000 lần</strong>.</p>
+              </div>
+            </div>
+
+            <!-- Thẻ 5: Tỉ số & Tỉ số phần trăm -->
+            <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-3.5 space-y-2">
+              <h5 class="font-black text-emerald-900 text-xs flex items-center gap-1.5">
+                <span>📊</span> Tỉ số & Tỉ số phần trăm
+              </h5>
+              <div class="text-xs space-y-1.5 text-slate-700 font-medium">
+                <p>• <strong>Tỉ số % của a và b:</strong> (a : b) × 100%</p>
+                <p>• <strong>Tìm a% của số B:</strong> B × a : 100</p>
+                <p>• <strong>Tìm số khi biết a% là B:</strong> B : a × 100</p>
+                <p>• <strong>Tổng - Tỉ:</strong> Tìm tổng số phần = chia tìm giá trị 1 phần = nhân tìm từng số.</p>
+                <p>• <strong>Hiệu - Tỉ:</strong> Tìm hiệu số phần = chia tìm giá trị 1 phần = nhân tìm từng số.</p>
+              </div>
+            </div>
+
+            <!-- Thẻ 6: Làm tròn số thập phân -->
+            <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-3.5 space-y-2">
+              <h5 class="font-black text-sky-900 text-xs flex items-center gap-1.5">
+                <span>🎯</span> Quy tắc làm tròn số thập phân
+              </h5>
+              <div class="text-xs space-y-1.5 text-slate-700 font-medium">
+                <p>• Nhìn chữ số ngay sau hàng cần làm tròn:</p>
+                <p>• Nếu <strong>&lt; 5</strong> (0, 1, 2, 3, 4): Giữ nguyên hàng làm tròn, bỏ phần sau.</p>
+                <p>• Nếu <strong>&ge; 5</strong> (5, 6, 7, 8, 9): Cộng thêm 1 vào hàng làm tròn.</p>
+                <p class="text-[11px] text-sky-800 italic">Ví dụ: 7,48 làm tròn đến hàng phần mười là <strong>7,5</strong> (do 8 &ge; 5); 12,34 là <strong>12,3</strong>.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4: 5 BẪY TOÁN HỌC KINH ĐIỂN -->
+        <section id="hb-sec-traps" class="space-y-3">
+          <div class="flex items-center gap-2 border-b-2 border-rose-500 pb-2">
+            <span class="w-7 h-7 rounded-lg bg-rose-500 text-white flex items-center justify-center font-black text-xs">04</span>
+            <h4 class="font-black text-slate-900 text-base sm:text-lg">5 BẪY SAI LẦM KINH ĐIỂN CỦA HỌC SINH LỚP 5 & MẸO RÔ-BỐT</h4>
+          </div>
+          <div class="space-y-2.5">
+            <div class="p-3 bg-rose-50/70 border border-rose-200 rounded-xl">
+              <strong class="text-rose-900 font-black">Bẫy 1: Đổi số đo thời gian sang số thập phân theo kiểu "viết ghép"</strong>
+              <p class="text-xs text-slate-700 mt-1">
+                ❌ <em>Sai:</em> Nghĩ rằng 45 phút = 0,45 giờ; 1 giờ 15 phút = 1,15 giờ.<br>
+                ✔️ <em>Rô-bốt chỉ cách đúng:</em> Muốn đổi phút ra giờ, phải lấy <strong>số phút chia cho 60</strong>! Ví dụ: 45 phút = 45/60 giờ = 0,75 giờ; 15 phút = 15/60 giờ = 0,25 giờ (1 giờ 15 phút = 1,25 giờ).
+              </p>
+            </div>
+            <div class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl">
+              <strong class="text-amber-900 font-black">Bẫy 2: Nhầm lẫn giữa Chu vi và Diện tích hình tròn</strong>
+              <p class="text-xs text-slate-700 mt-1">
+                ❌ <em>Sai:</em> Nhầm giữa r × 2 × 3,14 và r × r × 3,14.<br>
+                ✔️ <em>Rô-bốt chỉ cách đúng:</em> <strong>Diện tích</strong> luôn có đơn vị vuông (cm², m²), nên có phép nhân <strong>hai bán kính</strong> (r × r × 3,14). Còn <strong>Chu vi</strong> là độ dài chỉ có r × 2 × 3,14 (hoặc d × 3,14).
+              </p>
+            </div>
+            <div class="p-3 bg-blue-50/70 border border-blue-200 rounded-xl">
+              <strong class="text-blue-900 font-black">Bẫy 3: Quên chia 2 khi tính diện tích hình tam giác và hình thang</strong>
+              <p class="text-xs text-slate-700 mt-1">
+                ❌ <em>Sai:</em> Tính diện tích tam giác lấy a × h mà quên chia 2.<br>
+                ✔️ <em>Rô-bốt chỉ cách đúng:</em> Đọc bài vè quen thuộc: <em>"Muốn tính diện tích hình thang / Đáy lớn đáy bé ta mang cộng vào / Cộng rồi nhân với chiều cao / Chia đôi lấy nửa thế nào cũng ra!"</em>. Luôn nhớ bước <strong>: 2</strong>!
+              </p>
+            </div>
+            <div class="p-3 bg-purple-50/70 border border-purple-200 rounded-xl">
+              <strong class="text-purple-900 font-black">Bẫy 4: Quên đổi về cùng một đơn vị đo trước khi tính</strong>
+              <p class="text-xs text-slate-700 mt-1">
+                ❌ <em>Sai:</em> Chiều dài tính bằng mét, chiều rộng tính bằng đề-xi-mét mà lấy nhân luôn.<br>
+                ✔️ <em>Rô-bốt chỉ cách đúng:</em> Quy tắc số 1 của mọi bài toán hình học và chuyển động: <strong>Kiểm tra đơn vị đo đầu tiên</strong>! Nếu khác đơn vị, phải đổi về cùng một đơn vị rồi mới tính.
+              </p>
+            </div>
+            <div class="p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl">
+              <strong class="text-emerald-900 font-black">Bẫy 5: Nhầm đơn vị đo Diện tích (100) với đơn vị Thể tích (1000)</strong>
+              <p class="text-xs text-slate-700 mt-1">
+                ❌ <em>Sai:</em> Đổi 1 m³ = 100 dm³.<br>
+                ✔️ <em>Rô-bốt chỉ cách đúng:</em> Số mũ 3 nhắc ta 3 chữ số 0! Mỗi đơn vị đo thể tích liền kề gấp hoặc kém nhau <strong>1000 lần</strong> (1 m³ = 1000 dm³ = 1 000 000 cm³). Riêng diện tích số mũ 2 nhắc ta 2 chữ số 0 (100 lần).
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-slate-100 px-5 py-3 border-t-2 border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-2 text-xs text-slate-600">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Dữ liệu chuẩn xác 100% theo SGK Toán 5 Kết nối tri thức 2018</span>
+        </div>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <a href="tro-ly-giai-toan.html" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black bg-amber-400 hover:bg-amber-500 text-slate-900 shadow-comic border-2 border-amber-600 transition text-center flex items-center justify-center gap-1.5">
+            <span>✨</span> Mở Trợ lý Sơ đồ đoạn thẳng
+          </a>
+          <button onclick="closeHandbookModal()" class="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-black bg-slate-800 hover:bg-slate-900 text-white shadow-comic border-2 border-slate-950 transition">
+            Đóng sổ tay
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT LOGIC TOÀN BỘ ỨNG DỤNG -->
+  <!-- ========================================================================= -->
+  <script>
+    /* =========================================================================
+       0. TỰ ĐỘNG CUNG CẤP FALLBACK CONFETTI NẾU MẤT MẠNG HOẶC CDN BỊ CHẶN
+       ========================================================================= */
+    if (typeof window.confetti !== 'function') {
+      window.confetti = function(opts) {
+        try {
+          const count = (opts && opts.particleCount) || 40;
+          const canvas = document.createElement('canvas');
+          canvas.style.position = 'fixed';
+          canvas.style.top = '0';
+          canvas.style.left = '0';
+          canvas.style.width = '100vw';
+          canvas.style.height = '100vh';
+          canvas.style.pointerEvents = 'none';
+          canvas.style.zIndex = '9999';
+          document.body.appendChild(canvas);
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          const ctx = canvas.getContext('2d');
+          const colors = ['#38bdf8', '#f59e0b', '#10b981', '#ec4899', '#8b5cf6'];
+          const particles = [];
+          for (let i = 0; i < count; i++) {
+            particles.push({
+              x: canvas.width * 0.5 + (Math.random() - 0.5) * 200,
+              y: canvas.height * ((opts && opts.origin && opts.origin.y) || 0.6),
+              vx: (Math.random() - 0.5) * 12,
+              vy: -Math.random() * 12 - 4,
+              size: Math.random() * 8 + 4,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              alpha: 1
+            });
+          }
+          let frame = 0;
+          function anim() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+              p.x += p.vx;
+              p.y += p.vy;
+              p.vy += 0.4;
+              p.alpha -= 0.015;
+              ctx.fillStyle = p.color;
+              ctx.globalAlpha = Math.max(0, p.alpha);
+              ctx.fillRect(p.x, p.y, p.size, p.size);
+            });
+            frame++;
+            if (frame < 70) requestAnimationFrame(anim);
+            else canvas.remove();
+          }
+          anim();
+        } catch(e) {}
+      };
+    }
+
+    /* =========================================================================
+       1. HỆ THỐNG ÂM THANH WEB AUDIO API (AN TOÀN, KHÔNG LỖI)
+       ========================================================================= */
+    let audioCtx = null;
+    let isSoundEnabled = true;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          audioCtx = new AudioContextClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSound() {
+      isSoundEnabled = !isSoundEnabled;
+      const onIcon = document.getElementById('sound-icon-on');
+      const offIcon = document.getElementById('sound-icon-off');
+      if (isSoundEnabled) {
+        onIcon.classList.remove('hidden');
+        offIcon.classList.add('hidden');
+        playClickSound();
+      } else {
+        onIcon.classList.add('hidden');
+        offIcon.classList.remove('hidden');
+      }
+    }
+
+    // Âm thanh click nút nhẹ nhàng
+    function playClickSound() {
+      if (!isSoundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(440, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.08);
+      } catch (e) {}
+    }
+
+    // Âm thanh trả lời đúng (Hợp âm vui tươi)
+    function playCorrectSound() {
+      if (!isSoundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.08);
+          gain.gain.setValueAtTime(0.18, ctx.currentTime + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.08 + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + idx * 0.08);
+          osc.stop(ctx.currentTime + idx * 0.08 + 0.25);
+        });
+      } catch (e) {}
+    }
+
+    // Âm thanh trả lời chưa đúng (Tiếng boing nhẹ không áp lực)
+    function playWrongSound() {
+      if (!isSoundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(260, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(140, ctx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.25);
+      } catch (e) {}
+    }
+
+    // Âm thanh Rô-bốt chào hỏi
+    function playRobotHello() {
+      playCorrectSound();
+      if (typeof window.confetti === 'function') {
+        window.confetti({ particleCount: 35, spread: 60, origin: { y: 0.2, x: 0.1 } });
+      }
+    }
+
+    /* =========================================================================
+       2. DỮ LIỆU ĐẦY ĐỦ 12 CHỦ ĐỀ SÁCH TOÁN 5 (CHUẨN CHỮ VÀ KÝ HIỆU TIỂU HỌC)
+       ========================================================================= */
+    const TOPICS_DATA = [
+      {
+        id: 1,
+        semester: 1,
+        title: "Chủ đề 1: Ôn tập và bổ sung",
+        icon: "🔁",
+        color: "blue",
+        summary: [
+          "<strong>Bài 1, 2:</strong> Ôn tập số tự nhiên và 4 phép tính với số tự nhiên (Giao hoán, kết hợp, nhân với một tổng).",
+          "<strong>Bài 3, 5, 6:</strong> Phân số & cộng, trừ hai phân số khác mẫu số (Quy đồng mẫu số rồi thực hiện tính).",
+          "<strong>Bài 4: Phân số thập phân:</strong> Phân số có mẫu số là 10, 100, 1000... (Ví dụ: 3/10, 25/100, 125/1000).",
+          "<strong>Bài 7: Hỗn số:</strong> Gồm phần nguyên và phần phân số (phần phân số luôn bé hơn 1). Cách đổi: 2 3/5 = (2 × 5 + 3) / 5 = 13/5.",
+          "<strong>Bài 8:</strong> Ôn tập hình học và đo lường (Hình vuông, chữ nhật, tam giác; đo góc độ, đường thẳng song song và vuông góc)."
+        ],
+        robotTip: "Muốn đổi hỗn số ra phân số: Lấy phần nguyên nhân với mẫu số rồi cộng với tử số, giữ nguyên mẫu số nhé!"
+      },
+      {
+        id: 2,
+        semester: 1,
+        title: "Chủ đề 2: Số thập phân",
+        icon: "🔢",
+        color: "indigo",
+        summary: [
+          "<strong>Cấu tạo số thập phân:</strong> Gồm <em>Phần nguyên</em> (ở bên trái dấu phẩy) và <em>Phần thập phân</em> (ở bên phải dấu phẩy).",
+          "<strong>Các hàng thập phân:</strong> Hàng phần mười (1/10), hàng phần trăm (1/100), hàng phần nghìn (1/1000)...",
+          "<strong>So sánh số thập phân:</strong> So sánh phần nguyên trước. Nếu phần nguyên bằng nhau, so sánh lần lượt chữ số ở hàng phần mười, hàng phần trăm...",
+          "<strong>Làm tròn số thập phân:</strong> Nếu chữ số ngay sau hàng làm tròn ≥ 5 thì cộng thêm 1 vào hàng làm tròn; nếu < 5 thì giữ nguyên."
+        ],
+        robotTip: "Thêm hoặc bỏ bớt chữ số 0 ở tận cùng bên phải phần thập phân thì giá trị của số thập phân không hề thay đổi! Ví dụ: 0,5 = 0,50 = 0,500."
+      },
+      {
+        id: 3,
+        semester: 1,
+        title: "Chủ đề 3: Một số đơn vị đo diện tích",
+        icon: "🗺️",
+        color: "emerald",
+        summary: [
+          "<strong>Ki-lô-mét vuông (km²):</strong> Là diện tích hình vuông có cạnh dài 1 km. 1 km² = 1 000 000 m² = 100 ha.",
+          "<strong>Héc-ta (ha):</strong> Là diện tích hình vuông có cạnh dài 100 m. 1 ha = 10 000 m².",
+          "<strong>Mối liên hệ:</strong> 1 km² = 100 ha; 1 ha = 10 000 m².",
+          "<strong>Quy tắc quan trọng:</strong> Mỗi đơn vị đo diện tích liền kề gấp hoặc kém nhau <strong>100 lần</strong> (tương ứng với 2 chữ số 0)."
+        ],
+        robotTip: "Héc-ta (ha) thường dùng để đo diện tích đất nông nghiệp, cánh đồng, rừng núi. Nhớ nhé: 1 ha = 10 000 m² (gấp 10 nghìn lần 1 m²)!"
+      },
+      {
+        id: 4,
+        semester: 1,
+        title: "Chủ đề 4: Các phép tính với số thập phân",
+        icon: "➕",
+        color: "amber",
+        summary: [
+          "<strong>Cộng, trừ số thập phân:</strong> Đặt tính sao cho các chữ số ở cùng một hàng thẳng cột với nhau và <em>dấu phẩy thẳng cột</em>.",
+          "<strong>Nhân số thập phân:</strong> Nhân như nhân số tự nhiên. Đếm xem hai thừa số có tất cả bao nhiêu chữ số ở phần thập phân rồi dùng dấu phẩy tách ở tích bấy nhiêu chữ số kể từ phải sang trái.",
+          "<strong>Nhân/chia nhẩm:</strong><br>• Nhân với 10, 100: Dời phẩy sang phải 1, 2 hàng.<br>• Chia cho 10, 100 (hoặc nhân với 0,1; 0,01): Dời phẩy sang trái 1, 2 hàng.",
+          "<strong>Chia cho số thập phân:</strong> Đếm xem số chia có bao nhiêu chữ số ở phần thập phân thì dời dấu phẩy ở số bị chia sang phải bấy nhiêu chữ số rồi bỏ dấu phẩy ở số chia."
+        ],
+        robotTip: "Nhân với 0,1 cũng chính là chia cho 10. Nhân với 0,01 chính là chia cho 100. Nhớ quy tắc này để nhẩm siêu nhanh!"
+      },
+      {
+        id: 5,
+        semester: 1,
+        title: "Chủ đề 5: Một số hình phẳng. Chu vi và diện tích",
+        icon: "📐",
+        color: "teal",
+        summary: [
+          "<strong>Hình tam giác:</strong> S = (a × h) : 2 (a: đáy, h: chiều cao cùng đơn vị).",
+          "<strong>Hình thang:</strong> S = (a + b) × h : 2 (a, b: hai đáy, h: chiều cao).<br><em>Bài ca:</em> 'Đáy lớn đáy nhỏ ta mang cộng vào / Thế rồi nhân với chiều cao / Chia đôi lấy nửa thế nào cũng ra'.",
+          "<strong>Hình tròn:</strong><br>• Chu vi: C = d × 3,14 = r × 2 × 3,14.<br>• Diện tích: S = r × r × 3,14 (r: bán kính, d: đường kính)."
+        ],
+        robotTip: "Đừng nhầm chu vi và diện tích hình tròn nhé: Chu vi nhân 2 rồi nhân 3,14; Diện tích lấy bán kính nhân chính nó rồi mới nhân 3,14!"
+      },
+      {
+        id: 6,
+        semester: 1,
+        title: "Chủ đề 6: Ôn tập Học kì 1",
+        icon: "🏅",
+        color: "purple",
+        summary: [
+          "<strong>Hệ thống hóa số học:</strong> Đọc, viết, so sánh số thập phân, phân số thập phân và hỗn số.",
+          "<strong>Thành thạo 4 phép tính:</strong> Thực hiện thành thạo cộng, trừ, nhân, chia số thập phân, tính giá trị biểu thức và tính bằng cách thuận tiện nhất.",
+          "<strong>Giải toán thực tế:</strong> Giải bài toán về tỉ số, chuyển đổi đơn vị diện tích và hình phẳng (tam giác, hình thang, hình tròn)."
+        ],
+        robotTip: "Gặp biểu thức có nhiều phép tính, hãy nhớ quy tắc: Trong ngoặc trước, ngoài ngoặc sau; Nhân chia trước, cộng trừ sau!"
+      },
+      {
+        id: 7,
+        semester: 2,
+        title: "Chủ đề 7: Tỉ số và các bài toán liên quan",
+        icon: "📊",
+        color: "blue",
+        summary: [
+          "<strong>Bài 36, 40: Tỉ số & Tỉ số phần trăm:</strong> Tỉ số của a và b là a : b (b ≠ 0). Tìm tỉ số %: Lấy thương a : b rồi nhân 100 và thêm % (Ví dụ: 3 : 5 = 0,6 = 60%).",
+          "<strong>Bài 37: Tỉ lệ bản đồ:</strong> Độ dài thật = Độ dài vẽ × Mẫu số tỉ lệ; Độ dài vẽ = Độ dài thật : Mẫu số tỉ lệ.",
+          "<strong>Bài 38, 39: Toán Tổng - Tỉ & Hiệu - Tỉ (Học ở HK2):</strong> Dựng sơ đồ đoạn thẳng → Tìm tổng (hiệu) số phần bằng nhau → Tìm giá trị 1 phần → Tìm hai số.",
+          "<strong>Bài 41: Tìm giá trị phần trăm của một số:</strong> Muốn tìm a% của số B, ta lấy B × a : 100 (Ví dụ: 20% của 150 kg là 150 × 20 : 100 = 30 kg).",
+          "<strong>Bài 42, 43: Máy tính cầm tay:</strong> Sử dụng các phím số, phép tính và phím % để kiểm tra nhanh kết quả tính toán."
+        ],
+        robotTip: "Toán Tổng - Tỉ và Hiệu - Tỉ trong sách Kết nối tri thức được học chính thức ở Chủ đề 7 Tập 2 nhé các bạn!"
+      },
+      {
+        id: 8,
+        semester: 2,
+        title: "Chủ đề 8: Thể tích. Đơn vị đo thể tích",
+        icon: "🧊",
+        color: "cyan",
+        summary: [
+          "<strong>Khái niệm thể tích:</strong> Là khoảng không gian mà một vật thể chiếm chỗ.",
+          "<strong>Các đơn vị đo thể tích:</strong><br>• Xăng-ti-mét khối (cm³): Khối lập phương cạnh 1 cm.<br>• Đề-xi-mét khối (dm³): Khối lập phương cạnh 1 dm. 1 dm³ = 1 000 cm³ = 1 lít.<br>• Mét khối (m³): Khối lập phương cạnh 1 m. 1 m³ = 1 000 dm³ = 1 000 000 cm³.",
+          "<strong>Mối quan hệ:</strong> Mỗi đơn vị đo thể tích liền kề gấp hoặc kém nhau <strong>1000 lần</strong> (3 chữ số 0)."
+        ],
+        robotTip: "Nhớ mẹo thần kỳ: 1 dm³ nước ngọt đúng bằng 1 lít nước! Khi gặp bài toán bể nước, đổi về dm³ là ra số lít ngay."
+      },
+      {
+        id: 9,
+        semester: 2,
+        title: "Chủ đề 9: Diện tích và thể tích hình khối",
+        icon: "📦",
+        color: "orange",
+        summary: [
+          "<strong>Hình hộp chữ nhật:</strong><br>• S<sub>xq</sub> = (a + b) × 2 × c (Chu vi đáy nhân chiều cao).<br>• S<sub>tp</sub> = S<sub>xq</sub> + 2 × (a × b).<br>• Thể tích: V = a × b × c.",
+          "<strong>Hình lập phương:</strong><br>• S<sub>xq</sub> = a × a × 4.<br>• S<sub>tp</sub> = a × a × 6.<br>• Thể tích: V = a × a × a.",
+          "<strong>Hình trụ:</strong> Nhận biết đáy hình tròn và mặt xung quanh trải ra là hình chữ nhật."
+        ],
+        robotTip: "Nếu chiếc hộp chữ nhật hoặc hộp lập phương không có nắp, diện tích toàn phần chỉ tính 5 mặt (trừ 1 mặt đáy ở trên) nhé!"
+      },
+      {
+        id: 10,
+        semester: 2,
+        title: "Chủ đề 10: Vận tốc, Quãng đường, Thời gian",
+        icon: "⏱️",
+        color: "red",
+        summary: [
+          "<strong>Toán chuyển động đều:</strong><br>• Vận tốc: v = s : t (đơn vị: km/h, m/s...).<br>• Quãng đường: s = v × t.<br>• Thời gian: t = s : v.",
+          "<strong>Hai chuyển động ngược chiều (gặp nhau):</strong><br>• Thời gian gặp nhau = Quãng đường ban đầu : (Tổng hai vận tốc v₁ + v₂).",
+          "<strong>Hai chuyển động cùng chiều (đuổi nhau):</strong><br>• Thời gian đuổi kịp = Khoảng cách ban đầu : (Hiệu hai vận tốc v₁ - v₂)."
+        ],
+        robotTip: "Trước khi tính toán đại lượng chuyển động, hãy kiểm tra đơn vị: Nếu quãng đường là km thì thời gian phải là giờ để vận tốc là km/h!"
+      },
+      {
+        id: 11,
+        semester: 2,
+        title: "Chủ đề 11: Một số yếu tố thống kê và xác suất",
+        icon: "🥧",
+        color: "violet",
+        summary: [
+          "<strong>Bài 63:</strong> Thu thập, phân loại, sắp xếp và kiểm đếm các số liệu thống kê thực tế.",
+          "<strong>Bài 64: Biểu đồ hình quạt tròn:</strong> Dùng biểu thị tỉ lệ phần trăm so với toàn thể (Cả hình tròn luôn tương ứng với 100%). Tính số lượng: Lấy Tổng × Tỉ lệ % : 100.",
+          "<strong>Bài 65: Xác suất thực nghiệm:</strong> Tỉ số của số lần lặp lại một sự kiện so với tổng số lần thực hiện = (Số lần lặp lại sự kiện) / (Tổng số lần thử nghiệm).",
+          "<strong>Bài 66:</strong> Thực hành và trải nghiệm thu thập, xử lý số liệu thống kê trong cuộc sống."
+        ],
+        robotTip: "Toàn bộ hình quạt tròn luôn tương ứng với 100%! Muốn tìm phần còn lại, lấy 100% trừ đi tổng các phần đã biết là ra ngay."
+      },
+      {
+        id: 12,
+        semester: 2,
+        title: "Chủ đề 12: Ôn tập cuối năm",
+        icon: "🎓",
+        color: "emerald",
+        summary: [
+          "<strong>Tổng kết số và phép tính:</strong> Số tự nhiên, phân số, số thập phân, tỉ số phần trăm và 4 phép tính.",
+          "<strong>Tổng kết hình học & đo lường:</strong> Chu vi, diện tích hình phẳng, diện tích và thể tích hình khối, bảng đơn vị đo.",
+          "<strong>Tổng kết giải toán có lời văn:</strong> Dạng toán chuyển động đều, dạng toán tỉ số, thống kê xác suất để tự tin bước vào Lớp 6!"
+        ],
+        robotTip: "Bí kíp đạt điểm 10 môn Toán của Rô-bốt: Đọc kỹ đề 2 lần, gạch chân từ khóa, vẽ sơ đồ nháp và kiểm tra lại phép tính trước khi nộp bài!"
+      }
+    ];
+
+        /* =========================================================================
+       3. Bá»˜ MÃY SINH Äá»€ TOÃN 5 THÃ”NG MINH (HÆ N 100.000+ CÃ‚U Há»ŽI KHÃ”NG TRÃ™NG Láº¶P)
+       ========================================================================= */
+    const SmartMath5Engine = /**
+ * =========================================================================
+ * BỘ MÁY SINH ĐỀ TOÁN LỚP 5 THÔNG MINH - HƠN 100.000 CÂU HỎI KHÔNG TRÙNG LẶP
+ * BỘ SÁCH "KẾT NỐI TRI THỨC VỚI CUỘC SỐNG" (CHƯƠNG TRÌNH GDPT 2018)
+ * NXB Giáo dục Việt Nam - Tổng Chủ biên Hà Huy Khoái, Chủ biên Lê Anh Vinh
+ * 
+ * Tính năng:
+ * - Hơn 35 mô hình câu hỏi tham số hóa (Procedural Question Generators).
+ * - Sinh vô hạn đề thi không trùng lặp cho:
+ *   + Từng phần riêng lẻ: Chủ đề 1 đến Chủ đề 12.
+ *   + Đề Ôn tập Giữa học kì 1 (Chủ đề 1, 2, 3).
+ *   + Đề Kiểm tra Cuối học kì 1 (Chủ đề 1 -> 6).
+ *   + Đề Ôn tập Giữa học kì 2 (Chủ đề 7, 8, 9).
+ *   + Đề Kiểm tra Cuối học kì 2 / Ôn tập cuối năm toàn diện (Chủ đề 1 -> 12).
+ * - Phân hóa 3 mức độ nhận thức theo Thông tư 27 (Mức 1, Mức 2, Mức 3).
+ * - Phương án nhiễu phản ánh chính xác các lỗi sai và bẫy kinh điển của học sinh.
+ * - Lời giải chi tiết từng bước & Mẹo thông minh từ nhân vật Rô-bốt.
+ * =========================================================================
+ */
+
+(function (root, factory) {
+  const engine = factory();
+  if (typeof module === 'object' && module.exports) {
+    module.exports = engine;
+  }
+  if (typeof root !== 'undefined') {
+    root.SmartMath5Engine = engine;
+  }
+  return engine;
+})(typeof self !== 'undefined' ? self : this, function () {
+
+  /* =========================================================================
+     1. TIỆN ÍCH TOÁN HỌC & NGẪU NHIÊN
+     ========================================================================= */
+  function randInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function choice(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function shuffle(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function gcd(a, b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while (b) {
+      const t = b;
+      b = a % b;
+      a = t;
+    }
+    return a;
+  }
+
+  function formatNum(n, maxDecimals = 3) {
+    if (typeof n !== 'number') return n;
+    // Format to rounded decimal
+    const factor = Math.pow(10, maxDecimals);
+    const rounded = Math.round(n * factor) / factor;
+    return rounded.toString().replace('.', ',');
+  }
+
+  /* =========================================================================
+     2. NHÂN VẬT ĐỒNG HÀNH (KNTT)
+     ========================================================================= */
+  const CHARACTERS = [
+    { name: "Việt", color: "bg-blue-500", text: "Bạn Việt mang đến câu đố hào hứng:" },
+    { name: "Nam", color: "bg-emerald-500", text: "Bạn Nam đố bạn một bài toán thực tế:" },
+    { name: "Mai", color: "bg-amber-500", text: "Bạn Mai cùng các bạn giải câu hỏi sau:" },
+    { name: "Mi", color: "bg-rose-500", text: "Bạn Mi đố vui các bạn nhỏ:" },
+    { name: "Rô-bốt", color: "bg-purple-600", text: "Rô-bốt thông thái đưa ra thử thách tư duy:" }
+  ];
+
+  /* =========================================================================
+     3. TẬP HỢP 35 MÔ HÌNH SINH CÂU HỎI THAM SỐ HÓA (GENERATORS)
+     ========================================================================= */
+  const GENERATORS = {
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 1: ÔN TẬP VÀ BỔ SUNG (BÀI 1 -> 9)
+    // -------------------------------------------------------------
+    G1_FractionToDecimalFraction: function () {
+      const char = choice(CHARACTERS);
+      const denominators = [2, 4, 5, 20, 25, 50, 125, 200, 250, 500];
+      const den = choice(denominators);
+      let targetDen = 10;
+      if (den > 10 && den <= 100) targetDen = 100;
+      else if (den > 100) targetDen = 1000;
+      else if (den === 4 || den === 20 || den === 25 || den === 50) targetDen = 100;
+
+      const factor = targetDen / den;
+      const num = randInt(1, Math.max(1, den - 1));
+      const targetNum = num * factor;
+
+      const correct = `${targetNum}/${targetDen}`;
+      const wrong1 = `${num}/${targetDen}`;
+      const wrong2 = `${targetNum}/${targetDen * 10}`;
+      const wrong3 = `${targetNum + 5}/${targetDen}`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 1,
+        topicTitle: "Chủ đề 1: Ôn tập và bổ sung",
+        semester: 1,
+        level: 1,
+        character: char,
+        question: `Phân số nào dưới đây là phân số thập phân bằng phân số ${num}/${den}?`,
+        options: options,
+        solution: [
+          `• Phân số thập phân là phân số có mẫu số là 10, 100, 1000...`,
+          `• Ta nhân cả tử số và mẫu số của ${num}/${den} với ${factor}:`,
+          `  ${num}/${den} = (${num} × ${factor}) / (${den} × ${factor}) = <strong>${targetNum}/${targetDen}</strong>.`,
+          `<strong>Đáp số:</strong> ${targetNum}/${targetDen}.`
+        ],
+        robotTip: "Muốn chuyển phân số thành phân số thập phân, hãy tìm một số nhân với mẫu số để được 10, 100 hoặc 1000 rồi nhân cả tử số với số đó!"
+      };
+    },
+
+    G1_MixedFractionToFraction: function () {
+      const char = choice(CHARACTERS);
+      const whole = randInt(2, 6);
+      const den = choice([3, 4, 5, 6, 7, 8, 9]);
+      const num = randInt(1, den - 1);
+      const resultNum = whole * den + num;
+
+      const correct = `${resultNum}/${den}`;
+      const wrong1 = `${whole * num}/${den}`;
+      const wrong2 = `${whole + num}/${den}`;
+      const wrong3 = `${resultNum + den}/${den}`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 1,
+        topicTitle: "Chủ đề 1: Ôn tập và bổ sung",
+        semester: 1,
+        level: 1,
+        character: char,
+        question: `Chuyển hỗn số ${whole} ${num}/${den} thành phân số, ta được kết quả là:`,
+        options: options,
+        solution: [
+          `• Quy tắc chuyển hỗn số thành phân số:`,
+          `  Tử số = (Phần nguyên × Mẫu số) + Tử số phần phân số.`,
+          `  Mẫu số = Giữ nguyên mẫu số của phần phân số.`,
+          `• Ta có: (${whole} × ${den} + ${num}) / ${den} = (${whole * den} + ${num}) / ${den} = <strong>${resultNum}/${den}</strong>.`,
+          `<strong>Đáp số:</strong> ${resultNum}/${den}.`
+        ],
+        robotTip: "Lấy phần nguyên nhân với mẫu số rồi cộng với tử số, giữ nguyên mẫu số nhé!"
+      };
+    },
+
+    G1_RatioOfQuantities: function () {
+      const char = choice(CHARACTERS);
+      const k = choice([2, 3, 4, 5]);
+      const r1 = choice([2, 3, 4, 5]);
+      let r2 = choice([3, 4, 5, 7]);
+      while (r1 === r2) r2 = choice([3, 4, 5, 7]);
+
+      const g = gcd(r1, r2);
+      const s1 = r1 / g;
+      const s2 = r2 / g;
+
+      const a = s1 * k * randInt(2, 4);
+      const b = s2 * k * randInt(2, 4);
+      const actualG = gcd(a, b);
+      const simA = a / actualG;
+      const simB = b / actualG;
+
+      const items = ["viên bi", "quyển sách", "bông hoa", "chiếc bút", "con tem"];
+      const item = choice(items);
+
+      const correct = `${simA}/${simB}`;
+      const wrong1 = `${simB}/${simA}`;
+      const wrong2 = `${simA}/${simA + simB}`;
+      const wrong3 = `${simB}/${simA + simB}`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 1,
+        topicTitle: "Chủ đề 1: Ôn tập và bổ sung",
+        semester: 1,
+        level: 2,
+        character: char,
+        question: `Bạn Việt có ${a} ${item}, bạn Nam có ${b} ${item}. Tỉ số giữa số ${item} của Việt so với số ${item} của Nam (viết dạng phân số tối giản) là:`,
+        options: options,
+        solution: [
+          `• Tỉ số giữa số ${item} của Việt và Nam là: ${a} : ${b} = ${a}/${b}.`,
+          `• Rút gọn phân số bằng cách chia cả tử và mẫu cho ước chung lớn nhất (${actualG}):`,
+          `  ${a}/${b} = (${a} : ${actualG}) / (${b} : ${actualG}) = <strong>${simA}/${simB}</strong>.`,
+          `<strong>Đáp số:</strong> ${simA}/${simB}.`
+        ],
+        robotTip: "Tỉ số của a và b là a : b hoặc a/b. Đừng quên rút gọn về phân số tối giản!"
+      };
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 2: SỐ THẬP PHÂN (BÀI 10 -> 14)
+    // -------------------------------------------------------------
+    G2_DigitPlaceValue: function () {
+      const char = choice(CHARACTERS);
+      const whole = randInt(10, 99);
+      const d1 = randInt(1, 9);
+      const d2 = randInt(1, 9);
+      const d3 = randInt(1, 9);
+      const numStr = `${whole},${d1}${d2}${d3}`;
+
+      const positions = [
+        { digit: d1, name: "hàng phần mười", value: `0,${d1}`, frac: `${d1}/10` },
+        { digit: d2, name: "hàng phần trăm", value: `0,0${d2}`, frac: `${d2}/100` },
+        { digit: d3, name: "hàng phần nghìn", value: `0,00${d3}`, frac: `${d3}/1000` }
+      ];
+      const target = choice(positions);
+
+      const correct = `${target.frac} (hay ${target.value})`;
+      const wrong1 = `${target.digit * 10}`;
+      const wrong2 = `${target.digit}`;
+      const wrong3 = target.name === "hàng phần mười" ? `${target.digit}/100` : `${target.digit}/10`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 2,
+        topicTitle: "Chủ đề 2: Số thập phân",
+        semester: 1,
+        level: 1,
+        character: char,
+        question: `Trong số thập phân ${numStr}, chữ số ${target.digit} nằm ở ${target.name} có giá trị là:`,
+        options: options,
+        solution: [
+          `• Số thập phân ${numStr} có:`,
+          `  - Phần nguyên: ${whole}.`,
+          `  - Chữ số ${d1} ở hàng phần mười, chữ số ${d2} ở hàng phần trăm, chữ số ${d3} ở hàng phần nghìn.`,
+          `• Vậy chữ số ${target.digit} ở ${target.name} có giá trị là <strong>${target.frac}</strong> (hay <strong>${target.value}</strong>).`
+        ],
+        robotTip: "Bên phải dấu phẩy: Hàng thứ nhất là phần mười (/10), hàng thứ hai là phần trăm (/100), hàng thứ ba là phần nghìn (/1000)!"
+      };
+    },
+
+    G2_RoundingDecimals: function () {
+      const char = choice(CHARACTERS);
+      const whole = randInt(10, 89);
+      const d1 = randInt(0, 9);
+      const d2 = randInt(1, 9);
+      const num = parseFloat(`${whole}.${d1}${d2}`);
+
+      // Round to tenths
+      let roundedTenth;
+      let explanation;
+      if (d2 >= 5) {
+        let newD1 = d1 + 1;
+        let newWhole = whole;
+        if (newD1 === 10) {
+          newD1 = 0;
+          newWhole += 1;
+        }
+        roundedTenth = `${newWhole},${newD1}`;
+        explanation = `Chữ số hàng phần trăm là ${d2} (≥ 5), ta cộng thêm 1 vào chữ số hàng phần mười (${d1} + 1 = ${newD1}).`;
+      } else {
+        roundedTenth = `${whole},${d1}`;
+        explanation = `Chữ số hàng phần trăm là ${d2} (< 5), ta giữ nguyên chữ số hàng phần mười (${d1}) và bỏ chữ số phía sau.`;
+      }
+
+      const wrong1 = `${whole},${d2}`;
+      const wrong2 = `${whole + 1}`;
+      const wrong3 = d2 >= 5 ? `${whole},${d1}` : `${whole},${d1 + 1}`;
+
+      const options = shuffle([
+        { text: roundedTenth, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 2,
+        topicTitle: "Chủ đề 2: Số thập phân",
+        semester: 1,
+        level: 2,
+        character: char,
+        question: `Làm tròn số thập phân ${whole},${d1}${d2} đến hàng phần mười, ta được số nào?`,
+        options: options,
+        solution: [
+          `• Quan sát chữ số ngay sau hàng phần mười: Đó là chữ số ${d2} ở hàng phần trăm.`,
+          `• ${explanation}`,
+          `• Kết quả làm tròn đến hàng phần mười là <strong>${roundedTenth}</strong>.`
+        ],
+        robotTip: "Quy tắc làm tròn: Nhìn chữ số ngay sau hàng cần làm tròn. Nếu < 5 thì giữ nguyên, nếu ≥ 5 thì cộng 1 vào hàng làm tròn nhé!"
+      };
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 3: MỘT SỐ ĐƠN VỊ ĐO DIỆN TÍCH (BÀI 15 -> 18)
+    // -------------------------------------------------------------
+    G3_ConvertHectareToSquareMeters: function () {
+      const char = choice(CHARACTERS);
+      const val = choice([1.5, 2.4, 3.8, 4.5, 0.75, 5.2, 12]);
+      const result = Math.round(val * 10000);
+
+      const correct = `${formatNum(result)} m²`;
+      const wrong1 = `${formatNum(val * 100)} m²`;
+      const wrong2 = `${formatNum(val * 1000)} m²`;
+      const wrong3 = `${formatNum(val * 100000)} m²`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 3,
+        topicTitle: "Chủ đề 3: Một số đơn vị đo diện tích",
+        semester: 1,
+        level: 1,
+        character: char,
+        question: `Một khu vườn sinh thái có diện tích ${formatNum(val)} ha. Hỏi khu vườn đó có diện tích bằng bao nhiêu mét vuông?`,
+        options: options,
+        solution: [
+          `• Ta biết: 1 ha = 10 000 m².`,
+          `• Diện tích khu vườn tính theo mét vuông là:`,
+          `  ${formatNum(val)} × 10 000 = <strong>${formatNum(result)}</strong> (m²).`,
+          `<strong>Đáp số:</strong> ${formatNum(result)} m².`
+        ],
+        robotTip: "Nhớ nằm lòng: 1 héc-ta (ha) = 10 000 m² (mười nghìn mét vuông)!"
+      };
+    },
+
+    G3_ConvertKm2ToHa: function () {
+      const char = choice(CHARACTERS);
+      const val = choice([2, 3.5, 4.8, 5, 7.2, 10, 15.6]);
+      const result = Math.round(val * 100);
+
+      const correct = `${formatNum(result)} ha`;
+      const wrong1 = `${formatNum(val * 10)} ha`;
+      const wrong2 = `${formatNum(val * 1000)} ha`;
+      const wrong3 = `${formatNum(val * 10000)} ha`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 3,
+        topicTitle: "Chủ đề 3: Một số đơn vị đo diện tích",
+        semester: 1,
+        level: 1,
+        character: char,
+        question: `Khu rừng quốc gia có diện tích ${formatNum(val)} km². Diện tích khu rừng đó tính bằng héc-ta (ha) là:`,
+        options: options,
+        solution: [
+          `• Ta có: 1 km² = 100 ha.`,
+          `• Diện tích khu rừng tính bằng héc-ta là:`,
+          `  ${formatNum(val)} × 100 = <strong>${formatNum(result)}</strong> (ha).`,
+          `<strong>Đáp số:</strong> ${formatNum(result)} ha.`
+        ],
+        robotTip: "1 km² = 100 ha = 1 000 000 m². Đổi từ km² sang ha chỉ cần nhân với 100!"
+      };
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 4: CÁC PHÉP TÍNH VỚI SỐ THẬP PHÂN (BÀI 19 -> 24)
+    // -------------------------------------------------------------
+    G4_MultiplyByTenHundredOrDecimals: function () {
+      const char = choice(CHARACTERS);
+      const whole = randInt(1, 99);
+      const dec = randInt(1, 9);
+      const num = parseFloat(`${whole}.${dec}`);
+      const type = choice(['x10', 'x100', 'x0.1', 'x0.01']);
+
+      let result, multiplierStr, rule;
+      if (type === 'x10') {
+        result = Math.round(num * 10 * 10) / 10;
+        multiplierStr = "10";
+        rule = "chuyển dấu phẩy sang bên phải 1 chữ số";
+      } else if (type === 'x100') {
+        result = Math.round(num * 100);
+        multiplierStr = "100";
+        rule = "chuyển dấu phẩy sang bên phải 2 chữ số";
+      } else if (type === 'x0.1') {
+        result = Math.round(num * 0.1 * 100) / 100;
+        multiplierStr = "0,1";
+        rule = "chuyển dấu phẩy sang bên trái 1 chữ số (chia cho 10)";
+      } else {
+        result = Math.round(num * 0.01 * 1000) / 1000;
+        multiplierStr = "0,01";
+        rule = "chuyển dấu phẩy sang bên trái 2 chữ số (chia cho 100)";
+      }
+
+      const correct = formatNum(result);
+      const wrong1 = formatNum(result * 10);
+      const wrong2 = formatNum(result / 10);
+      const wrong3 = formatNum(num);
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 4,
+        topicTitle: "Chủ đề 4: Các phép tính với số thập phân",
+        semester: 1,
+        level: 1,
+        character: char,
+        question: `Tính nhẩm: ${formatNum(num)} × ${multiplierStr} = ?`,
+        options: options,
+        solution: [
+          `• Muốn nhân một số thập phân với ${multiplierStr}, ta chỉ việc ${rule}.`,
+          `• ${formatNum(num)} × ${multiplierStr} = <strong>${correct}</strong>.`
+        ],
+        robotTip: "Nhân với 10, 100: dịch dấu phẩy sang PHẢI. Nhân với 0,1; 0,01: dịch dấu phẩy sang TRÁI!"
+      };
+    },
+
+    G4_WordProblemDecimalMath: function () {
+      const char = choice(CHARACTERS);
+      const priceK = choice([12, 15, 18, 24, 25, 30, 45]);
+      const quantity = choice([1.5, 2.5, 3.2, 4.5, 0.8]);
+      const total = Math.round(priceK * quantity * 1000);
+
+      const items = ["vải lụa", "hoa quả sạch", "thịt bò tươi", "hạt điều rang muối"];
+      const item = choice(items);
+
+      const correct = `${formatNum(total)} đồng`;
+      const wrong1 = `${formatNum(total + 10000)} đồng`;
+      const wrong2 = `${formatNum(total - 5000)} đồng`;
+      const wrong3 = `${formatNum(Math.round(priceK * 1000 * 2))} đồng`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 4,
+        topicTitle: "Chủ đề 4: Các phép tính với số thập phân",
+        semester: 1,
+        level: 2,
+        character: char,
+        question: `Mỗi ki-lô-gam ${item} có giá ${formatNum(priceK * 1000)} đồng. Mẹ bạn Mai mua ${formatNum(quantity)} kg ${item} đó thì phải trả bao nhiêu tiền?`,
+        options: options,
+        solution: [
+          `• Số tiền mẹ phải trả là:`,
+          `  ${formatNum(priceK * 1000)} × ${formatNum(quantity)} = <strong>${formatNum(total)}</strong> (đồng).`,
+          `<strong>Đáp số:</strong> ${formatNum(total)} đồng.`
+        ],
+        robotTip: "Nhân số thập phân: Thực hiện nhân như số tự nhiên rồi đếm phần thập phân để đặt dấu phẩy chính xác!"
+      };
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 5: MỘT SỐ HÌNH PHẲNG. CHU VI VÀ DIỆN TÍCH (BÀI 25 -> 29)
+    // -------------------------------------------------------------
+    G5_TriangleArea: function () {
+      const char = choice(CHARACTERS);
+      const a = randInt(6, 24);
+      const h = randInt(4, 18);
+      const area = (a * h) / 2;
+
+      const correct = `${formatNum(area)} cm²`;
+      const wrongTrapNoDiv2 = `${formatNum(a * h)} cm²`; // Bẫy quên chia 2!
+      const wrong1 = `${formatNum(area + a)} cm²`;
+      const wrong2 = `${formatNum((a + h) * 2)} cm²`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrongTrapNoDiv2, isCorrect: false },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 5,
+        topicTitle: "Chủ đề 5: Một số hình phẳng. Chu vi và diện tích",
+        semester: 1,
+        level: 2,
+        character: char,
+        question: `Một hình tam giác có độ dài đáy là ${a} cm và chiều cao tương ứng là ${h} cm. Diện tích của hình tam giác đó là:`,
+        options: options,
+        solution: [
+          `• Muốn tính diện tích hình tam giác, ta lấy độ dài đáy nhân với chiều cao (cùng đơn vị đo) rồi chia cho 2:`,
+          `  S = (a × h) : 2`,
+          `  S = (${a} × ${h}) : 2 = ${a * h} : 2 = <strong>${formatNum(area)}</strong> (cm²).`,
+          `<strong>Đáp số:</strong> ${formatNum(area)} cm².`
+        ],
+        robotTip: "Đừng quên bước chia cho 2! Rất nhiều bạn làm ra kết quả " + (a * h) + " cm² vì quên chia 2 đấy!"
+      };
+    },
+
+    G5_TrapezoidArea: function () {
+      const char = choice(CHARACTERS);
+      const a = randInt(12, 28); // Đáy lớn
+      const b = randInt(6, a - 2); // Đáy bé
+      const h = randInt(4, 16); // Chiều cao
+      const area = ((a + b) * h) / 2;
+
+      const correct = `${formatNum(area)} m²`;
+      const wrongTrapNoDiv2 = `${formatNum((a + b) * h)} m²`; // Bẫy quên chia 2
+      const wrong1 = `${formatNum(a * h)} m²`;
+      const wrong2 = `${formatNum(area + 10)} m²`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrongTrapNoDiv2, isCorrect: false },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 5,
+        topicTitle: "Chủ đề 5: Một số hình phẳng. Chu vi và diện tích",
+        semester: 1,
+        level: 2,
+        character: char,
+        question: `Một thửa ruộng hình thang có đáy lớn ${a} m, đáy bé ${b} m và chiều cao ${h} m. Diện tích thửa ruộng đó là:`,
+        options: options,
+        solution: [
+          `• Công thức tính diện tích hình thang:`,
+          `  S = (a + b) × h : 2`,
+          `• Diện tích thửa ruộng hình thang là:`,
+          `  (${a} + ${b}) × ${h} : 2 = ${a + b} × ${h} : 2 = ${((a + b) * h)} : 2 = <strong>${formatNum(area)}</strong> (m²).`,
+          `<strong>Đáp số:</strong> ${formatNum(area)} m².`
+        ],
+        robotTip: "Nhớ câu vè: Đáy lớn đáy bé ta mang cộng vào / Cộng rồi nhân với chiều cao / Chia đôi lấy nửa thế nào cũng ra!"
+      };
+    },
+
+    G5_CircleAreaAndCircumference: function () {
+      const char = choice(CHARACTERS);
+      const r = choice([2, 3, 4, 5, 6, 8, 10]);
+      const S = Math.round(r * r * 3.14 * 100) / 100;
+      const C = Math.round(r * 2 * 3.14 * 100) / 100;
+
+      const isAreaQuestion = Math.random() > 0.5;
+
+      if (isAreaQuestion) {
+        const correct = `${formatNum(S)} cm²`;
+        const wrongTrapCircumference = `${formatNum(C)} cm²`; // Bẫy nhầm chu vi!
+        const wrong1 = `${formatNum(Math.round(r * 3.14 * 100) / 100)} cm²`;
+        const wrong2 = `${formatNum(Math.round(r * r * 100) / 100)} cm²`;
+
+        const options = shuffle([
+          { text: correct, isCorrect: true },
+          { text: wrongTrapCircumference, isCorrect: false },
+          { text: wrong1, isCorrect: false },
+          { text: wrong2, isCorrect: false }
+        ]);
+
+        return {
+          topicId: 5,
+          topicTitle: "Chủ đề 5: Một số hình phẳng. Chu vi và diện tích",
+          semester: 1,
+          level: 2,
+          character: char,
+          question: `Một biển báo giao thông hình tròn có bán kính ${r} cm. Diện tích của hình tròn đó là:`,
+          options: options,
+          solution: [
+            `• Muốn tính diện tích hình tròn, ta lấy bán kính nhân với bán kính rồi nhân với 3,14:`,
+            `  S = r × r × 3,14`,
+            `  S = ${r} × ${r} × 3,14 = ${r * r} × 3,14 = <strong>${formatNum(S)}</strong> (cm²).`,
+            `<strong>Đáp số:</strong> ${formatNum(S)} cm².`
+          ],
+          robotTip: "Diện tích có đơn vị vuông nên có 2 bán kính nhân với nhau: r × r × 3,14. Đừng nhầm với chu vi r × 2 × 3,14 nhé!"
+        };
+      } else {
+        const correct = `${formatNum(C)} cm`;
+        const wrongTrapArea = `${formatNum(S)} cm`;
+        const wrong1 = `${formatNum(r * 3.14)} cm`;
+        const wrong2 = `${formatNum(r * 4)} cm`;
+
+        const options = shuffle([
+          { text: correct, isCorrect: true },
+          { text: wrongTrapArea, isCorrect: false },
+          { text: wrong1, isCorrect: false },
+          { text: wrong2, isCorrect: false }
+        ]);
+
+        return {
+          topicId: 5,
+          topicTitle: "Chủ đề 5: Một số hình phẳng. Chu vi và diện tích",
+          semester: 1,
+          level: 2,
+          character: char,
+          question: `Một chiếc đĩa sứ hình tròn có bán kính ${r} cm. Chu vi của chiếc đĩa đó là:`,
+          options: options,
+          solution: [
+            `• Muốn tính chu vi hình tròn, ta lấy bán kính nhân 2 rồi nhân với 3,14 (hoặc đường kính nhân 3,14):`,
+            `  C = r × 2 × 3,14`,
+            `  C = ${r} × 2 × 3,14 = ${r * 2} × 3,14 = <strong>${formatNum(C)}</strong> (cm).`,
+            `<strong>Đáp số:</strong> ${formatNum(C)} cm.`
+          ],
+          robotTip: "Chu vi hình tròn C = d × 3,14 = r × 2 × 3,14!"
+        };
+      }
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 6: ÔN TẬP HỌC KÌ 1 (BÀI 30 -> 35)
+    // -------------------------------------------------------------
+    G6_ComprehensiveSemester1: function () {
+      const char = choice(CHARACTERS);
+      const a = randInt(15, 25);
+      const b = randInt(10, a - 2);
+      const h = randInt(8, 14);
+      const S = ((a + b) * h) / 2;
+      const yieldPer100 = choice([60, 65, 70, 75]); // kg/100m2
+      const totalKg = (S / 100) * yieldPer100;
+      const totalTa = totalKg / 100;
+
+      const correct = `${formatNum(totalTa)} tạ`;
+      const wrong1 = `${formatNum(totalKg)} tạ`;
+      const wrong2 = `${formatNum(totalTa * 10)} tạ`;
+      const wrong3 = `${formatNum(Math.round(totalTa * 0.8 * 10) / 10)} tạ`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 6,
+        topicTitle: "Chủ đề 6: Ôn tập học kì 1",
+        semester: 1,
+        level: 3,
+        character: char,
+        question: `Bác Ba có một thửa ruộng hình thang có đáy lớn ${a} m, đáy bé ${b} m, chiều cao ${h} m. Trung bình cứ 100 m² thu hoạch được ${yieldPer100} kg thóc. Hỏi trên cả thửa ruộng đó, bác Ba thu hoạch được bao nhiêu tạ thóc?`,
+        options: options,
+        solution: [
+          `• Diện tích thửa ruộng hình thang là:`,
+          `  (${a} + ${b}) × ${h} : 2 = ${S} (m²).`,
+          `• Số ki-lô-gam thóc thu hoạch được trên thửa ruộng là:`,
+          `  (${S} : 100) × ${yieldPer100} = ${formatNum(totalKg)} (kg).`,
+          `• Đổi sang đơn vị tạ (1 tạ = 100 kg):`,
+          `  ${formatNum(totalKg)} kg = <strong>${formatNum(totalTa)}</strong> tạ.`,
+          `<strong>Đáp số:</strong> ${formatNum(totalTa)} tạ.`
+        ],
+        robotTip: "Chú ý đọc kỹ đơn vị đề bài yêu cầu: Hỏi 'tạ' thì sau khi tính ra 'kg' phải đổi bằng cách chia cho 100!"
+      };
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 7: TỈ SỐ VÀ CÁC BÀI TOÁN LIÊN QUAN (BÀI 36 -> 44)
+    // -------------------------------------------------------------
+    G7_SumAndRatioWordProblem: function () {
+      const char = choice(CHARACTERS);
+      const p1 = choice([1, 2, 3]);
+      const p2 = choice([3, 4, 5]);
+      if (p1 === p2) return GENERATORS.G7_SumAndRatioWordProblem();
+
+      const unitVal = randInt(4, 15);
+      const totalParts = p1 + p2;
+      const total = unitVal * totalParts;
+      const num1 = unitVal * p1;
+      const num2 = unitVal * p2;
+
+      const items = ["viên bi", "quyển vở", "con tem", "quả cam"];
+      const item = choice(items);
+
+      const correct = `Việt có ${num1} ${item}, Nam có ${num2} ${item}`;
+      const wrong1 = `Việt có ${num2} ${item}, Nam có ${num1} ${item}`;
+      const wrong2 = `Việt có ${num1 + 2} ${item}, Nam có ${num2 - 2} ${item}`;
+      const wrong3 = `Việt có ${num1 - 3} ${item}, Nam có ${num2 + 3} ${item}`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 7,
+        topicTitle: "Chủ đề 7: Tỉ số và các bài toán liên quan",
+        semester: 2,
+        level: 2,
+        character: char,
+        question: `Hai bạn Việt và Nam có tất cả ${total} ${item}. Biết rằng số ${item} của Việt bằng ${p1}/${p2} số ${item} của Nam. Hỏi mỗi bạn có bao nhiêu ${item}?`,
+        options: options,
+        solution: [
+          `• Dạng toán: Tìm hai số khi biết Tổng và Tỉ số của hai số đó (Bài 38).`,
+          `• Tổng số phần bằng nhau là: ${p1} + ${p2} = ${totalParts} (phần).`,
+          `• Giá trị một phần là: ${total} : ${totalParts} = ${unitVal} (${item}).`,
+          `• Số ${item} của Việt là: ${unitVal} × ${p1} = <strong>${num1}</strong> (${item}).`,
+          `• Số ${item} của Nam là: ${unitVal} × ${p2} = <strong>${num2}</strong> (${item}).`,
+          `<strong>Đáp số:</strong> Việt: ${num1} ${item}; Nam: ${num2} ${item}.`
+        ],
+        robotTip: "Nhớ 4 bước: Vẽ sơ đồ ➔ Tìm tổng số phần bằng nhau ➔ Tìm giá trị một phần ➔ Tìm từng số!"
+      };
+    },
+
+    G7_DifferenceAndRatioWordProblem: function () {
+      const char = choice(CHARACTERS);
+      const p1 = choice([1, 2, 3]);
+      const p2 = choice([3, 4, 5, 7]);
+      if (p1 >= p2) return GENERATORS.G7_DifferenceAndRatioWordProblem();
+
+      const diffParts = p2 - p1;
+      const unitVal = randInt(4, 12);
+      const diff = unitVal * diffParts;
+      const num1 = unitVal * p1; // Bé
+      const num2 = unitVal * p2; // Lớn
+
+      const correct = `Số bé: ${num1}; Số lớn: ${num2}`;
+      const wrong1 = `Số bé: ${num2}; Số lớn: ${num1}`;
+      const wrong2 = `Số bé: ${num1 + diffParts}; Số lớn: ${num2 - diffParts}`;
+      const wrong3 = `Số bé: ${num1 * 2}; Số lớn: ${num2 * 2}`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 7,
+        topicTitle: "Chủ đề 7: Tỉ số và các bài toán liên quan",
+        semester: 2,
+        level: 2,
+        character: char,
+        question: `Hiệu của hai số là ${diff}. Tỉ số của hai số đó là ${p1}/${p2}. Tìm hai số đó.`,
+        options: options,
+        solution: [
+          `• Dạng toán: Tìm hai số khi biết Hiệu và Tỉ số của hai số đó (Bài 39).`,
+          `• Hiệu số phần bằng nhau là: ${p2} - ${p1} = ${diffParts} (phần).`,
+          `• Giá trị một phần là: ${diff} : ${diffParts} = ${unitVal}.`,
+          `• Số bé là: ${unitVal} × ${p1} = <strong>${num1}</strong>.`,
+          `• Số lớn là: ${unitVal} × ${p2} = <strong>${num2}</strong> (hoặc ${num1} + ${diff} = ${num2}).`,
+          `<strong>Đáp số:</strong> Số bé: ${num1}; Số lớn: ${num2}.`
+        ],
+        robotTip: "Với bài toán Hiệu - Tỉ, hãy tìm hiệu số phần bằng nhau bằng cách lấy số phần lớn trừ đi số phần bé!"
+      };
+    },
+
+    G7_PercentageDiscount: function () {
+      const char = choice(CHARACTERS);
+      const originalPriceK = choice([150, 200, 250, 300, 400, 500]);
+      const discountPercent = choice([10, 15, 20, 25, 30]);
+      const discountVal = (originalPriceK * 1000 * discountPercent) / 100;
+      const finalPrice = originalPriceK * 1000 - discountVal;
+
+      const items = ["chiếc cặp sách", "bộ đồng phục", "đôi giày thể thao", "chiếc vợt cầu lông"];
+      const item = choice(items);
+
+      const correct = `${formatNum(finalPrice)} đồng`;
+      const wrongTrapDiscountOnly = `${formatNum(discountVal)} đồng`; // Bẫy chỉ tính tiền giảm!
+      const wrong1 = `${formatNum(originalPriceK * 1000 + discountVal)} đồng`;
+      const wrong2 = `${formatNum(finalPrice - 10000)} đồng`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrongTrapDiscountOnly, isCorrect: false },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 7,
+        topicTitle: "Chủ đề 7: Tỉ số và các bài toán liên quan",
+        semester: 2,
+        level: 2,
+        character: char,
+        question: `Một ${item} có giá niêm yết là ${formatNum(originalPriceK * 1000)} đồng. Nhân dịp khai giảng, cửa hàng giảm giá ${discountPercent}%. Hỏi bạn Mai phải trả bao nhiêu tiền để mua chiếc cặp đó?`,
+        options: options,
+        solution: [
+          `• Số tiền được giảm giá là:`,
+          `  ${formatNum(originalPriceK * 1000)} × ${discountPercent} : 100 = ${formatNum(discountVal)} (đồng).`,
+          `• Số tiền bạn Mai thực tế phải trả là:`,
+          `  ${formatNum(originalPriceK * 1000)} - ${formatNum(discountVal)} = <strong>${formatNum(finalPrice)}</strong> (đồng).`,
+          `<strong>Đáp số:</strong> ${formatNum(finalPrice)} đồng.`
+        ],
+        robotTip: "Đề bài hỏi 'phải trả bao nhiêu tiền', nên sau khi tính tiền giảm giá, ta phải lấy giá gốc trừ đi tiền giảm nhé!"
+      };
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 8: THỂ TÍCH. ĐƠN VỊ ĐO THỂ TÍCH (BÀI 45 -> 48)
+    // -------------------------------------------------------------
+    G8_VolumeUnitsConversion: function () {
+      const char = choice(CHARACTERS);
+      const val = choice([1.8, 2.5, 3.4, 0.75, 4.2, 5]);
+      const dm3 = Math.round(val * 1000);
+
+      const correct = `${formatNum(dm3)} dm³ (hay ${formatNum(dm3)} lít)`;
+      const wrongTrap100 = `${formatNum(val * 100)} dm³`; // Bẫy nhầm 100 của diện tích!
+      const wrong1 = `${formatNum(val * 10)} dm³`;
+      const wrong2 = `${formatNum(val * 10000)} dm³`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrongTrap100, isCorrect: false },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 8,
+        topicTitle: "Chủ đề 8: Thể tích. Đơn vị đo thể tích",
+        semester: 2,
+        level: 1,
+        character: char,
+        question: `Một bể chứa nước có thể tích ${formatNum(val)} m³. Thể tích bể nước đó bằng bao nhiêu đề-xi-mét khối (dm³)?`,
+        options: options,
+        solution: [
+          `• Ta biết: 1 m³ = 1000 dm³ = 1000 lít.`,
+          `• Thể tích bể nước đổi ra đề-xi-mét khối là:`,
+          `  ${formatNum(val)} × 1000 = <strong>${formatNum(dm3)}</strong> (dm³).`,
+          `<strong>Đáp số:</strong> ${formatNum(dm3)} dm³.`
+        ],
+        robotTip: "Đơn vị đo thể tích hơn kém nhau 1000 lần (3 chữ số 0)! Đừng nhầm với đơn vị diện tích hơn kém nhau 100 lần!"
+      };
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 9: DIỆN TÍCH VÀ THỂ TÍCH HÌNH KHỐI (BÀI 49 -> 55)
+    // -------------------------------------------------------------
+    G9_RectangularBoxVolumeAndArea: function () {
+      const char = choice(CHARACTERS);
+      const a = randInt(5, 12); // Dài (dm)
+      const b = randInt(4, a - 1); // Rộng (dm)
+      const c = randInt(3, 8); // Cao (dm)
+
+      const V = a * b * c; // dm3 = lít
+      const Sxq = (a + b) * 2 * c;
+      const Stp = Sxq + 2 * a * b;
+
+      const isVolume = Math.random() > 0.5;
+
+      if (isVolume) {
+        const correct = `${formatNum(V)} dm³`;
+        const wrong1 = `${formatNum(Sxq)} dm³`;
+        const wrong2 = `${formatNum((a + b) * c)} dm³`;
+        const wrong3 = `${formatNum(V + 20)} dm³`;
+
+        const options = shuffle([
+          { text: correct, isCorrect: true },
+          { text: wrong1, isCorrect: false },
+          { text: wrong2, isCorrect: false },
+          { text: wrong3, isCorrect: false }
+        ]);
+
+        return {
+          topicId: 9,
+          topicTitle: "Chủ đề 9: Diện tích và thể tích hình khối",
+          semester: 2,
+          level: 2,
+          character: char,
+          question: `Một bể cá kính hình hộp chữ nhật có chiều dài ${a} dm, chiều rộng ${b} dm và chiều cao ${c} dm. Thể tích của bể cá đó là:`,
+          options: options,
+          solution: [
+            `• Công thức tính thể tích hình hộp chữ nhật:`,
+            `  V = a × b × c`,
+            `• Thể tích của bể cá là:`,
+            `  ${a} × ${b} × ${c} = <strong>${formatNum(V)}</strong> (dm³).`,
+            `<strong>Đáp số:</strong> ${formatNum(V)} dm³ (chứa tối đa ${formatNum(V)} lít nước).`
+          ],
+          robotTip: "Thể tích hình hộp chữ nhật = Chiều dài × Chiều rộng × Chiều cao (cùng đơn vị đo)!"
+        };
+      } else {
+        const correct = `${formatNum(Sxq)} dm²`;
+        const wrongTrapStp = `${formatNum(Stp)} dm²`;
+        const wrong1 = `${formatNum(a * b * c)} dm²`;
+        const wrong2 = `${formatNum((a + b) * c)} dm²`;
+
+        const options = shuffle([
+          { text: correct, isCorrect: true },
+          { text: wrongTrapStp, isCorrect: false },
+          { text: wrong1, isCorrect: false },
+          { text: wrong2, isCorrect: false }
+        ]);
+
+        return {
+          topicId: 9,
+          topicTitle: "Chủ đề 9: Diện tích và thể tích hình khối",
+          semester: 2,
+          level: 2,
+          character: char,
+          question: `Một thùng tôn hình hộp chữ nhật có chiều dài ${a} dm, chiều rộng ${b} dm và chiều cao ${c} dm. Diện tích xung quanh của thùng tôn đó là:`,
+          options: options,
+          solution: [
+            `• Chu vi mặt đáy của hình hộp chữ nhật: (${a} + ${b}) × 2 = ${(a + b) * 2} (dm).`,
+            `• Diện tích xung quanh = Chu vi đáy × Chiều cao:`,
+            `  Sxq = ${(a + b) * 2} × ${c} = <strong>${formatNum(Sxq)}</strong> (dm²).`,
+            `<strong>Đáp số:</strong> ${formatNum(Sxq)} dm².`
+          ],
+          robotTip: "Diện tích xung quanh hình hộp chữ nhật = Chu vi mặt đáy × Chiều cao!"
+        };
+      }
+    },
+
+    G9_CylinderUnfoldedNet: function () {
+      const char = choice(CHARACTERS);
+      const r = randInt(3, 8);
+      const h = randInt(10, 20);
+      const circumference = Math.round(r * 2 * 3.14 * 100) / 100;
+
+      const correct = `Một hình chữ nhật kích thước ${formatNum(circumference)} cm × ${h} cm và 2 hình tròn bán kính ${r} cm`;
+      const wrong1 = `Hai hình vuông và hai hình chữ nhật`;
+      const wrong2 = `Một hình tam giác và hai hình tròn bán kính ${r} cm`;
+      const wrong3 = `Một hình chữ nhật kích thước ${r} cm × ${h} cm và 1 hình tròn`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 9,
+        topicTitle: "Chủ đề 9: Diện tích và thể tích hình khối",
+        semester: 2,
+        level: 1,
+        character: char,
+        question: `Khi khai triển mặt xung quanh và hai đáy của một hình trụ có bán kính đáy ${r} cm và chiều cao ${h} cm, ta nhận được:`,
+        options: options,
+        solution: [
+          `• Theo Bài 49 SGK Toán 5 Kết nối tri thức:`,
+          `  - Khi mở mặt xung quanh của hình trụ, ta được một <strong>hình chữ nhật</strong> có:`,
+          `    + Chiều dài bằng chu vi đáy hình trụ: ${r} × 2 × 3,14 = ${formatNum(circumference)} cm.`,
+          `    + Chiều rộng bằng chiều cao hình trụ: ${h} cm.`,
+          `  - Hai đáy là <strong>hai hình tròn bằng nhau</strong> có bán kính ${r} cm.`,
+          `<strong>Đáp số:</strong> ${correct}.`
+        ],
+        robotTip: "Hình khai triển của hình trụ gồm 1 hình chữ nhật (mặt xung quanh) và 2 hình tròn bằng nhau (hai đáy)!"
+      };
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 10: SỐ ĐO THỜI GIAN. TOÁN CHUYỂN ĐỘNG ĐỀU (BÀI 56 -> 62)
+    // -------------------------------------------------------------
+    G10_ConvertMinutesToDecimalHours: function () {
+      const char = choice(CHARACTERS);
+      const minChoice = choice([
+        { min: 15, hDec: "0,25" },
+        { min: 30, hDec: "0,5" },
+        { min: 45, hDec: "0,75" },
+        { min: 36, hDec: "0,6" },
+        { min: 48, hDec: "0,8" },
+        { min: 12, hDec: "0,2" }
+      ]);
+
+      const correct = `${minChoice.hDec} giờ`;
+      const wrongTrapDirect = `0,${minChoice.min} giờ`; // Bẫy kinh điển: 45 phút = 0,45 giờ!
+      const wrong1 = `${minChoice.min / 10} giờ`;
+      const wrong2 = `1,${minChoice.min} giờ`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrongTrapDirect, isCorrect: false },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 10,
+        topicTitle: "Chủ đề 10: Số đo thời gian. Vận tốc, quãng đường, thời gian",
+        semester: 2,
+        level: 1,
+        character: char,
+        question: `Đổi số đo thời gian: ${minChoice.min} phút = ... giờ?`,
+        options: options,
+        solution: [
+          `• 1 giờ = 60 phút.`,
+          `• Muốn đổi từ phút sang giờ, ta lấy số phút chia cho 60:`,
+          `  ${minChoice.min} : 60 = <strong>${minChoice.hDec}</strong> (giờ).`,
+          `<strong>Đáp số:</strong> ${minChoice.hDec} giờ.`
+        ],
+        robotTip: "Bẫy siêu phổ biến: Tuyệt đối không viết " + minChoice.min + " phút thành 0," + minChoice.min + " giờ! Phải chia cho 60 nhé!"
+      };
+    },
+
+    G10_OppositeDirectionMeetingProblem: function () {
+      const char = choice(CHARACTERS);
+      const v1 = choice([35, 40, 42, 45, 48]); // Xe máy
+      const v2 = choice([50, 55, 60, 65]); // Ô tô
+      const tHours = choice([1.5, 2, 2.5, 3]);
+      const s = (v1 + v2) * tHours;
+
+      const cities = [
+        { from: "Hà Nội", to: "Hải Phòng" },
+        { from: "Hà Nội", to: "Nam Định" },
+        { from: "TP. Hồ Chí Minh", to: "Vũng Tàu" },
+        { from: "Đà Nẵng", to: "Huế" }
+      ];
+      const city = choice(cities);
+
+      const correct = `${formatNum(tHours)} giờ`;
+      const wrong1 = `${formatNum(tHours + 0.5)} giờ`;
+      const wrong2 = `${formatNum(tHours - 0.5)} giờ`;
+      const wrong3 = `${formatNum(Math.round(s / (v2 - v1) * 10) / 10)} giờ`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 10,
+        topicTitle: "Chủ đề 10: Số đo thời gian. Vận tốc, quãng đường, thời gian",
+        semester: 2,
+        level: 3,
+        character: char,
+        question: `Quãng đường từ ${city.from} đến ${city.to} dài ${formatNum(s)} km. Một ô tô đi từ ${city.from} với vận tốc ${v2} km/h và một xe máy đi từ ${city.to} với vận tốc ${v1} km/h khởi hành cùng một lúc và đi ngược chiều nhau. Hỏi sau bao lâu hai xe gặp nhau?`,
+        options: options,
+        solution: [
+          `• Dạng toán chuyển động ngược chiều gặp nhau (Bài 62):`,
+          `• Sau mỗi giờ, hai xe đi được quãng đường là (tổng vận tốc):`,
+          `  ${v2} + ${v1} = ${v1 + v2} (km).`,
+          `• Thời gian để hai xe gặp nhau là:`,
+          `  ${formatNum(s)} : ${v1 + v2} = <strong>${formatNum(tHours)}</strong> (giờ).`,
+          `<strong>Đáp số:</strong> ${formatNum(tHours)} giờ.`
+        ],
+        robotTip: "Đi ngược chiều gặp nhau: Thời gian gặp nhau = Quãng đường : Tổng hai vận tốc (t = s : (v1 + v2))!"
+      };
+    },
+
+    G10_SameDirectionCatchUpProblem: function () {
+      const char = choice(CHARACTERS);
+      const vBike = 12; // Xe đạp
+      const vMoto = choice([36, 42, 48]); // Xe máy
+      const headStartHours = choice([1, 1.5, 2]);
+      const initialDistance = vBike * headStartHours;
+      const speedDiff = vMoto - vBike;
+      const catchUpTime = Math.round((initialDistance / speedDiff) * 10) / 10;
+
+      const correct = `${formatNum(catchUpTime)} giờ`;
+      const wrong1 = `${formatNum(catchUpTime + 1)} giờ`;
+      const wrong2 = `${formatNum(headStartHours)} giờ`;
+      const wrong3 = `${formatNum(Math.round(initialDistance / (vMoto + vBike) * 10) / 10)} giờ`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 10,
+        topicTitle: "Chủ đề 10: Số đo thời gian. Vận tốc, quãng đường, thời gian",
+        semester: 2,
+        level: 3,
+        character: char,
+        question: `Một người đi xe đạp với vận tốc ${vBike} km/h. Sau ${formatNum(headStartHours)} giờ, một người đi xe máy đuổi theo với vận tốc ${vMoto} km/h cùng xuất phát từ điểm đó. Hỏi sau bao lâu kể từ lúc xe máy bắt đầu đi, người đi xe máy đuổi kịp người đi xe đạp?`,
+        options: options,
+        solution: [
+          `• Quãng đường người đi xe đạp đã đi trước (khoảng cách ban đầu):`,
+          `  ${vBike} × ${formatNum(headStartHours)} = ${formatNum(initialDistance)} (km).`,
+          `• Sau mỗi giờ xe máy rút ngắn khoảng cách so với xe đạp là (hiệu vận tốc):`,
+          `  ${vMoto} - ${vBike} = ${speedDiff} (km/h).`,
+          `• Thời gian xe máy đuổi kịp xe đạp là:`,
+          `  ${formatNum(initialDistance)} : ${speedDiff} = <strong>${formatNum(catchUpTime)}</strong> (giờ).`,
+          `<strong>Đáp số:</strong> ${formatNum(catchUpTime)} giờ.`
+        ],
+        robotTip: "Đi cùng chiều đuổi kịp: Thời gian đuổi kịp = Khoảng cách cách nhau : Hiệu hai vận tốc (t = s : (v1 - v2))!"
+      };
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 11: MỘT SỐ YẾU TỐ THỐNG KÊ VÀ XÁC SUẤT (BÀI 63 -> 66)
+    // -------------------------------------------------------------
+    G11_PieChartInterpretation: function () {
+      const char = choice(CHARACTERS);
+      const totalStudents = choice([200, 300, 400, 500]);
+      const pMath = choice([35, 40, 45, 50]);
+      const countMath = (totalStudents * pMath) / 100;
+
+      const correct = `${countMath} học sinh`;
+      const wrong1 = `${pMath} học sinh`;
+      const wrong2 = `${countMath + 20} học sinh`;
+      const wrong3 = `${countMath - 15} học sinh`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 11,
+        topicTitle: "Chủ đề 11: Một số yếu tố thống kê và xác suất",
+        semester: 2,
+        level: 2,
+        character: char,
+        question: `Khảo sát môn học yêu thích của ${totalStudents} học sinh khối lớp 5. Biểu đồ hình quạt tròn cho biết có ${pMath}% học sinh yêu thích môn Toán. Hỏi có bao nhiêu học sinh yêu thích môn Toán?`,
+        options: options,
+        solution: [
+          `• Theo Bài 64 SGK Toán 5: Toàn bộ hình quạt tròn tương ứng với 100%.`,
+          `• Số học sinh yêu thích môn Toán là:`,
+          `  ${totalStudents} × ${pMath} : 100 = <strong>${countMath}</strong> (học sinh).`,
+          `<strong>Đáp số:</strong> ${countMath} học sinh.`
+        ],
+        robotTip: "Toàn bộ biểu đồ hình quạt tròn luôn là 100%. Muốn tìm số lượng thành phần, lấy Tổng × Tỉ lệ % : 100!"
+      };
+    },
+
+    G11_ExperimentalProbabilityRatio: function () {
+      const char = choice(CHARACTERS);
+      const totalTrials = choice([20, 30, 40, 50]);
+      const successCount = choice([9, 11, 13, 17, 19, 21, 23]);
+      const g = gcd(successCount, totalTrials);
+      const simNum = successCount / g;
+      const simDen = totalTrials / g;
+
+      const correct = `${simNum}/${simDen}`;
+      const wrong1 = `${totalTrials - successCount}/${totalTrials}`;
+      const wrong2 = `${successCount}/${totalTrials + 5}`;
+      const wrong3 = `${simDen}/${simNum}`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 11,
+        topicTitle: "Chủ đề 11: Một số yếu tố thống kê và xác suất",
+        semester: 2,
+        level: 2,
+        character: char,
+        question: `Bạn Nam gieo một đồng xu ${totalTrials} lần và ghi lại có ${successCount} lần xuất hiện mặt Ngửa. Tỉ số của số lần lặp lại sự kiện mặt Ngửa so với tổng số lần thực hiện là:`,
+        options: options,
+        solution: [
+          `• Theo Bài 65 SGK Toán 5: Xác suất thực nghiệm = (Số lần lặp lại sự kiện) / (Tổng số lần thực hiện).`,
+          `• Tỉ số cần tìm là: ${successCount}/${totalTrials}.`,
+          `• Rút gọn tối giản (nếu có): <strong>${simNum}/${simDen}</strong>.`,
+          `<strong>Đáp số:</strong> ${simNum}/${simDen}.`
+        ],
+        robotTip: "Tỉ số của số lần lặp lại sự kiện so với tổng số lần thực hiện luôn viết dưới dạng phân số tối giản!"
+      };
+    },
+
+    // -------------------------------------------------------------
+    // CHỦ ĐỀ 12: ÔN TẬP CUỐI NĂM (BÀI 67 -> 71)
+    // -------------------------------------------------------------
+    G12_ComprehensiveYearEndWaterTank: function () {
+      const char = choice(CHARACTERS);
+      const a = randInt(15, 25) / 10; // dài 1.5 - 2.5 m
+      const b = randInt(10, 15) / 10; // rộng 1.0 - 1.5 m
+      const h = randInt(8, 12) / 10;  // cao 0.8 - 1.2 m
+      const V_m3 = Math.round(a * b * h * 100) / 100;
+      const V_liters = Math.round(V_m3 * 1000); // dm3 = lít
+
+      const flowRatePerMin = choice([20, 25, 30, 40, 50]); // lít / phút
+      const totalMinutes = Math.round(V_liters / flowRatePerMin);
+      const hours = Math.floor(totalMinutes / 60);
+      const mins = totalMinutes % 60;
+
+      const timeStr = hours > 0 ? `${hours} giờ ${mins} phút` : `${mins} phút`;
+
+      const correct = timeStr;
+      const wrong1 = `${hours + 1} giờ ${mins} phút`;
+      const wrong2 = `${Math.round(totalMinutes * 0.8)} phút`;
+      const wrong3 = `${totalMinutes + 30} phút`;
+
+      const options = shuffle([
+        { text: correct, isCorrect: true },
+        { text: wrong1, isCorrect: false },
+        { text: wrong2, isCorrect: false },
+        { text: wrong3, isCorrect: false }
+      ]);
+
+      return {
+        topicId: 12,
+        topicTitle: "Chủ đề 12: Ôn tập cuối năm",
+        semester: 2,
+        level: 3,
+        character: char,
+        question: `Một bể nước hình hộp chữ nhật có kích thước bên trong là: chiều dài ${formatNum(a)} m, chiều rộng ${formatNum(b)} m và chiều cao ${formatNum(h)} m. Người ta mở một vòi nước chảy vào bể, trung bình mỗi phút vòi chảy được ${flowRatePerMin} lít nước. Hỏi sau bao lâu thì bể đầy nước?`,
+        options: options,
+        solution: [
+          `• Thể tích của bể nước là:`,
+          `  ${formatNum(a)} × ${formatNum(b)} × ${formatNum(h)} = ${formatNum(V_m3)} (m³).`,
+          `• Đổi sang đơn vị lít (1 m³ = 1000 dm³ = 1000 lít):`,
+          `  ${formatNum(V_m3)} m³ = ${formatNum(V_liters)} lít.`,
+          `• Thời gian để vòi nước chảy đầy bể là:`,
+          `  ${formatNum(V_liters)} : ${flowRatePerMin} = ${totalMinutes} (phút).`,
+          `• Đổi ra giờ và phút: ${totalMinutes} phút = <strong>${timeStr}</strong>.`,
+          `<strong>Đáp số:</strong> ${timeStr}.`
+        ],
+        robotTip: "Bài toán kết hợp thể tích hình hộp chữ nhật, chuyển đổi đơn vị thể tích sang lít và giải toán tỉ lệ thực tế!"
+      };
+    }
+  };
+
+  /* =========================================================================
+     4. MA TRẬN PHÂN BỔ CÂU HỎI THEO CHẾ ĐỘ THI & CHỦ ĐỀ
+     ========================================================================= */
+  const ALL_GEN_KEYS = Object.keys(GENERATORS);
+
+  const TOPIC_GEN_MAP = {
+    1: ['G1_FractionToDecimalFraction', 'G1_MixedFractionToFraction', 'G1_RatioOfQuantities'],
+    2: ['G2_DigitPlaceValue', 'G2_RoundingDecimals'],
+    3: ['G3_ConvertHectareToSquareMeters', 'G3_ConvertKm2ToHa'],
+    4: ['G4_MultiplyByTenHundredOrDecimals', 'G4_WordProblemDecimalMath'],
+    5: ['G5_TriangleArea', 'G5_TrapezoidArea', 'G5_CircleAreaAndCircumference'],
+    6: ['G6_ComprehensiveSemester1', 'G5_TrapezoidArea', 'G4_WordProblemDecimalMath'],
+    7: ['G7_SumAndRatioWordProblem', 'G7_DifferenceAndRatioWordProblem', 'G7_PercentageDiscount'],
+    8: ['G8_VolumeUnitsConversion'],
+    9: ['G9_RectangularBoxVolumeAndArea', 'G9_CylinderUnfoldedNet'],
+    10: ['G10_ConvertMinutesToDecimalHours', 'G10_OppositeDirectionMeetingProblem', 'G10_SameDirectionCatchUpProblem'],
+    11: ['G11_PieChartInterpretation', 'G11_ExperimentalProbabilityRatio'],
+    12: ['G12_ComprehensiveYearEndWaterTank', 'G10_OppositeDirectionMeetingProblem', 'G7_PercentageDiscount', 'G9_RectangularBoxVolumeAndArea']
+  };
+
+  const EXAM_MODE_POOLS = {
+    'giua-ky-1': [
+      ...TOPIC_GEN_MAP[1],
+      ...TOPIC_GEN_MAP[2],
+      ...TOPIC_GEN_MAP[3]
+    ],
+    'cuoi-ky-1': [
+      ...TOPIC_GEN_MAP[1],
+      ...TOPIC_GEN_MAP[2],
+      ...TOPIC_GEN_MAP[3],
+      ...TOPIC_GEN_MAP[4],
+      ...TOPIC_GEN_MAP[5],
+      ...TOPIC_GEN_MAP[6]
+    ],
+    'giua-ky-2': [
+      ...TOPIC_GEN_MAP[7],
+      ...TOPIC_GEN_MAP[8],
+      ...TOPIC_GEN_MAP[9]
+    ],
+    'cuoi-nam': ALL_GEN_KEYS
+  };
+
+  /* =========================================================================
+     5. HÀM TẠO ĐỀ THI TỰ ĐỘNG KHÔNG TRÙNG LẶP (CORE API)
+     ========================================================================= */
+  function generateExam(mode = 'cuoi-nam', count = 12) {
+    let pool = [];
+
+    if (mode.startsWith('topic-')) {
+      const topicId = parseInt(mode.replace('topic-', ''), 10);
+      pool = TOPIC_GEN_MAP[topicId] || ALL_GEN_KEYS;
+    } else if (EXAM_MODE_POOLS[mode]) {
+      pool = EXAM_MODE_POOLS[mode];
+    } else {
+      pool = ALL_GEN_KEYS;
+    }
+
+    const questions = [];
+    const usedSignatures = new Set();
+    const examCode = `KNTT-${randInt(10000, 99999)}`;
+
+    let attempts = 0;
+    while (questions.length < count && attempts < count * 20) {
+      attempts++;
+      // Rotate through pool or pick random
+      const genKey = pool[questions.length % pool.length] || choice(pool);
+      const generatorFn = GENERATORS[genKey];
+      if (typeof generatorFn !== 'function') continue;
+
+      const q = generatorFn();
+      // Generate deduplication signature based on question text core
+      const sig = q.question.replace(/\s+/g, '').substring(0, 40);
+      if (!usedSignatures.has(sig) || questions.length >= pool.length) {
+        usedSignatures.add(sig);
+        q.id = questions.length + 1;
+        q.type = 'mcq';
+        questions.push(q);
+      }
+    }
+
+    return {
+      examCode: examCode,
+      mode: mode,
+      count: questions.length,
+      createdAt: new Date().toISOString(),
+      questions: questions
+    };
+  }
+
+  return {
+    generateExam: generateExam,
+    GENERATORS: GENERATORS,
+    CHARACTERS: CHARACTERS
+  };
+});
+;
+
+    /* =========================================================================
+       4. TRẠNG THÁI ỨNG DỤNG (APP STATE)
+       ========================================================================= */
+    const state = {
+      activeTab: 'tab-theory',
+      currentSemesterFilter: 'all',
+      // Converter state
+      converterType: 'area', // 'area' | 'volume'
+      // Lab state
+      labTool: 'geometry', // 'geometry' | 'diagram'
+      selectedShape: 'trapezoid', // 'trapezoid' | 'circle' | 'box'
+      shapeParams: {
+        trapezoid: { a: 12, b: 18, h: 10 },
+        circle: { r: 5 },
+        box: { a: 8, b: 5, c: 6 }
+      },
+      ratioProblem: {
+        type: 'sum', // 'sum' | 'diff'
+        totalVal: 45,
+        partSmall: 2,
+        partBig: 3
+      },
+      // Smart Exam Engine state (Ngân hàng 100.000+ câu hỏi tự động)
+      examMode: 'cuoi-nam',
+      examLength: 20,
+      examCode: 'KNTT-2026-AUTO',
+      currentQuestions: [],
+      quizAnswersState: [],
+      currentQuizIndex: 0,
+      starsEarned: 0,
+      streak: 0
+    };
+
+
+    /* =========================================================================
+       5. CHUYỂN ĐỔI TAB & BỘ LỌC HỌC KỲ
+       ========================================================================= */
+    function openHandbookModal() {
+      playClickSound();
+      const modal = document.getElementById('handbook-modal');
+      if (modal) modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeHandbookModal() {
+      playClickSound();
+      const modal = document.getElementById('handbook-modal');
+      if (modal) modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    // Đóng khi click ngoài khung modal hoặc bấm ESC
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeHandbookModal();
+    });
+    window.addEventListener('click', (e) => {
+      const modal = document.getElementById('handbook-modal');
+      if (modal && e.target === modal) closeHandbookModal();
+    });
+
+    function switchTab(tabId) {
+      playClickSound();
+      state.activeTab = tabId;
+
+      // Update Tab panes
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      const activeEl = document.getElementById(tabId);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      // Update Nav buttons styling
+      const tabs = [
+        { id: 'tab-theory', btn: 'nav-btn-theory' },
+        { id: 'tab-lab', btn: 'nav-btn-lab' },
+        { id: 'tab-quiz', btn: 'nav-btn-quiz' }
+      ];
+
+      tabs.forEach(t => {
+        const btn = document.getElementById(t.btn);
+        if (btn) {
+          if (t.id === tabId) {
+            btn.className = "tab-button flex items-center gap-2 px-4 py-2 font-black text-sm rounded-xl transition duration-150 shadow-comic bg-sky-500 text-white border-2 border-sky-600 whitespace-nowrap";
+          } else {
+            btn.className = "tab-button flex items-center gap-2 px-4 py-2 font-black text-sm rounded-xl transition duration-150 shadow-comic bg-white text-slate-700 hover:bg-slate-100 border-2 border-slate-300 whitespace-nowrap";
+          }
+        }
+      });
+
+      // Special triggers on tab open
+      if (tabId === 'tab-lab') {
+        if (state.labTool === 'geometry') renderShapeSimulator();
+        else solveRatioProblem();
+      }
+    }
+
+    function filterSemester(sem) {
+      playClickSound();
+      state.currentSemesterFilter = sem;
+
+      const btnAll = document.getElementById('btn-sem-all');
+      const btn1 = document.getElementById('btn-sem-1');
+      const btn2 = document.getElementById('btn-sem-2');
+
+      const activeClass = "flex-1 md:flex-none px-4 py-1.5 rounded-xl text-xs sm:text-sm font-black transition border-2 border-sky-600 bg-sky-500 text-white shadow-comic";
+      const inactiveClass = "flex-1 md:flex-none px-4 py-1.5 rounded-xl text-xs sm:text-sm font-black transition border-2 border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic";
+
+      btnAll.className = sem === 'all' ? activeClass : inactiveClass;
+      btn1.className = sem === 1 ? activeClass : inactiveClass;
+      btn2.className = sem === 2 ? activeClass : inactiveClass;
+
+      renderTopicsCards();
+    }
+
+    function quickJumpToConverter() {
+      switchTab('tab-theory');
+      const el = document.getElementById('unit-converter-box');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /* =========================================================================
+       6. RENDER 12 CHỦ ĐỀ SÁCH GIÁO KHOA (TAB 1)
+       ========================================================================= */
+    function renderTopicsCards() {
+      const container = document.getElementById('topics-container');
+      container.innerHTML = '';
+
+      const filtered = TOPICS_DATA.filter(t => {
+        if (state.currentSemesterFilter === 'all') return true;
+        return t.semester === state.currentSemesterFilter;
+      });
+
+      filtered.forEach(topic => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl p-5 border-2 border-slate-200 shadow-comic hover:border-sky-300 transition duration-200 space-y-4 flex flex-col justify-between";
+
+        const semBadge = topic.semester === 1 
+          ? '<span class="bg-blue-100 text-blue-800 text-[11px] font-extrabold px-2 py-0.5 rounded-md">Học kỳ 1 (Tập 1)</span>'
+          : '<span class="bg-emerald-100 text-emerald-800 text-[11px] font-extrabold px-2 py-0.5 rounded-md">Học kỳ 2 (Tập 2)</span>';
+
+        const listItems = topic.summary.map(s => `<li class="leading-relaxed">${s}</li>`).join('');
+
+        card.innerHTML = `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">${topic.icon}</span>
+                <h3 class="font-black text-slate-900 text-base sm:text-lg">${topic.title}</h3>
+              </div>
+              ${semBadge}
+            </div>
+
+            <!-- Khung tóm tắt ghi nhớ -->
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs sm:text-sm text-slate-700">
+              <div class="font-extrabold text-slate-900 mb-1.5 text-xs uppercase tracking-wider text-sky-700 flex items-center gap-1">
+                <span>📌</span> Trọng tâm kiến thức:
+              </div>
+              <ul class="list-disc list-inside space-y-1.5 marker:text-sky-500">
+                ${listItems}
+              </ul>
+            </div>
+          </div>
+
+          <!-- Lời Rô-bốt mách nhỏ -->
+          <div class="bg-gradient-to-r from-amber-50 to-yellow-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-start gap-2.5">
+            <span class="text-lg flex-shrink-0 animate-bounce">🤖</span>
+            <div>
+              <strong class="font-black text-amber-950">Góc Rô-bốt mách nhỏ:</strong>
+              <p class="mt-0.5">${topic.robotTip}</p>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    /* =========================================================================
+       7. BẢNG QUY ĐỔI ĐƠN VỊ ĐO TỰ ĐỘNG (TAB 1)
+       ========================================================================= */
+    const AREA_UNITS = [
+      { id: 'km²', label: 'km² (ki-lô-mét vuông)', toBase: 1000000 },
+      { id: 'ha', label: 'ha (héc-ta)', toBase: 10000 },
+      { id: 'm²', label: 'm² (mét vuông)', toBase: 1 },
+      { id: 'dm²', label: 'dm² (đề-xi-mét vuông)', toBase: 0.01 },
+      { id: 'cm²', label: 'cm² (xăng-ti-mét vuông)', toBase: 0.0001 }
+    ];
+
+    const VOLUME_UNITS = [
+      { id: 'm³', label: 'm³ (mét khối)', toBase: 1000 },
+      { id: 'dm³', label: 'dm³ / lít', toBase: 1 },
+      { id: 'cm³', label: 'cm³ / ml', toBase: 0.001 }
+    ];
+
+    function setConverterType(type) {
+      playClickSound();
+      state.converterType = type;
+
+      const btnArea = document.getElementById('conv-type-area');
+      const btnVol = document.getElementById('conv-type-volume');
+      const tip = document.getElementById('converter-robot-tip');
+
+      if (type === 'area') {
+        btnArea.className = "px-3 py-1 rounded-lg text-xs font-black bg-amber-500 text-white shadow-sm border border-amber-600";
+        btnVol.className = "px-3 py-1 rounded-lg text-xs font-black bg-white text-slate-700 hover:bg-amber-100 shadow-sm border border-slate-300";
+        tip.innerHTML = "<strong>Góc Rô-bốt mách nhỏ:</strong> 1 héc-ta (ha) = 10 000 m². Mỗi đơn vị diện tích liền kề gấp hoặc kém nhau 100 lần (thêm hoặc bớt 2 chữ số 0)!";
+      } else {
+        btnVol.className = "px-3 py-1 rounded-lg text-xs font-black bg-amber-500 text-white shadow-sm border border-amber-600";
+        btnArea.className = "px-3 py-1 rounded-lg text-xs font-black bg-white text-slate-700 hover:bg-amber-100 shadow-sm border border-slate-300";
+        tip.innerHTML = "<strong>Góc Rô-bốt mách nhỏ:</strong> 1 dm³ = 1 lít. Mỗi đơn vị thể tích liền kề gấp hoặc kém nhau 1000 lần (thêm hoặc bớt 3 chữ số 0)!";
+      }
+
+      populateConverterDropdown();
+      runUnitConvert();
+    }
+
+    function populateConverterDropdown() {
+      const select = document.getElementById('converter-from-unit');
+      select.innerHTML = '';
+      const list = state.converterType === 'area' ? AREA_UNITS : VOLUME_UNITS;
+
+      list.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.id;
+        opt.textContent = u.label;
+        select.appendChild(opt);
+      });
+      // Default selection
+      if (state.converterType === 'area') select.value = 'ha';
+      else select.value = 'm³';
+    }
+
+    function formatNumberVi(num) {
+      if (num === 0) return '0';
+      if (Math.abs(num) >= 10000000 || (Math.abs(num) < 0.0001 && num !== 0)) {
+        return num.toExponential(4).replace('.', ',');
+      }
+      // Rounded clean decimal
+      const formatted = Number(num.toFixed(6)).toString();
+      return formatted.replace('.', ',');
+    }
+
+    function runUnitConvert() {
+      const inputVal = parseFloat(document.getElementById('converter-input-val').value);
+      const fromUnitId = document.getElementById('converter-from-unit').value;
+      const resultList = document.getElementById('converter-result-list');
+      resultList.innerHTML = '';
+
+      if (isNaN(inputVal)) {
+        resultList.innerHTML = '<span class="text-red-500 col-span-2">Vui lòng nhập một số hợp lệ</span>';
+        return;
+      }
+
+      const list = state.converterType === 'area' ? AREA_UNITS : VOLUME_UNITS;
+      const currentUnitObj = list.find(u => u.id === fromUnitId);
+      if (!currentUnitObj) return;
+
+      // Base: m2 for area, dm3 (liters) for volume
+      const baseValue = inputVal * currentUnitObj.toBase;
+
+      list.forEach(targetUnit => {
+        const converted = baseValue / targetUnit.toBase;
+        const isCurrent = targetUnit.id === fromUnitId;
+
+        const item = document.createElement('div');
+        item.className = isCurrent 
+          ? "bg-amber-200/80 p-2 rounded-lg border border-amber-400 flex items-center justify-between"
+          : "bg-slate-50 p-2 rounded-lg border border-slate-200 flex items-center justify-between";
+
+        item.innerHTML = `
+          <span class="text-slate-600 font-bold">${targetUnit.id}:</span>
+          <span class="font-black ${isCurrent ? 'text-amber-950' : 'text-slate-900'}">${formatNumberVi(converted)}</span>
+        `;
+        resultList.appendChild(item);
+      });
+    }
+
+    /* =========================================================================
+       8. PHÒNG THÍ NGHIỆM TOÁN HỌC: MÁY TÍNH HÌNH HỌC TRỰC QUAN (TAB 2)
+       ========================================================================= */
+    function setLabTool(tool) {
+      playClickSound();
+      state.labTool = tool;
+
+      const btnGeo = document.getElementById('lab-tool-geo-btn');
+      const btnDiag = document.getElementById('lab-tool-diag-btn');
+      const secGeo = document.getElementById('lab-geometry-section');
+      const secDiag = document.getElementById('lab-diagram-section');
+
+      if (tool === 'geometry') {
+        btnGeo.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-purple-600 text-white shadow-comic border-2 border-purple-700";
+        btnDiag.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic border-2 border-slate-300";
+        secGeo.classList.remove('hidden');
+        secDiag.classList.add('hidden');
+        renderShapeSimulator();
+      } else {
+        btnDiag.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-purple-600 text-white shadow-comic border-2 border-purple-700";
+        btnGeo.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-black bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic border-2 border-slate-300";
+        secDiag.classList.remove('hidden');
+        secGeo.classList.add('hidden');
+        solveRatioProblem();
+      }
+    }
+
+    function selectShape(shape) {
+      playClickSound();
+      state.selectedShape = shape;
+
+      const shapes = ['trapezoid', 'circle', 'box'];
+      shapes.forEach(s => {
+        const btn = document.getElementById(`shape-btn-${s}`);
+        if (s === shape) {
+          btn.className = "px-3 py-1.5 rounded-lg text-xs font-black bg-sky-500 text-white shadow-sm border border-sky-600";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-lg text-xs font-black bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-sm border border-slate-300";
+        }
+      });
+
+      renderShapeSimulator();
+    }
+
+    function renderShapeSimulator() {
+      const inputsContainer = document.getElementById('shape-inputs-container');
+      const title = document.getElementById('shape-input-title');
+      const formulaEl = document.getElementById('shape-formula-text');
+      const stepsEl = document.getElementById('shape-calculation-steps');
+      const finalResultEl = document.getElementById('shape-final-result');
+      const svgWrapper = document.getElementById('shape-svg-wrapper');
+
+      inputsContainer.innerHTML = '';
+
+      if (state.selectedShape === 'trapezoid') {
+        title.innerHTML = '<span>⚙️</span> Thông số Hình thang';
+        const p = state.shapeParams.trapezoid;
+
+        inputsContainer.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold text-slate-600">Đáy lớn a (cm):</label>
+            <input type="number" id="trap-b" value="${p.b}" min="1" step="any" oninput="updateShapeParams()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600">Đáy bé b (cm):</label>
+            <input type="number" id="trap-a" value="${p.a}" min="1" step="any" oninput="updateShapeParams()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600">Chiều cao h (cm):</label>
+            <input type="number" id="trap-h" value="${p.h}" min="1" step="any" oninput="updateShapeParams()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-sm">
+          </div>
+        `;
+
+        const area = ((p.a + p.b) * p.h) / 2;
+        formulaEl.textContent = "S = (a + b) × h : 2";
+        stepsEl.innerHTML = `
+          • Tổng hai đáy: ${p.b} + ${p.a} = ${p.b + p.a} cm<br>
+          • Thế số: S = (${p.b} + ${p.a}) × ${p.h} : 2 = ${(p.b + p.a) * p.h} : 2 = ${area} cm²
+        `;
+        finalResultEl.textContent = `Diện tích S = ${formatNumberVi(area)} cm²`;
+
+        // Draw Trapezoid SVG
+        svgWrapper.innerHTML = `
+          <svg viewBox="0 0 340 220" class="w-full max-w-[340px] drop-shadow">
+            <!-- Trapezoid Body -->
+            <polygon points="90,50 250,50 310,170 30,170" fill="#bae6fd" stroke="#0284c7" stroke-width="3" />
+            <!-- Height dashed line -->
+            <line x1="90" y1="50" x2="90" y2="170" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="4,4" />
+            <rect x="90" y="156" width="14" height="14" fill="none" stroke="#ef4444" stroke-width="1.5" />
+            
+            <!-- Labels -->
+            <text x="170" y="42" fill="#0369a1" font-weight="bold" font-size="13" text-anchor="middle">Đáy bé: ${p.a} cm</text>
+            <text x="170" y="195" fill="#0369a1" font-weight="bold" font-size="13" text-anchor="middle">Đáy lớn: ${p.b} cm</text>
+            <text x="105" y="115" fill="#dc2626" font-weight="bold" font-size="12">h = ${p.h} cm</text>
+          </svg>
+        `;
+
+      } else if (state.selectedShape === 'circle') {
+        title.innerHTML = '<span>⚙️</span> Thông số Hình tròn';
+        const p = state.shapeParams.circle;
+
+        inputsContainer.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold text-slate-600">Bán kính r (cm):</label>
+            <input type="number" id="circle-r" value="${p.r}" min="0.1" step="any" oninput="updateShapeParams()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-sm">
+          </div>
+          <div class="text-xs text-slate-500">
+            Đường kính tương ứng: <strong>d = ${(p.r * 2).toFixed(1)} cm</strong>
+          </div>
+        `;
+
+        const C = 2 * p.r * 3.14;
+        const S = p.r * p.r * 3.14;
+
+        formulaEl.textContent = "Chu vi C = r × 2 × 3,14 | Diện tích S = r × r × 3,14";
+        stepsEl.innerHTML = `
+          • Chu vi: C = ${p.r} × 2 × 3,14 = ${formatNumberVi(C)} cm<br>
+          • Diện tích: S = ${p.r} × ${p.r} × 3,14 = ${formatNumberVi(S)} cm²
+        `;
+        finalResultEl.innerHTML = `
+          <div>Chu vi C = ${formatNumberVi(C)} cm</div>
+          <div class="text-lg mt-0.5">Diện tích S = ${formatNumberVi(S)} cm²</div>
+        `;
+
+        // Draw Circle SVG
+        svgWrapper.innerHTML = `
+          <svg viewBox="0 0 300 220" class="w-full max-w-[300px] drop-shadow">
+            <circle cx="150" cy="110" r="75" fill="#fed7aa" stroke="#f97316" stroke-width="3" />
+            <!-- Center dot -->
+            <circle cx="150" cy="110" r="4" fill="#c2410c" />
+            <text x="142" y="105" fill="#9a3412" font-size="11" font-weight="bold">O</text>
+            <!-- Radius line -->
+            <line x1="150" y1="110" x2="225" y2="110" stroke="#dc2626" stroke-width="2.5" />
+            <text x="187" y="102" fill="#dc2626" font-size="12" font-weight="bold" text-anchor="middle">r = ${p.r} cm</text>
+          </svg>
+        `;
+
+      } else if (state.selectedShape === 'box') {
+        title.innerHTML = '<span>⚙️</span> Thông số Hình hộp chữ nhật';
+        const p = state.shapeParams.box;
+
+        inputsContainer.innerHTML = `
+          <div>
+            <label class="block text-xs font-bold text-slate-600">Chiều dài a (cm):</label>
+            <input type="number" id="box-a" value="${p.a}" min="1" step="any" oninput="updateShapeParams()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600">Chiều rộng b (cm):</label>
+            <input type="number" id="box-b" value="${p.b}" min="1" step="any" oninput="updateShapeParams()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600">Chiều cao c (cm):</label>
+            <input type="number" id="box-c" value="${p.c}" min="1" step="any" oninput="updateShapeParams()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg font-bold text-sm">
+          </div>
+        `;
+
+        const Sxq = (p.a + p.b) * 2 * p.c;
+        const Stp = Sxq + 2 * (p.a * p.b);
+        const V = p.a * p.b * p.c;
+
+        formulaEl.textContent = "V = a × b × c | Sxq = (a + b) × 2 × c";
+        stepsEl.innerHTML = `
+          • S<sub>xq</sub> = (${p.a} + ${p.b}) × 2 × ${p.c} = ${Sxq} cm²<br>
+          • S<sub>tp</sub> = ${Sxq} + 2 × (${p.a} × ${p.b}) = ${Stp} cm²<br>
+          • Thể tích: V = ${p.a} × ${p.b} × ${p.c} = ${V} cm³
+        `;
+        finalResultEl.innerHTML = `
+          <div>Thể tích V = ${formatNumberVi(V)} cm³</div>
+          <div class="text-sm mt-0.5 font-bold">Sxq: ${formatNumberVi(Sxq)} cm² | Stp: ${formatNumberVi(Stp)} cm²</div>
+        `;
+
+        // Draw 3D Isometric Rectangular Box SVG
+        svgWrapper.innerHTML = `
+          <svg viewBox="0 0 320 220" class="w-full max-w-[320px] drop-shadow">
+            <!-- Front Face -->
+            <polygon points="50,90 190,90 190,180 50,180" fill="#a7f3d0" stroke="#059669" stroke-width="2.5" />
+            <!-- Top Face -->
+            <polygon points="50,90 110,40 250,40 190,90" fill="#6ee7b7" stroke="#059669" stroke-width="2.5" />
+            <!-- Right Side Face -->
+            <polygon points="190,90 250,40 250,130 190,180" fill="#34d399" stroke="#059669" stroke-width="2.5" />
+            <!-- Hidden lines dashed -->
+            <line x1="50" y1="180" x2="110" y2="130" stroke="#047857" stroke-width="1.5" stroke-dasharray="3,3" />
+            <line x1="110" y1="130" x2="250" y2="130" stroke="#047857" stroke-width="1.5" stroke-dasharray="3,3" />
+            <line x1="110" y1="130" x2="110" y2="40" stroke="#047857" stroke-width="1.5" stroke-dasharray="3,3" />
+            
+            <!-- Dimension labels -->
+            <text x="120" y="198" fill="#065f46" font-size="12" font-weight="bold" text-anchor="middle">dài a = ${p.a} cm</text>
+            <text x="235" y="165" fill="#065f46" font-size="12" font-weight="bold">rộng b = ${p.b} cm</text>
+            <text x="32" y="140" fill="#065f46" font-size="12" font-weight="bold" text-anchor="end">cao c = ${p.c} cm</text>
+          </svg>
+        `;
+      }
+    }
+
+    function updateShapeParams() {
+      if (state.selectedShape === 'trapezoid') {
+        const a = parseFloat(document.getElementById('trap-a').value) || 1;
+        const b = parseFloat(document.getElementById('trap-b').value) || 1;
+        const h = parseFloat(document.getElementById('trap-h').value) || 1;
+        state.shapeParams.trapezoid = { a, b, h };
+      } else if (state.selectedShape === 'circle') {
+        const r = parseFloat(document.getElementById('circle-r').value) || 1;
+        state.shapeParams.circle = { r };
+      } else if (state.selectedShape === 'box') {
+        const a = parseFloat(document.getElementById('box-a').value) || 1;
+        const b = parseFloat(document.getElementById('box-b').value) || 1;
+        const c = parseFloat(document.getElementById('box-c').value) || 1;
+        state.shapeParams.box = { a, b, c };
+      }
+      renderShapeSimulator();
+    }
+
+    /* =========================================================================
+       9. GIẢI TOÁN TỔNG - TỈ & HIỆU - TỈ VẼ SƠ ĐỒ ĐOẠN THẲNG (TAB 2)
+       ========================================================================= */
+    function setRatioProblemType(type) {
+      playClickSound();
+      state.ratioProblem.type = type;
+
+      const btnSum = document.getElementById('ratio-btn-sum');
+      const btnDiff = document.getElementById('ratio-btn-diff');
+      const labelVal = document.getElementById('ratio-val-label');
+
+      if (type === 'sum') {
+        btnSum.className = "px-3.5 py-1.5 rounded-xl text-xs font-black bg-orange-500 text-white shadow-comic-orange border border-orange-600";
+        btnDiff.className = "px-3.5 py-1.5 rounded-xl text-xs font-black bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic border border-slate-300";
+        labelVal.textContent = "Tổng của hai số:";
+        state.ratioProblem.totalVal = 45;
+        state.ratioProblem.partSmall = 2;
+        state.ratioProblem.partBig = 3;
+      } else {
+        btnDiff.className = "px-3.5 py-1.5 rounded-xl text-xs font-black bg-orange-500 text-white shadow-comic-orange border border-orange-600";
+        btnSum.className = "px-3.5 py-1.5 rounded-xl text-xs font-black bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-comic border border-slate-300";
+        labelVal.textContent = "Hiệu của hai số:";
+        state.ratioProblem.totalVal = 24;
+        state.ratioProblem.partSmall = 2;
+        state.ratioProblem.partBig = 5;
+      }
+
+      document.getElementById('ratio-total-val').value = state.ratioProblem.totalVal;
+      document.getElementById('ratio-part-small').value = state.ratioProblem.partSmall;
+      document.getElementById('ratio-part-big').value = state.ratioProblem.partBig;
+
+      solveRatioProblem();
+    }
+
+    function randomizeRatioProblem() {
+      playClickSound();
+      if (state.ratioProblem.type === 'sum') {
+        const samples = [
+          { val: 45, s: 2, b: 3 },
+          { val: 64, s: 3, b: 5 },
+          { val: 90, s: 4, b: 5 },
+          { val: 72, s: 1, b: 3 },
+          { val: 120, s: 2, b: 3 }
+        ];
+        const pick = samples[Math.floor(Math.random() * samples.length)];
+        state.ratioProblem.totalVal = pick.val;
+        state.ratioProblem.partSmall = pick.s;
+        state.ratioProblem.partBig = pick.b;
+      } else {
+        const samples = [
+          { val: 24, s: 2, b: 5 },
+          { val: 36, s: 1, b: 4 },
+          { val: 15, s: 2, b: 5 },
+          { val: 40, s: 3, b: 7 },
+          { val: 28, s: 3, b: 7 }
+        ];
+        const pick = samples[Math.floor(Math.random() * samples.length)];
+        state.ratioProblem.totalVal = pick.val;
+        state.ratioProblem.partSmall = pick.s;
+        state.ratioProblem.partBig = pick.b;
+      }
+
+      document.getElementById('ratio-total-val').value = state.ratioProblem.totalVal;
+      document.getElementById('ratio-part-small').value = state.ratioProblem.partSmall;
+      document.getElementById('ratio-part-big').value = state.ratioProblem.partBig;
+
+      solveRatioProblem();
+    }
+
+    function solveRatioProblem() {
+      const val = parseFloat(document.getElementById('ratio-total-val').value) || 0;
+      let partSmall = parseInt(document.getElementById('ratio-part-small').value) || 1;
+      let partBig = parseInt(document.getElementById('ratio-part-big').value) || 2;
+
+      // Ensure valid parts
+      if (partSmall < 1) partSmall = 1;
+      if (partBig <= partSmall) partBig = partSmall + 1;
+
+      state.ratioProblem.totalVal = val;
+      state.ratioProblem.partSmall = partSmall;
+      state.ratioProblem.partBig = partBig;
+
+      const isSum = state.ratioProblem.type === 'sum';
+      const partsDiffOrSum = isSum ? (partSmall + partBig) : (partBig - partSmall);
+      const unitValue = val / partsDiffOrSum;
+      const numSmall = unitValue * partSmall;
+      const numBig = unitValue * partBig;
+
+      // 1. Render Sơ đồ đoạn thẳng SVG tự động
+      renderRatioSVG(partSmall, partBig, isSum, val);
+
+      // 2. Render Các bước giải chi tiết chuẩn SGK
+      const stepsContainer = document.getElementById('ratio-solution-steps');
+      if (isSum) {
+        stepsContainer.innerHTML = `
+          <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+            <strong>Bước 1:</strong> Theo sơ đồ, tổng số phần bằng nhau là:<br>
+            <span class="font-mono text-indigo-700">${partSmall} + ${partBig} = ${partsDiffOrSum} (phần)</span>
+          </div>
+          <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+            <strong>Bước 2:</strong> Giá trị của một phần bằng nhau là:<br>
+            <span class="font-mono text-indigo-700">${val} : ${partsDiffOrSum} = ${formatNumberVi(unitValue)}</span>
+          </div>
+          <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+            <strong>Bước 3:</strong> Số bé là:<br>
+            <span class="font-mono text-emerald-700">${formatNumberVi(unitValue)} × ${partSmall} = ${formatNumberVi(numSmall)}</span>
+          </div>
+          <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+            <strong>Bước 4:</strong> Số lớn là:<br>
+            <span class="font-mono text-emerald-700">${val} - ${formatNumberVi(numSmall)} = ${formatNumberVi(numBig)} (hoặc ${formatNumberVi(unitValue)} × ${partBig} = ${formatNumberVi(numBig)})</span>
+          </div>
+          <div class="p-3 bg-emerald-100/80 rounded-lg text-emerald-900 font-black border border-emerald-300">
+            🎯 ĐÁP SỐ: Số bé = ${formatNumberVi(numSmall)}; Số lớn = ${formatNumberVi(numBig)}.
+          </div>
+        `;
+      } else {
+        stepsContainer.innerHTML = `
+          <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+            <strong>Bước 1:</strong> Theo sơ đồ, hiệu số phần bằng nhau là:<br>
+            <span class="font-mono text-indigo-700">${partBig} - ${partSmall} = ${partsDiffOrSum} (phần)</span>
+          </div>
+          <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+            <strong>Bước 2:</strong> Giá trị của một phần bằng nhau là:<br>
+            <span class="font-mono text-indigo-700">${val} : ${partsDiffOrSum} = ${formatNumberVi(unitValue)}</span>
+          </div>
+          <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+            <strong>Bước 3:</strong> Số bé là:<br>
+            <span class="font-mono text-emerald-700">${formatNumberVi(unitValue)} × ${partSmall} = ${formatNumberVi(numSmall)}</span>
+          </div>
+          <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+            <strong>Bước 4:</strong> Số lớn là:<br>
+            <span class="font-mono text-emerald-700">${formatNumberVi(numSmall)} + ${val} = ${formatNumberVi(numBig)} (hoặc ${formatNumberVi(unitValue)} × ${partBig} = ${formatNumberVi(numBig)})</span>
+          </div>
+          <div class="p-3 bg-emerald-100/80 rounded-lg text-emerald-900 font-black border border-emerald-300">
+            🎯 ĐÁP SỐ: Số bé = ${formatNumberVi(numSmall)}; Số lớn = ${formatNumberVi(numBig)}.
+          </div>
+        `;
+      }
+    }
+
+    function renderRatioSVG(partSmall, partBig, isSum, val) {
+      const container = document.getElementById('ratio-svg-container');
+      const boxWidth = 36;
+      const boxHeight = 22;
+      const startX = 110;
+      const ySmall = 40;
+      const yBig = 100;
+      const svgWidth = Math.max(540, startX + partBig * boxWidth + 140);
+      const svgHeight = 160;
+
+      let rectsSmall = '';
+      for (let i = 0; i < partSmall; i++) {
+        rectsSmall += `
+          <rect x="${startX + i * boxWidth}" y="${ySmall}" width="${boxWidth}" height="${boxHeight}" fill="#bae6fd" stroke="#0284c7" stroke-width="2" rx="2" />
+        `;
+      }
+
+      let rectsBig = '';
+      for (let i = 0; i < partBig; i++) {
+        rectsBig += `
+          <rect x="${startX + i * boxWidth}" y="${yBig}" width="${boxWidth}" height="${boxHeight}" fill="#fed7aa" stroke="#ea580c" stroke-width="2" rx="2" />
+        `;
+      }
+
+      let annotation = '';
+      if (isSum) {
+        // Dấu ngoặc nhọn tổng hai số
+        const endX = startX + Math.max(partSmall, partBig) * boxWidth + 15;
+        annotation = `
+          <path d="M ${endX} 45 Q ${endX + 20} 80 ${endX + 35} 80 Q ${endX + 20} 80 ${endX} 115" fill="none" stroke="#475569" stroke-width="2.5" />
+          <text x="${endX + 45}" y="86" fill="#1e293b" font-weight="900" font-size="14">Tổng: ${val}</text>
+        `;
+      } else {
+        // Đoạn biểu thị phần hơn kém (hiệu)
+        const diffStartX = startX + partSmall * boxWidth;
+        const diffEndX = startX + partBig * boxWidth;
+        annotation = `
+          <line x1="${diffStartX}" y1="${ySmall + boxHeight + 4}" x2="${diffStartX}" y2="${yBig - 4}" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,3" />
+          <line x1="${diffStartX}" y1="132" x2="${diffEndX}" y2="132" stroke="#dc2626" stroke-width="2" />
+          <line x1="${diffStartX}" y1="126" x2="${diffStartX}" y2="138" stroke="#dc2626" stroke-width="2" />
+          <line x1="${diffEndX}" y1="126" x2="${diffEndX}" y2="138" stroke="#dc2626" stroke-width="2" />
+          <text x="${(diffStartX + diffEndX) / 2}" y="150" fill="#dc2626" font-weight="bold" font-size="12" text-anchor="middle">Hiệu: ${val}</text>
+        `;
+      }
+
+      container.innerHTML = `
+        <svg viewBox="0 0 ${svgWidth} ${svgHeight}" class="w-full h-auto min-w-[500px]">
+          <!-- Label Số bé -->
+          <text x="20" y="${ySmall + 16}" fill="#0369a1" font-weight="bold" font-size="13">Số bé (?):</text>
+          ${rectsSmall}
+          <text x="${startX + partSmall * boxWidth + 10}" y="${ySmall + 16}" fill="#0284c7" font-size="11" font-weight="bold">(${partSmall} phần)</text>
+          
+          <!-- Label Số lớn -->
+          <text x="20" y="${yBig + 16}" fill="#c2410c" font-weight="bold" font-size="13">Số lớn (?):</text>
+          ${rectsBig}
+          <text x="${startX + partBig * boxWidth + 10}" y="${yBig + 16}" fill="#ea580c" font-size="11" font-weight="bold">(${partBig} phần)</text>
+          
+          <!-- Ghi chú ngoặc hoặc hiệu -->
+          ${annotation}
+        </svg>
+      `;
+    }
+
+        /* =========================================================================
+       10. BỘ ĐIỀU KHIỂN ĐỀ THI & LUYỆN TẬP THÔNG MINH (TAB 3)
+       ========================================================================= */
+    function onExamModeChanged() {
+      const select = document.getElementById('exam-mode-select');
+      if (select) {
+        state.examMode = select.value;
+        generateNewExam(state.examMode, state.examLength);
+      }
+    }
+
+    function onExamLengthChanged() {
+      const select = document.getElementById('exam-length-select');
+      if (select) {
+        state.examLength = parseInt(select.value, 10);
+        generateNewExam(state.examMode, state.examLength);
+      }
+    }
+
+    function generateNewExam(mode, count, playSound = true) {
+      if (playSound) playClickSound();
+      const examMode = mode || state.examMode || 'cuoi-nam';
+      const examLength = count || state.examLength || 20;
+
+      const examData = SmartMath5Engine.generateExam(examMode, examLength);
+      state.examMode = examMode;
+      state.examLength = examLength;
+      state.examCode = examData.examCode;
+      state.currentQuestions = examData.questions;
+      state.quizAnswersState = new Array(examData.questions.length).fill(null);
+      state.currentQuizIndex = 0;
+      state.starsEarned = 0;
+      state.streak = 0;
+
+      // Update UI Header
+      const badge = document.getElementById('quiz-exam-badge');
+      if (badge) badge.textContent = `Mã đề: #${examData.examCode}`;
+
+      const congrats = document.getElementById('quiz-congrats-card');
+      if (congrats) congrats.classList.add('hidden');
+
+      renderQuizPills();
+      renderCurrentQuizQuestion();
+      updateHeaderCounters();
+    }
+
+    function resetCurrentExam() {
+      playClickSound();
+      state.quizAnswersState = new Array(state.currentQuestions.length).fill(null);
+      state.starsEarned = 0;
+      state.streak = 0;
+      state.currentQuizIndex = 0;
+      const congrats = document.getElementById('quiz-congrats-card');
+      if (congrats) congrats.classList.add('hidden');
+      renderQuizPills();
+      renderCurrentQuizQuestion();
+      updateHeaderCounters();
+    }
+
+    function renderQuizPills() {
+      const container = document.getElementById('quiz-question-pills');
+      if (!container) return;
+      container.innerHTML = '';
+
+      state.currentQuestions.forEach((q, idx) => {
+        const btn = document.createElement('button');
+        const isCurrent = idx === state.currentQuizIndex;
+        const ans = state.quizAnswersState[idx];
+
+        let style = "w-7 h-7 sm:w-8 sm:h-8 rounded-lg font-black text-xs transition duration-150 flex items-center justify-center ";
+
+        if (isCurrent) {
+          style += "ring-3 ring-sky-500 scale-105 z-10 ";
+        }
+
+        if (ans && ans.isSubmitted) {
+          if (ans.isCorrect) {
+            style += "bg-emerald-500 text-white shadow-sm ";
+          } else {
+            style += "bg-rose-500 text-white shadow-sm ";
+          }
+        } else {
+          style += isCurrent ? "bg-sky-500 text-white shadow-comic " : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 ";
+        }
+
+        btn.className = style;
+        btn.textContent = idx + 1;
+        btn.onclick = () => jumpToQuizQuestion(idx);
+        container.appendChild(btn);
+      });
+    }
+
+    function jumpToQuizQuestion(idx) {
+      playClickSound();
+      state.currentQuizIndex = idx;
+      renderCurrentQuizQuestion();
+      renderQuizPills();
+    }
+
+    function prevQuizQuestion() {
+      if (state.currentQuizIndex > 0) {
+        jumpToQuizQuestion(state.currentQuizIndex - 1);
+      }
+    }
+
+    function nextQuizQuestion() {
+      if (state.currentQuizIndex < state.currentQuestions.length - 1) {
+        jumpToQuizQuestion(state.currentQuizIndex + 1);
+      }
+    }
+
+    function renderCurrentQuizQuestion() {
+      if (!state.currentQuestions || state.currentQuestions.length === 0) return;
+      const q = state.currentQuestions[state.currentQuizIndex];
+      const ansState = state.quizAnswersState[state.currentQuizIndex];
+
+      // Badges
+      const topicEl = document.getElementById('quiz-badge-topic');
+      if (topicEl) topicEl.textContent = q.topicTitle;
+      const semEl = document.getElementById('quiz-badge-semester');
+      if (semEl) semEl.textContent = q.semester === 1 ? 'Học kỳ 1' : 'Học kỳ 2';
+
+      const levelEl = document.getElementById('quiz-badge-level');
+      const starsRating = document.getElementById('quiz-stars-rating');
+      if (levelEl) {
+        const lvl = q.level || 1;
+        if (lvl === 1) {
+          levelEl.className = "bg-purple-100 text-purple-800 font-bold text-xs px-2.5 py-1 rounded-lg";
+          levelEl.textContent = "Mức 1 (Nhận biết)";
+          if (starsRating) starsRating.textContent = "⭐☆☆☆☆";
+        } else if (lvl === 2) {
+          levelEl.className = "bg-sky-100 text-sky-800 font-bold text-xs px-2.5 py-1 rounded-lg";
+          levelEl.textContent = "Mức 2 (Thông hiểu)";
+          if (starsRating) starsRating.textContent = "⭐⭐⭐☆☆";
+        } else {
+          levelEl.className = "bg-amber-100 text-amber-800 font-bold text-xs px-2.5 py-1 rounded-lg";
+          levelEl.textContent = "Mức 3 (Vận dụng)";
+          if (starsRating) starsRating.textContent = "⭐⭐⭐⭐⭐";
+        }
+      }
+
+      // Character & Prompt
+      const charAvatar = document.getElementById('quiz-character-avatar');
+      if (charAvatar) {
+        charAvatar.className = `w-11 h-11 rounded-full ${q.character.color} flex items-center justify-center text-white font-black text-xs flex-shrink-0 shadow-sm border-2 border-white`;
+        charAvatar.textContent = q.character.name;
+      }
+
+      const charName = document.getElementById('quiz-character-name');
+      if (charName) charName.textContent = q.character.text;
+
+      const promptEl = document.getElementById('quiz-question-prompt');
+      if (promptEl) promptEl.textContent = q.question;
+
+      // Render Options (MCQ)
+      const answersArea = document.getElementById('quiz-answers-area');
+      answersArea.innerHTML = '';
+
+      const isLocked = ansState && ansState.isSubmitted;
+
+      const grid = document.createElement('div');
+      grid.className = "grid grid-cols-1 sm:grid-cols-2 gap-3";
+
+      q.options.forEach((opt, optIdx) => {
+        const btn = document.createElement('button');
+        let btnStyle = "p-3.5 rounded-xl border-2 text-left font-bold text-xs sm:text-sm transition duration-150 flex items-center justify-between leading-snug ";
+
+        if (!isLocked) {
+          if (ansState && ansState.selected === optIdx) {
+            btnStyle += "bg-sky-50 border-sky-500 text-sky-900 shadow-comic";
+          } else {
+            btnStyle += "bg-white border-slate-200 hover:border-sky-300 text-slate-800 shadow-sm";
+          }
+        } else {
+          if (opt.isCorrect) {
+            btnStyle += "bg-emerald-100 border-emerald-500 text-emerald-900 font-extrabold";
+          } else if (ansState.selected === optIdx && !opt.isCorrect) {
+            btnStyle += "bg-rose-100 border-rose-400 text-rose-900";
+          } else {
+            btnStyle += "bg-slate-50 border-slate-200 text-slate-400 opacity-60";
+          }
+        }
+
+        btn.className = btnStyle;
+        btn.innerHTML = `
+          <span><strong class="text-sky-700">${['A', 'B', 'C', 'D'][optIdx]}.</strong> ${opt.text}</span>
+          ${isLocked && opt.isCorrect ? '<span class="text-emerald-600 font-black text-base ml-2">✓</span>' : ''}
+        `;
+
+        if (!isLocked) {
+          btn.onclick = () => selectQuizOption(optIdx);
+        }
+        grid.appendChild(btn);
+      });
+
+      answersArea.appendChild(grid);
+
+      // Prev/Next & Submit button state
+      const prevBtn = document.getElementById('quiz-prev-btn');
+      if (prevBtn) prevBtn.disabled = state.currentQuizIndex === 0;
+
+      const nextBtn = document.getElementById('quiz-next-btn');
+      if (nextBtn) nextBtn.disabled = state.currentQuizIndex === state.currentQuestions.length - 1;
+
+      const submitBtn = document.getElementById('quiz-submit-btn');
+      if (submitBtn) {
+        if (isLocked) {
+          submitBtn.innerHTML = `<span>🔄</span> Làm lại câu này`;
+          submitBtn.className = "px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black text-slate-700 bg-slate-200 hover:bg-slate-300 border-2 border-slate-300 shadow-comic transition";
+        } else {
+          submitBtn.innerHTML = `<span>🚀</span> Nộp bài & Xem giải`;
+          submitBtn.className = "px-6 py-2.5 rounded-xl text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-500 border-2 border-emerald-700 shadow-comic-green transition transform active:scale-95 flex items-center gap-2";
+        }
+      }
+
+      // Feedback Box
+      const feedbackBox = document.getElementById('quiz-feedback-box');
+      if (isLocked) {
+        renderFeedbackBox(q, ansState);
+        feedbackBox.classList.remove('hidden');
+      } else {
+        feedbackBox.classList.add('hidden');
+      }
+    }
+
+    function selectQuizOption(optIdx) {
+      playClickSound();
+      if (!state.quizAnswersState[state.currentQuizIndex]) {
+        state.quizAnswersState[state.currentQuizIndex] = { selected: optIdx, isSubmitted: false, isCorrect: false };
+      } else {
+        state.quizAnswersState[state.currentQuizIndex].selected = optIdx;
+      }
+      renderCurrentQuizQuestion();
+    }
+
+    function submitQuizAnswer() {
+      const q = state.currentQuestions[state.currentQuizIndex];
+      let ansState = state.quizAnswersState[state.currentQuizIndex];
+
+      // If already submitted, allow resetting this question
+      if (ansState && ansState.isSubmitted) {
+        playClickSound();
+        if (ansState.isCorrect) {
+          state.starsEarned = Math.max(0, state.starsEarned - 1);
+          updateHeaderCounters();
+        }
+        state.quizAnswersState[state.currentQuizIndex] = null;
+        renderCurrentQuizQuestion();
+        renderQuizPills();
+        return;
+      }
+
+      if (!ansState || ansState.selected === null || ansState.selected === undefined) {
+        alert("Bạn ơi, hãy chọn một đáp án trước khi bấm Nộp bài nhé!");
+        return;
+      }
+
+      const userChoice = ansState.selected;
+      const isCorrect = q.options[userChoice].isCorrect;
+
+      // Update State
+      state.quizAnswersState[state.currentQuizIndex] = {
+        selected: userChoice,
+        isSubmitted: true,
+        isCorrect: isCorrect
+      };
+
+      if (isCorrect) {
+        playCorrectSound();
+        state.starsEarned++;
+        state.streak++;
+        if (typeof window.confetti === 'function') {
+          window.confetti({
+            particleCount: 60,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        }
+      } else {
+        playWrongSound();
+        state.streak = 0;
+      }
+
+      updateHeaderCounters();
+      renderCurrentQuizQuestion();
+      renderQuizPills();
+
+      // Check if finished entire exam
+      checkQuizCompletion();
+    }
+
+    function renderFeedbackBox(q, ansState) {
+      const icon = document.getElementById('quiz-feedback-icon');
+      const title = document.getElementById('quiz-feedback-title');
+      const comment = document.getElementById('quiz-robot-comment');
+      const box = document.getElementById('quiz-feedback-box');
+      const solutionContent = document.getElementById('quiz-solution-content');
+
+      if (ansState.isCorrect) {
+        box.className = "rounded-2xl p-5 border-2 transition-all duration-300 space-y-4 bg-emerald-50 border-emerald-400";
+        icon.className = "w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-black flex-shrink-0 shadow-sm bg-emerald-500 text-white";
+        icon.textContent = "⭐";
+        title.className = "font-black text-lg text-emerald-900";
+        title.textContent = "Chính xác 100%! Rô-bốt khen bạn!";
+        comment.className = "text-xs sm:text-sm font-semibold text-emerald-800";
+        comment.textContent = q.robotTip || "Bạn đã tư duy rất nhanh và chuẩn xác. Hãy ghi nhớ các bước giải chi tiết bên dưới nhé!";
+      } else {
+        box.className = "rounded-2xl p-5 border-2 transition-all duration-300 space-y-4 bg-rose-50 border-rose-300";
+        icon.className = "w-12 h-12 rounded-xl flex items-center justify-center text-2xl font-black flex-shrink-0 shadow-sm bg-rose-500 text-white";
+        icon.textContent = "💡";
+        title.className = "font-black text-lg text-rose-950";
+        title.textContent = "Chưa hoàn toàn chính xác, đừng nản lòng nhé!";
+        comment.className = "text-xs sm:text-sm font-semibold text-rose-800";
+        comment.textContent = q.robotTip || "Không sao cả, sai là mẹ thành công! Rô-bốt và các bạn đã viết sẵn lời giải mẫu từng bước dưới đây cho bạn nè.";
+      }
+
+      solutionContent.innerHTML = q.solution.map(s => `<p class="leading-relaxed">${s}</p>`).join('');
+    }
+
+    function updateHeaderCounters() {
+      const total = state.currentQuestions ? state.currentQuestions.length : 20;
+      const answeredCount = state.quizAnswersState ? state.quizAnswersState.filter(a => a && a.isSubmitted).length : 0;
+      const score = Math.round((state.starsEarned / total) * 10 * 10) / 10;
+
+      const starCountEl = document.getElementById('star-count');
+      if (starCountEl) starCountEl.textContent = `${state.starsEarned} / ${total}`;
+
+      const streakEl = document.getElementById('streak-count');
+      if (streakEl) streakEl.textContent = state.streak;
+
+      const progressEl = document.getElementById('quiz-progress-text');
+      if (progressEl) progressEl.textContent = `Đã làm: ${answeredCount}/${total} câu`;
+
+      const scoreEl = document.getElementById('quiz-score-badge');
+      if (scoreEl) scoreEl.textContent = `⭐ ${score}/10 Điểm`;
+    }
+
+    function checkQuizCompletion() {
+      const allSubmitted = state.quizAnswersState.every(ans => ans && ans.isSubmitted);
+      if (allSubmitted) {
+        const total = state.currentQuestions.length;
+        const correct = state.starsEarned;
+        const score = Math.round((correct / total) * 10 * 10) / 10;
+
+        const congrats = document.getElementById('quiz-congrats-card');
+        const titleEl = document.getElementById('quiz-result-title');
+        const summaryEl = document.getElementById('quiz-result-summary');
+
+        if (score === 10) {
+          titleEl.textContent = "🎉 HOÀN HẢO! ĐẠT ĐIỂM 10 TUYỆT ĐỐI!";
+          summaryEl.textContent = `Xuất sắc! Bạn đúng trọn vẹn ${correct}/${total} câu (${score}/10 điểm). Bạn hoàn toàn xứng đáng là Kiện tướng Toán 5!`;
+        } else if (score >= 9) {
+          titleEl.textContent = "🏆 XUẤT SẮC! BẠN LÀ CAO THỦ TOÁN LỚP 5!";
+          summaryEl.textContent = `Thành tích rất ấn tượng: ${correct}/${total} câu đúng (${score}/10 điểm). Rô-bốt, Việt, Nam, Mai và Mi rất khâm phục bạn!`;
+        } else if (score >= 7) {
+          titleEl.textContent = "🌟 GIỎI LẮM! KẾT QUẢ ĐẠT YÊU CẦU!";
+          summaryEl.textContent = `Bạn đã hoàn thành tốt: ${correct}/${total} câu đúng (${score}/10 điểm). Xem lại các câu sai để bứt phá điểm 10 ở đề sau nhé!`;
+        } else {
+          titleEl.textContent = "💪 CỐ GẮNG LÊN! HÃY ÔN LẠI VÀ THỬ LẠI!";
+          summaryEl.textContent = `Bạn đạt ${correct}/${total} câu (${score}/10 điểm). Hãy xem kỹ lời giải chi tiết và làm thêm đề mới để nắm vững kiến thức!`;
+        }
+
+        if (congrats) congrats.classList.remove('hidden');
+
+        if (typeof window.confetti === 'function') {
+          window.confetti({ particleCount: 120, spread: 100, origin: { y: 0.5 } });
+          setTimeout(() => {
+            window.confetti({ particleCount: 90, spread: 80, origin: { y: 0.4 } });
+          }, 400);
+        }
+      }
+    }
+
+
+    /* =========================================================================
+       11. KHỞI TẠO TOÀN TRANG (INIT)
+       ========================================================================= */
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Render Tab 1 Topics & Setup Converter
+      renderTopicsCards();
+      setConverterType('area');
+
+      // 2. Setup Tab 2 Geometry & Ratio Lab
+      renderShapeSimulator();
+      solveRatioProblem();
+
+      // 3. Setup Tab 3 Smart Exam Engine (Ngân hàng 100.000+ câu)
+      generateNewExam('cuoi-nam', 20, false);
+    });
+  </script>
+</body>
+</html>
