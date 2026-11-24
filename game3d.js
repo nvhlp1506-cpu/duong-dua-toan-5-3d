@@ -1224,14 +1224,25 @@
     }
 
     spawnNextQuestion() {
+      // 1. Nếu đang trong trạng thái Đấu Boss -> sinh câu hỏi Đấu Boss
+      if (this.state === STATES.BOSS) {
+        this.spawnBossQuestion();
+        return;
+      }
+
       this.questionIndex++;
 
-      // Kiểm tra xem đã đến lúc đấu Boss chưa (8 câu đúng trong chặng thường)
+      // 2. Kiểm tra xem đã hoàn thành 8 câu chặng thường chưa -> Chuyển sang Đấu Boss
       if (!this.isEndlessMode && this.questionIndex > this.questionsPerStage) {
         this.startBossFight();
         return;
       }
 
+      // 3. Khởi tạo câu hỏi chặng thường
+      this.initQuestionRound();
+    }
+
+    initQuestionRound() {
       // Khởi tạo thời gian 1 phút (60 giây) cho mỗi chướng ngại vật
       this.questionTimeLimit = 60.0;
       this.questionTimeRemaining = 60.0;
@@ -1239,7 +1250,7 @@
       this.updateTimerHUD();
 
       // Sinh câu hỏi từ mathEngine.js
-      const q = window.MathEngine5.generate(this.currentStageId);
+      const q = window.MathEngine5.generate(this.isEndlessMode ? 'endless' : this.currentStageId);
       this.gateWave.questionData = q;
       this.gateWave.z = -100;
       this.gateWave.resolved = false;
@@ -1258,10 +1269,12 @@
       // Rải xu vàng ngẫu nhiên giữa đường đua
       this.spawnCoinsBetweenGates(-100, -25);
 
-      // Đã loại bỏ rào chắn gây mất mạng để học sinh tập trung làm Toán
-
       // Cập nhật HUD câu hỏi
       this.updateQuestionCard(q);
+    }
+
+    spawnBossQuestion() {
+      this.initQuestionRound();
     }
 
     spawnCoinsBetweenGates(startZ, endZ) {
@@ -1291,7 +1304,7 @@
       if (qText) qText.innerHTML = formatMathHTML(q.question);
       if (qNum) {
         if (this.state === STATES.BOSS) {
-          qNum.textContent = `💥 Thử Thách Đấu Boss (${this.bossCurrentHP} HP)`;
+          qNum.textContent = `💥 ĐẤU BOSS (${this.bossCurrentHP} / ${this.bossMaxHP} HP)`;
         } else if (this.isEndlessMode) {
           qNum.textContent = `Chướng ngại vật ${this.questionIndex}`;
         } else {
@@ -1300,7 +1313,11 @@
       }
       if (stName) {
         const theme = STAGE_THEMES[this.currentStageId] || STAGE_THEMES[1];
-        stName.innerHTML = `<span>${theme.icon}</span> ${this.isEndlessMode ? 'ĐUA VÔ TẬN' : theme.name.toUpperCase()}`;
+        if (this.state === STATES.BOSS) {
+          stName.innerHTML = `<span>👾</span> ${theme.bossName.toUpperCase()} (ĐẤU BOSS)`;
+        } else {
+          stName.innerHTML = `<span>${theme.icon}</span> ${this.isEndlessMode ? 'ĐUA VÔ TẬN' : theme.name.toUpperCase()}`;
+        }
       }
 
       if (svgBox) {
@@ -1448,9 +1465,11 @@
       this.bossCurrentHP = this.bossMaxHP;
 
       const theme = STAGE_THEMES[this.currentStageId] || STAGE_THEMES[1];
-      this.bossMesh.children[0].material.color.setHex(theme.bossColor);
+      if (this.bossMesh && this.bossMesh.children && this.bossMesh.children[0]) {
+        this.bossMesh.children[0].material.color.setHex(theme.bossColor);
+      }
       this.bossMesh.visible = true;
-      this.bossMesh.position.set(0, 3.5, -38);
+      this.bossMesh.position.set(0, 2.0, -22);
 
       const bossHud = document.getElementById('boss-hud');
       const bossName = document.getElementById('boss-name');
@@ -1463,8 +1482,8 @@
       this.sound.playBossRoar();
       this.cameraShakeIntensity = 0.5;
 
-      // Sinh câu hỏi đánh Boss
-      this.spawnNextQuestion();
+      // Sinh câu hỏi đầu tiên của trận Đấu Boss
+      this.spawnBossQuestion();
     }
 
     fireLaserAtBoss() {
@@ -1850,6 +1869,7 @@
         // Camera FOV mượt mà
         this.camera.fov = THREE.MathUtils.lerp(this.camera.fov, targetFOV, 1 - Math.exp(-6 * dt));
         this.camera.updateProjectionMatrix();
+        this.camera.lookAt(camTargetX, 1.2, -8);
       }
 
       // 5. Cập nhật Chướng Ngại Vật (Thời gian 1 phút & Cổng Năng Lượng tiến về người chơi)
@@ -1952,7 +1972,8 @@
           this.bossLaneTargetX,
           1 - Math.exp(-3 * effectiveDt)
         );
-        this.bossMesh.position.y = 3.5 + Math.sin(this.runAnimTimer * 0.8) * 0.4;
+        this.bossMesh.position.y = 2.0 + Math.sin(this.runAnimTimer * 0.8) * 0.3;
+        this.bossMesh.position.z = -22;
       }
 
       // 9. Cập nhật Hạt nổ 3D (Particle Pool)
