@@ -36,26 +36,36 @@ html, body {
 
 /* HIỆU ỨNG GLASSMORPHISM CAO CẤP CHO HUD & MODAL */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.72);
+  background: rgba(15, 23, 42, 0.68);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
 }
 
 .glass-panel-question {
-  background: rgba(11, 18, 38, 0.85);
+  background: rgba(11, 18, 38, 0.78);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 2px solid rgba(56, 189, 248, 0.55);
-  box-shadow: 0 0 25px rgba(14, 165, 233, 0.25), inset 0 0 15px rgba(56, 189, 248, 0.1);
+  border: 2px solid rgba(56, 189, 248, 0.6);
+  box-shadow: 0 0 28px rgba(14, 165, 233, 0.28), inset 0 0 18px rgba(56, 189, 248, 0.12);
 }
 
 .glass-panel-btn {
-  background: rgba(30, 41, 59, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.45), 0 8px 16px rgba(0, 0, 0, 0.35);
+}
+
+.btn-3d {
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35), 0 8px 18px rgba(0, 0, 0, 0.3);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+}
+.btn-3d:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
 /* HIỆU ỨNG HÃM THỜI GIAN (SLOW-MOTION ICE VIGNETTE) */

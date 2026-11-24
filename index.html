@@ -62,14 +62,14 @@
     <!-- TOP SECTION: THÔNG SỐ VÀ THẺ CÂU HỎI TỐI ƯU MỌI THIẾT BỊ -->
     <div class="w-full flex flex-col gap-2 pointer-events-none">
       
-      <!-- DÒNG 1: TRÁI TIM, COMBO, XU, ĐIỂM, SLOW-MO, PAUSE -->
-      <div class="flex items-center justify-between w-full pointer-events-auto">
+      <!-- DÒNG 1: TRÁI TIM, COMBO, XU, ĐIỂM, SLOW-MO, NHÁP, PAUSE (CHUẨN MÀN HÌNH NHỎ) -->
+      <div class="flex items-center justify-between gap-1 w-full pointer-events-auto">
         <!-- Cột Trái: Trái Tim & Combo Streak -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1 sm:gap-2 min-w-0">
           <!-- 3 Trái Tim -->
-          <div class="glass-panel px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl flex items-center gap-1.5 shadow-lg border border-white/20">
+          <div class="glass-panel px-2 py-1 sm:px-3 sm:py-1.5 rounded-2xl flex items-center gap-1 shadow-lg border border-white/20 shrink-0">
             <span class="text-[10px] sm:text-xs font-black text-rose-300 mr-0.5 uppercase tracking-wider hidden sm:inline">Mạng</span>
-            <div id="hud-hearts" class="flex items-center gap-0.5 sm:gap-1 text-base sm:text-xl">
+            <div id="hud-hearts" class="flex items-center gap-0.5 sm:gap-1 text-sm sm:text-xl">
               <span class="heart-icon animate-pulse text-rose-500">❤️</span>
               <span class="heart-icon animate-pulse text-rose-500">❤️</span>
               <span class="heart-icon animate-pulse text-rose-500">❤️</span>
@@ -77,41 +77,46 @@
           </div>
 
           <!-- Combo Streak & Turbo Badge -->
-          <div id="hud-combo-badge" class="glass-panel px-2.5 py-1 rounded-xl flex items-center gap-1 border border-amber-400/40 shadow-lg hidden">
-            <span class="text-sm sm:text-base animate-bounce">🔥</span>
-            <span id="hud-combo-text" class="text-[10px] sm:text-xs font-black text-amber-300 tracking-wider">COMBO x2</span>
+          <div id="hud-combo-badge" class="glass-panel px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-xl flex items-center gap-0.5 sm:gap-1 border border-amber-400/40 shadow-lg hidden shrink-0">
+            <span class="text-xs sm:text-base animate-bounce">🔥</span>
+            <span id="hud-combo-text" class="text-[9px] sm:text-xs font-black text-amber-300 tracking-tight sm:tracking-wider">x2</span>
           </div>
         </div>
 
-        <!-- Cột Phải: Xu, Điểm, Slow-Mo & Tạm Dừng -->
-        <div class="flex items-center gap-2">
+        <!-- Cột Phải: Xu, Điểm, Slow-Mo, Nháp & Tạm Dừng -->
+        <div class="flex items-center gap-1 sm:gap-2 shrink-0">
           <!-- Xu Vàng & Điểm -->
-          <div class="glass-panel px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-2xl flex items-center gap-2 sm:gap-3 border border-white/20 shadow-lg">
-            <div class="flex items-center gap-1">
-              <span class="text-sm sm:text-base text-amber-400">🪙</span>
-              <span id="hud-coins" class="text-xs sm:text-sm font-black text-amber-200">0</span>
+          <div class="glass-panel px-2 py-1 sm:px-3 sm:py-1.5 rounded-2xl flex items-center gap-1.5 sm:gap-3 border border-white/20 shadow-lg">
+            <div class="flex items-center gap-0.5 sm:gap-1">
+              <span class="text-xs sm:text-base text-amber-400">🪙</span>
+              <span id="hud-coins" class="text-[11px] sm:text-sm font-black text-amber-200">0</span>
             </div>
             <div class="w-px h-3 bg-white/30"></div>
             <div class="flex items-center gap-1">
               <span class="text-[10px] sm:text-xs font-bold text-slate-300 hidden sm:inline">Điểm:</span>
-              <span id="hud-score" class="text-xs sm:text-sm font-black text-sky-300">0</span>
+              <span id="hud-score" class="text-[11px] sm:text-sm font-black text-sky-300">0</span>
             </div>
           </div>
 
-          <!-- Thanh Năng Lượng Hãm Thời Gian (Slow-Mo Gauge) & Nút Tạm Dừng -->
-          <div class="flex items-center gap-1.5 sm:gap-2">
-            <!-- Nút Slow-Mo ảo (Mobile & PC) -->
-            <button id="btn-slowmo" class="glass-panel px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-cyan-400/50 hover:bg-cyan-500/20 active:scale-95 transition flex items-center gap-1 shadow-lg" title="Hãm Thời Gian (Phím Shift)">
+          <!-- Thanh Năng Lượng Hãm Thời Gian (Slow-Mo), Bảng Nháp & Tạm Dừng -->
+          <div class="flex items-center gap-1 sm:gap-1.5">
+            <!-- Nút Slow-Mo ảo -->
+            <button id="btn-slowmo" class="glass-panel px-1.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-cyan-400/50 hover:bg-cyan-500/20 active:scale-95 transition flex items-center gap-1 shadow-lg" title="Hãm Thời Gian (Phím Shift)">
               <span class="text-xs sm:text-base animate-spin-slow">⏳</span>
               <div class="flex flex-col items-start">
-                <div class="flex justify-between w-10 sm:w-14 text-[8px] sm:text-[9px] font-black text-cyan-300">
-                  <span>SLOW</span>
+                <div class="flex justify-between w-7 sm:w-14 text-[8px] sm:text-[9px] font-black text-cyan-300">
+                  <span class="hidden sm:inline">SLOW</span>
                   <span id="hud-slowmo-pct">100%</span>
                 </div>
-                <div class="w-10 sm:w-14 bg-slate-800 rounded-full h-1 sm:h-1.5 overflow-hidden border border-cyan-400/40">
+                <div class="w-7 sm:w-14 bg-slate-800 rounded-full h-1 sm:h-1.5 overflow-hidden border border-cyan-400/40">
                   <div id="hud-slowmo-bar" class="h-full bg-gradient-to-r from-cyan-400 to-sky-400 w-full transition-all duration-150"></div>
                 </div>
               </div>
+            </button>
+
+            <!-- Nút Bảng Nháp Mini -->
+            <button id="btn-scratchpad" class="glass-panel p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-amber-400/50 hover:bg-amber-500/20 active:scale-95 transition flex items-center gap-1 shadow-lg text-amber-300 font-black text-xs" title="Bảng Tính Nháp Vẽ Tay">
+              <span>📝</span> <span class="hidden sm:inline">Nháp</span>
             </button>
 
             <!-- Nút Tạm Dừng -->
@@ -127,32 +132,34 @@
       <!-- DÒNG 2: THẺ CHƯỚNG NGẠI VẬT TOÁN 5 (CÓ 1 PHÚT SUY NGHĨ) -->
       <div class="w-full max-w-xl mx-auto pointer-events-auto relative">
         
-        <!-- Toast thưởng điểm tốc độ khi vượt chướng ngại vật nhanh -->
-        <div id="hud-bonus-toast" class="absolute -top-12 left-1/2 -translate-x-1/2 pointer-events-none hidden z-30 flex flex-col items-center animate-bounce">
-          <div class="px-4 py-1.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-2xl border-2 border-white flex items-center gap-1.5 whitespace-nowrap">
-            <span>⚡</span> <span id="hud-bonus-toast-title">VƯỢT CHƯỚNG NGẠI VẬT XUẤT SẮC!</span>
-          </div>
-          <div id="hud-bonus-toast-sub" class="text-[10px] font-black text-amber-300 mt-0.5 drop-shadow">
-            +50s Thưởng Tốc Độ
+        <!-- Toast thưởng điểm tốc độ (Căn giữa tuyệt đối trên mọi màn hình) -->
+        <div class="fixed inset-x-0 top-12 sm:top-14 flex justify-center pointer-events-none z-50 px-3">
+          <div id="hud-bonus-toast" class="hidden flex flex-col items-center animate-bounce">
+            <div class="px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-2xl border-2 border-white flex items-center gap-1.5 whitespace-nowrap">
+              <span>⚡</span> <span id="hud-bonus-toast-title">VƯỢT CHƯỚNG NGẠI VẬT XUẤT SẮC!</span>
+            </div>
+            <div id="hud-bonus-toast-sub" class="text-[10px] font-black text-amber-200 bg-slate-950/80 px-2.5 py-0.5 rounded-full mt-0.5 drop-shadow">
+              +50s Thưởng Tốc Độ
+            </div>
           </div>
         </div>
 
-        <div id="hud-question-card" class="glass-panel-question px-3.5 py-2 sm:px-6 sm:py-3 rounded-2xl border-2 border-sky-400/60 shadow-2xl text-center space-y-1.5 relative overflow-hidden backdrop-blur-xl">
+        <div id="hud-question-card" class="glass-panel-question px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-2xl border-2 border-sky-400/60 shadow-2xl text-center space-y-1 sm:space-y-1.5 relative overflow-hidden backdrop-blur-xl">
           
           <!-- Huy hiệu chặng, đồng hồ 1 phút & số chướng ngại vật -->
-          <div class="flex items-center justify-between text-[10px] sm:text-xs font-black">
-            <span id="hud-stage-name" class="text-sky-300 uppercase tracking-widest flex items-center gap-1">
+          <div class="flex items-center justify-between gap-1.5 text-[10px] sm:text-xs font-black">
+            <span id="hud-stage-name" class="text-sky-300 uppercase tracking-wide flex items-center gap-1 truncate flex-1 min-w-0 text-left">
               <span>🌲</span> RỪNG PHÂN SỐ
             </span>
 
             <!-- ĐỒNG HỒ 1 PHÚT ĐẾM NGƯỢC (60s COUNTDOWN TIMER) -->
-            <div id="hud-timer-badge" class="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-inner">
+            <div id="hud-timer-badge" class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-900/90 border border-cyan-400/60 shadow-inner shrink-0">
               <span class="text-xs">⏱️</span>
-              <span class="text-[9px] text-slate-300 uppercase hidden xs:inline">Còn:</span>
+              <span class="text-[9px] text-slate-300 uppercase hidden sm:inline">Còn:</span>
               <span id="hud-question-timer" class="font-mono text-xs sm:text-sm font-black text-cyan-300">01:00</span>
             </div>
 
-            <span id="hud-question-number" class="bg-sky-500/30 text-sky-200 px-2 py-0.5 rounded-full border border-sky-400/40">
+            <span id="hud-question-number" class="bg-sky-500/30 text-sky-200 px-2 py-0.5 rounded-full border border-sky-400/40 whitespace-nowrap shrink-0">
               Chướng ngại vật 1 / 8
             </span>
           </div>
@@ -163,10 +170,10 @@
           </div>
 
           <!-- Khung SVG Minh Họa Hình Học (Chỉ hiện ở Chặng Hình Học) -->
-          <div id="hud-svg-container" class="hidden my-1 flex justify-center max-h-24 sm:max-h-28 overflow-hidden"></div>
+          <div id="hud-svg-container" class="hidden my-0.5 flex justify-center max-h-20 sm:max-h-24 overflow-hidden"></div>
 
           <!-- 3 THẺ ĐÁP ÁN TƯƠNG TÁC (CHẠM ĐỂ CHỌN HOẶC ĐIỀU KHIỂN PHI THUYỀN) -->
-          <div id="hud-options-grid" class="grid grid-cols-3 gap-1.5 sm:gap-2.5 pt-1 pb-0.5">
+          <div id="hud-options-grid" class="grid grid-cols-3 gap-1.5 sm:gap-2.5 pt-0.5">
             
             <!-- Cổng A (Trái) -->
             <button id="hud-opt-0" onclick="game3D.selectLaneDirectly(0)" class="option-btn p-1.5 sm:p-2 rounded-xl border-2 border-sky-400/50 bg-sky-950/70 hover:bg-sky-500/25 active:scale-95 transition-all duration-150 flex flex-col items-center justify-center relative shadow-lg" title="Chọn Cổng A (Phím 1 hoặc A)">
@@ -175,7 +182,7 @@
                 <span class="text-[9px] sm:text-[10px] text-sky-300 font-bold uppercase hidden xs:inline">Trái</span>
               </div>
               <div id="hud-opt-text-0" class="text-xs sm:text-sm md:text-base font-black text-white leading-snug pointer-events-none">--</div>
-              <div id="hud-opt-badge-0" class="hidden text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full bg-sky-400 text-slate-950 mt-0.5 animate-pulse pointer-events-none">ĐANG CHỌN</div>
+              <div id="hud-opt-badge-0" class="hidden text-[8px] sm:text-[9px] font-black px-1.5 py-0.2 rounded-full bg-sky-400 text-slate-950 mt-0.5 animate-pulse pointer-events-none">ĐANG CHỌN</div>
             </button>
 
             <!-- Cổng B (Giữa) -->
@@ -185,7 +192,7 @@
                 <span class="text-[9px] sm:text-[10px] text-amber-300 font-bold uppercase hidden xs:inline">Giữa</span>
               </div>
               <div id="hud-opt-text-1" class="text-xs sm:text-sm md:text-base font-black text-white leading-snug pointer-events-none">--</div>
-              <div id="hud-opt-badge-1" class="hidden text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full bg-amber-400 text-slate-950 mt-0.5 animate-pulse pointer-events-none">ĐANG CHỌN</div>
+              <div id="hud-opt-badge-1" class="hidden text-[8px] sm:text-[9px] font-black px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 mt-0.5 animate-pulse pointer-events-none">ĐANG CHỌN</div>
             </button>
 
             <!-- Cổng C (Phải) -->
@@ -195,44 +202,44 @@
                 <span class="text-[9px] sm:text-[10px] text-purple-300 font-bold uppercase hidden xs:inline">Phải</span>
               </div>
               <div id="hud-opt-text-2" class="text-xs sm:text-sm md:text-base font-black text-white leading-snug pointer-events-none">--</div>
-              <div id="hud-opt-badge-2" class="hidden text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-full bg-purple-400 text-slate-950 mt-0.5 animate-pulse pointer-events-none">ĐANG CHỌN</div>
+              <div id="hud-opt-badge-2" class="hidden text-[8px] sm:text-[9px] font-black px-1.5 py-0.2 rounded-full bg-purple-400 text-slate-950 mt-0.5 animate-pulse pointer-events-none">ĐANG CHỌN</div>
             </button>
 
           </div>
 
           <!-- THANH TIẾN ĐỘ 60 GIÂY VÀ NÚT XÁC NHẬN VƯỢT CHƯỚNG NGẠI VẬT -->
-          <div class="pt-1.5 flex items-center justify-between gap-2.5">
+          <div class="pt-1 flex items-center justify-between gap-2">
             <div class="flex-grow flex flex-col justify-center text-left">
               <div class="flex justify-between items-center text-[9px] font-bold text-slate-300 px-0.5 mb-0.5">
                 <span class="flex items-center gap-1 text-slate-300">
                   <span class="text-amber-400">⚡</span> <span>Hạn chót 1 phút:</span>
                 </span>
-                <span id="hud-timer-seconds" class="font-mono font-black text-cyan-300 text-[11px]">60s</span>
+                <span id="hud-timer-seconds" class="font-mono font-black text-cyan-300 text-[10px]">60s</span>
               </div>
-              <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-white/20">
+              <div class="w-full bg-slate-900 rounded-full h-1.5 sm:h-2 overflow-hidden border border-white/20">
                 <div id="hud-question-timer-bar" class="h-full bg-gradient-to-r from-cyan-400 via-emerald-400 to-sky-400 w-full transition-all duration-100"></div>
               </div>
             </div>
 
             <!-- NÚT VƯỢT NGAY (CHỐT ĐÁP ÁN SỚM ĐỂ NHẬN THƯỞNG TỐC ĐỘ) -->
-            <button id="btn-confirm-obstacle" onclick="game3D.confirmObstaclePass()" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:brightness-110 active:scale-95 transition-all text-slate-950 font-black text-xs sm:text-sm flex items-center gap-1 shadow-lg shadow-orange-500/30 whitespace-nowrap cursor-pointer select-none" title="Chốt đáp án đang chọn để vượt chướng ngại vật ngay (+Điểm thưởng tốc độ)">
+            <button id="btn-confirm-obstacle" onclick="game3D.confirmObstaclePass()" class="btn-3d px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-xl bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 hover:brightness-110 transition-all text-slate-950 font-black text-xs sm:text-sm flex items-center gap-1 whitespace-nowrap cursor-pointer select-none" title="Chốt đáp án đang chọn để vượt chướng ngại vật ngay (+Điểm thưởng tốc độ)">
               <span>🚀</span> <span>VƯỢT NGAY</span> <kbd class="text-[9px] bg-black/30 text-white px-1.5 py-0.2 rounded font-mono hidden sm:inline">Enter</kbd>
             </button>
           </div>
 
         </div>
 
-        <!-- Thanh Máu Boss (Chỉ hiển thị khi vào trạng thái BOSS) -->
-        <div id="boss-hud" class="glass-panel px-4 py-2 rounded-2xl border-2 border-rose-500/80 shadow-2xl mt-1.5 hidden backdrop-blur-xl animate-pulse">
-          <div class="flex items-center justify-between mb-1 text-xs font-black">
-            <div class="flex items-center gap-2 text-rose-300">
-              <span id="boss-avatar" class="text-lg sm:text-xl">👾</span>
-              <span id="boss-name" class="tracking-wider uppercase text-[11px] sm:text-xs">ĐẠI BOSS VUA KHỈ 3D</span>
+        <!-- Thanh Máu Boss (Gọn gàng tối đa trên Mobile để lộ Boss 3D phía dưới) -->
+        <div id="boss-hud" class="glass-panel px-3 py-1.5 rounded-xl border-2 border-rose-500/80 shadow-2xl mt-1 hidden backdrop-blur-xl">
+          <div class="flex items-center justify-between gap-2 text-[11px] font-black">
+            <div class="flex items-center gap-1.5 text-rose-300 whitespace-nowrap">
+              <span id="boss-avatar" class="text-base">👾</span>
+              <span id="boss-name" class="tracking-wider uppercase">ĐẠI BOSS</span>
             </div>
-            <span id="boss-hp-text" class="text-rose-400 font-bold text-xs">4 / 4 HP</span>
-          </div>
-          <div class="w-full bg-slate-900 rounded-full h-2.5 sm:h-3 border border-rose-500/40 overflow-hidden">
-            <div id="boss-hp-bar" class="h-full bg-gradient-to-r from-rose-600 via-amber-500 to-rose-400 w-full transition-all duration-300"></div>
+            <div class="flex-grow bg-slate-900 rounded-full h-2 border border-rose-500/40 overflow-hidden mx-1">
+              <div id="boss-hp-bar" class="h-full bg-gradient-to-r from-rose-600 via-amber-500 to-rose-400 w-full transition-all duration-300"></div>
+            </div>
+            <span id="boss-hp-text" class="text-rose-400 font-bold whitespace-nowrap">4 / 4 HP</span>
           </div>
         </div>
       </div>
@@ -277,33 +284,43 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 3. MÀN HÌNH CHÍNH (MENU SCREEN) -->
+  <!-- 3. MÀN HÌNH CHÍNH (MENU SCREEN - KHOE THẾ GIỚI 3D PHÍA SAU) -->
   <!-- ========================================================================= -->
-  <div id="menu-screen" class="absolute inset-0 z-30 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-    <div class="max-w-xl w-full my-auto glass-panel p-5 sm:p-8 rounded-3xl border-2 border-sky-400/40 shadow-2xl text-center space-y-5 relative max-h-[92vh] overflow-y-auto">
+  <div id="menu-screen" class="absolute inset-0 z-30 flex items-center justify-center p-3 sm:p-4 bg-slate-950/35 backdrop-blur-[4px] overflow-y-auto">
+    <div class="max-w-xl w-full my-auto glass-panel p-4 sm:p-7 rounded-3xl border-2 border-sky-400/50 shadow-2xl text-center space-y-4 relative max-h-[92vh] overflow-y-auto">
       
       <!-- Logo Game 3D -->
       <div class="space-y-1">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30 text-xs font-black tracking-widest uppercase">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/40 text-[10px] sm:text-xs font-black tracking-widest uppercase">
           <span>🎮</span> GDPT 2018 • KẾT NỐI TRI THỨC
         </div>
-        <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-teal-300 to-amber-300 drop-shadow">
+        <h1 class="text-2xl sm:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-teal-200 to-amber-300 drop-shadow-md">
           ĐƯỜNG ĐUA TOÁN 5 – 3D
         </h1>
-        <p class="text-xs sm:text-sm font-bold text-slate-300">
-          Chạy 3D siêu tốc, chọn Cổng Năng Lượng đúng và hạ gục Đại Boss Toán học!
+        <p class="text-[11px] sm:text-sm font-bold text-slate-200">
+          Phiêu lưu qua 5 thế giới hoạt hình 3D rực rỡ và hạ gục Đại Boss Toán học!
         </p>
+      </div>
+
+      <!-- Thanh Xem Trước 5 Thế Giới Hoạt Hình 3D Ngay Tại Menu -->
+      <div class="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap">
+        <span class="text-[10px] font-black text-slate-300 uppercase tracking-wider mr-1">Ngắm Thế Giới 3D:</span>
+        <button onclick="game3D.previewMenuWorld(1)" class="px-2.5 py-1 rounded-full glass-panel border border-emerald-400/50 hover:bg-emerald-500/30 text-xs font-bold text-emerald-200 transition active:scale-95" title="Rừng Thần Tiên (Totoro / Pandora)">🌲 Rừng</button>
+        <button onclick="game3D.previewMenuWorld(2)" class="px-2.5 py-1 rounded-full glass-panel border border-amber-400/50 hover:bg-amber-500/30 text-xs font-bold text-amber-200 transition active:scale-95" title="Ốc Đảo Nghìn Lẻ Một Đêm (Aladdin)">🏜️ Sa mạc</button>
+        <button onclick="game3D.previewMenuWorld(3)" class="px-2.5 py-1 rounded-full glass-panel border border-purple-400/50 hover:bg-purple-500/30 text-xs font-bold text-purple-200 transition active:scale-95" title="Thành Phố San Fransokyo (Big Hero 6)">🏙️ Thành phố</button>
+        <button onclick="game3D.previewMenuWorld(4)" class="px-2.5 py-1 rounded-full glass-panel border border-cyan-400/50 hover:bg-cyan-500/30 text-xs font-bold text-cyan-200 transition active:scale-95" title="Vương Quốc Băng Giá (Frozen)">❄️ Băng giá</button>
+        <button onclick="game3D.previewMenuWorld(5)" class="px-2.5 py-1 rounded-full glass-panel border border-rose-400/50 hover:bg-rose-500/30 text-xs font-bold text-rose-200 transition active:scale-95" title="Du Hành Ngân Hà (Wall-E / Doraemon)">🚀 Vũ trụ</button>
       </div>
 
       <!-- Bảng Thông tin Kỷ lục & Xu tích lũy -->
       <div class="grid grid-cols-2 gap-3 max-w-sm mx-auto text-left">
-        <div class="glass-panel p-3 rounded-2xl border border-white/10">
-          <span class="text-[10px] font-black text-slate-400 uppercase">Kỷ lục Điểm:</span>
-          <div id="menu-high-score" class="text-lg font-black text-sky-400">0</div>
+        <div class="glass-panel p-2.5 sm:p-3 rounded-2xl border border-white/15">
+          <span class="text-[10px] font-black text-slate-300 uppercase">Kỷ lục Điểm:</span>
+          <div id="menu-high-score" class="text-base sm:text-lg font-black text-sky-300">0</div>
         </div>
-        <div class="glass-panel p-3 rounded-2xl border border-white/10">
-          <span class="text-[10px] font-black text-slate-400 uppercase">Kho Xu Vàng:</span>
-          <div id="menu-total-coins" class="text-lg font-black text-amber-400 flex items-center gap-1">
+        <div class="glass-panel p-2.5 sm:p-3 rounded-2xl border border-white/15">
+          <span class="text-[10px] font-black text-slate-300 uppercase">Kho Xu Vàng:</span>
+          <div id="menu-total-coins" class="text-base sm:text-lg font-black text-amber-300 flex items-center gap-1">
             <span>🪙</span> 0
           </div>
         </div>
@@ -311,75 +328,82 @@
 
       <!-- Chọn 5 Chặng Toán 5 -->
       <div class="space-y-2 text-left">
-        <div class="text-xs font-black text-slate-300 uppercase tracking-wider flex items-center justify-between">
-          <span>CHỌN CHẶNG THỬ THÁCH:</span>
-          <span class="text-[10px] text-sky-400">8 câu + Đấu Boss 3D</span>
+        <div class="text-xs font-black text-slate-200 uppercase tracking-wider flex items-center justify-between">
+          <span>CHỌN CHẶNG PHIÊU LƯU:</span>
+          <span class="text-[10px] text-sky-300">8 câu + Đấu Boss 3D</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <!-- Chặng 1 -->
-          <button onclick="game3D.selectStage(1)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-emerald-500/20 border-2 border-emerald-500/40 text-left transition flex items-center gap-3 active:scale-95">
-            <span class="text-2xl">🌲</span>
-            <div>
-              <div class="text-xs font-black text-emerald-300">Chặng 1: Rừng Phân Số</div>
-              <div class="text-[10px] text-slate-400">Rút gọn, so sánh, hỗn số, 4 phép tính</div>
+          <button onclick="game3D.selectStage(1)" onmouseenter="game3D.previewMenuWorld(1)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-emerald-500/25 border-2 border-emerald-400/50 text-left transition flex items-center gap-3 active:scale-95">
+            <span class="text-2xl sm:text-3xl drop-shadow">🌲</span>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between gap-1">
+                <span class="text-xs font-black text-emerald-300 truncate">Chặng 1: Rừng Phân Số</span>
+              </div>
+              <div class="text-[10px] text-emerald-200/80 font-bold">🌿 Rừng Thần Tiên • Hỗn số</div>
+              <div class="text-[10px] text-slate-300 truncate">Rút gọn, so sánh, hỗn số, phép tính</div>
             </div>
           </button>
 
           <!-- Chặng 2 -->
-          <button onclick="game3D.selectStage(2)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-amber-500/20 border-2 border-amber-500/40 text-left transition flex items-center gap-3 active:scale-95">
-            <span class="text-2xl">🏜️</span>
-            <div>
-              <div class="text-xs font-black text-amber-300">Chặng 2: Sa Mạc Thập Phân</div>
-              <div class="text-[10px] text-slate-400">Cộng, trừ, nhân, chia, tính nhẩm 10/0,1</div>
+          <button onclick="game3D.selectStage(2)" onmouseenter="game3D.previewMenuWorld(2)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-amber-500/25 border-2 border-amber-400/50 text-left transition flex items-center gap-3 active:scale-95">
+            <span class="text-2xl sm:text-3xl drop-shadow">🏜️</span>
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-black text-amber-300 truncate">Chặng 2: Sa Mạc Thập Phân</div>
+              <div class="text-[10px] text-amber-200/80 font-bold">🕌 Ốc Đảo Aladdin • Số thập phân</div>
+              <div class="text-[10px] text-slate-300 truncate">Cộng, trừ, nhân, chia, nhẩm 10/0,1</div>
             </div>
           </button>
 
           <!-- Chặng 3 -->
-          <button onclick="game3D.selectStage(3)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-purple-500/20 border-2 border-purple-500/40 text-left transition flex items-center gap-3 active:scale-95">
-            <span class="text-2xl">🏙️</span>
-            <div>
-              <div class="text-xs font-black text-purple-300">Chặng 3: Thành Phố Phần Trăm</div>
-              <div class="text-[10px] text-slate-400">Tỉ số %, tìm a% của số, bài toán giảm giá</div>
+          <button onclick="game3D.selectStage(3)" onmouseenter="game3D.previewMenuWorld(3)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-purple-500/25 border-2 border-purple-400/50 text-left transition flex items-center gap-3 active:scale-95">
+            <span class="text-2xl sm:text-3xl drop-shadow">🏙️</span>
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-black text-purple-300 truncate">Chặng 3: Thành Phố Phần Trăm</div>
+              <div class="text-[10px] text-purple-200/80 font-bold">🤖 Thành Phố San Fransokyo • Tỉ số %</div>
+              <div class="text-[10px] text-slate-300 truncate">Tỉ số %, tìm a% của số, giảm giá</div>
             </div>
           </button>
 
           <!-- Chặng 4 -->
-          <button onclick="game3D.selectStage(4)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-cyan-500/20 border-2 border-cyan-500/40 text-left transition flex items-center gap-3 active:scale-95">
-            <span class="text-2xl">🔷</span>
-            <div>
-              <div class="text-xs font-black text-cyan-300">Chặng 4: Thung Lũng Hình Học</div>
-              <div class="text-[10px] text-slate-400">Đổi đơn vị, tam giác, thang, tròn, khối hộp</div>
+          <button onclick="game3D.selectStage(4)" onmouseenter="game3D.previewMenuWorld(4)" class="stage-select-btn p-3 rounded-2xl glass-panel hover:bg-cyan-500/25 border-2 border-cyan-400/50 text-left transition flex items-center gap-3 active:scale-95">
+            <span class="text-2xl sm:text-3xl drop-shadow">❄️</span>
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-black text-cyan-300 truncate">Chặng 4: Thung Lũng Hình Học</div>
+              <div class="text-[10px] text-cyan-200/80 font-bold">💎 Vương Quốc Băng Giá • SVG 3D</div>
+              <div class="text-[10px] text-slate-300 truncate">Đổi đơn vị, tam giác, thang, tròn, hộp</div>
             </div>
           </button>
 
           <!-- Chặng 5 -->
-          <button onclick="game3D.selectStage(5)" class="stage-select-btn sm:col-span-2 p-3 rounded-2xl glass-panel hover:bg-rose-500/20 border-2 border-rose-500/40 text-left transition flex items-center gap-3 active:scale-95">
-            <span class="text-2xl">🚀</span>
-            <div>
-              <div class="text-xs font-black text-rose-300">Chặng 5: Đường Hầm Chuyển Động</div>
-              <div class="text-[10px] text-slate-400">Vận tốc, quãng đường, thời gian, bài toán hai xe ngược/cùng chiều</div>
+          <button onclick="game3D.selectStage(5)" onmouseenter="game3D.previewMenuWorld(5)" class="stage-select-btn sm:col-span-2 p-3 rounded-2xl glass-panel hover:bg-rose-500/25 border-2 border-rose-400/50 text-left transition flex items-center gap-3 active:scale-95">
+            <span class="text-2xl sm:text-3xl drop-shadow">🚀</span>
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-black text-rose-300 truncate">Chặng 5: Đường Hầm Chuyển Động</div>
+              <div class="text-[10px] text-rose-200/80 font-bold">🪐 Du Hành Ngân Hà • Chuyển động đều</div>
+              <div class="text-[10px] text-slate-300 truncate">Vận tốc, quãng đường, thời gian, hai xe ngược/cùng chiều</div>
             </div>
           </button>
         </div>
       </div>
 
       <!-- Nút Chế độ Vô Tận & Nút Mở Cửa Hàng Skin -->
-      <div class="flex flex-col sm:flex-row gap-3 pt-2">
-        <button onclick="game3D.startEndlessMode()" class="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 font-black text-base shadow-lg shadow-orange-500/30 hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-2">
-          <span>⚡</span> <span>ĐUA VÔ TẬN (ENDLESS SPEED)</span>
+      <div class="flex flex-col sm:flex-row gap-3 pt-1">
+        <button onclick="game3D.startEndlessMode()" class="btn-3d flex-1 py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 text-slate-950 font-black text-sm sm:text-base hover:brightness-110 transition flex items-center justify-center gap-2">
+          <span>⚡</span> <span>ĐUA VÔ TẬN (XUYÊN 5 THẾ GIỚI)</span>
         </button>
-        <button onclick="game3D.openSkinShop()" class="py-3.5 px-6 rounded-2xl glass-panel border border-amber-400/50 hover:bg-amber-400/20 font-black text-sm text-amber-300 transition flex items-center justify-center gap-2 active:scale-95">
+        <button onclick="game3D.openSkinShop()" class="btn-3d py-3 px-6 rounded-2xl glass-panel border-2 border-amber-400/60 hover:bg-amber-400/20 font-black text-sm text-amber-300 transition flex items-center justify-center gap-2">
           <span>🚀</span> <span>ĐỔI SKIN 3D</span>
         </button>
       </div>
 
       <!-- Tùy chọn Âm thanh & Trợ giúp -->
-      <div class="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/10">
-        <button id="menu-sound-btn" onclick="game3D.toggleSound()" class="flex items-center gap-1.5 hover:text-white transition">
+      <div class="flex items-center justify-between text-xs text-slate-300 pt-2 border-t border-white/15">
+        <button id="menu-sound-btn" onclick="game3D.toggleSound()" class="flex items-center gap-1.5 hover:text-white transition font-bold">
           <span id="menu-sound-icon">🔊</span> <span id="menu-sound-text">Âm thanh: BẬT</span>
         </button>
-        <span class="text-[11px]">Three.js 60 FPS • Web Audio API</span>
+        <span class="text-[11px] font-bold text-slate-400">Three.js 60 FPS • Procedural Worlds</span>
       </div>
 
     </div>
@@ -563,7 +587,27 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- 9. SCRIPTS LIÊN KẾT (NẠP ĐÚNG THỨ TỰ) -->
+  <!-- 9. MODAL: BẢNG NHÁP MINI VẼ TAY (TRANSPARENT SCRATCHPAD) -->
+  <!-- ========================================================================= -->
+  <div id="scratchpad-modal" class="absolute inset-x-0 bottom-0 z-30 flex items-end justify-center p-2.5 sm:p-4 pointer-events-none hidden">
+    <div class="max-w-lg w-full h-[42vh] min-h-[200px] max-h-[290px] glass-panel rounded-3xl border-2 border-amber-400/70 shadow-2xl flex flex-col overflow-hidden pointer-events-auto animate-fade-in">
+      <div class="flex items-center justify-between px-3.5 py-2 bg-slate-900/90 border-b border-white/15">
+        <span class="text-xs font-black text-amber-300 flex items-center gap-1.5">
+          <span>📝</span> <span>BẢNG TÍNH NHÁP (Đề bài vẫn hiện phía trên)</span>
+        </span>
+        <div class="flex items-center gap-1.5">
+          <button onclick="game3D.clearScratchpad()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-slate-200 border border-white/15 transition">🗑️ Xóa</button>
+          <button onclick="game3D.toggleScratchpad(false)" class="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-[11px] font-black text-slate-950 transition">✓ Đóng</button>
+        </div>
+      </div>
+      <div class="relative flex-1 bg-slate-950/65 touch-none">
+        <canvas id="scratchpad-canvas" class="w-full h-full cursor-crosshair block"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 10. SCRIPTS LIÊN KẾT (NẠP ĐÚNG THỨ TỰ) -->
   <!-- ========================================================================= -->
   <script src="mathEngine.js"></script>
   <script src="game3d.js"></script>
