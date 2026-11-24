@@ -1968,6 +1968,11 @@
       this.invulnerableTimer = 0;
       if (this.playerGroup) this.playerGroup.rotation.set(0, 0, 0);
 
+      // Làm mới bộ chống trùng lặp câu hỏi cho màn chơi mới
+      if (window.MathEngine5 && window.MathEngine5.resetSession) {
+        window.MathEngine5.resetSession();
+      }
+
       // Cập nhật toàn bộ không gian 3D theo chủ đề hoạt hình của chặng
       this.applyStageTheme(stageId);
 
@@ -2017,7 +2022,22 @@
       this.lastTickSecond = 60;
       this.updateTimerHUD();
 
-      const q = window.MathEngine5.generate(this.isEndlessMode ? 'endless' : this.currentStageId);
+      // Xác định cấp độ khó tăng dần từ Dễ -> Trung bình -> Khó -> Đấu Boss
+      let difficultyLevel = 1;
+      if (this.state === STATES.BOSS) {
+        difficultyLevel = 4;
+      } else if (this.isEndlessMode) {
+        if (this.questionIndex <= 4) difficultyLevel = 1;
+        else if (this.questionIndex <= 9) difficultyLevel = 2;
+        else if (this.questionIndex <= 14) difficultyLevel = 3;
+        else difficultyLevel = 4;
+      } else {
+        if (this.questionIndex <= 3) difficultyLevel = 1;
+        else if (this.questionIndex <= 6) difficultyLevel = 2;
+        else difficultyLevel = 3;
+      }
+
+      const q = window.MathEngine5.generate(this.isEndlessMode ? 'endless' : this.currentStageId, difficultyLevel);
 
       // Chế độ Vô Tận: tự động chuyển thế giới 3D theo chủ đề câu hỏi!
       if (this.isEndlessMode && q.stageId && q.stageId !== this.activeThemeId) {
@@ -2089,6 +2109,25 @@
         } else {
           svgBox.innerHTML = '';
           svgBox.classList.add('hidden');
+        }
+      }
+
+      // Cập nhật huy hiệu độ khó (Dễ -> Trung bình -> Khó -> Siêu Boss)
+      const diffBadge = document.getElementById('hud-diff-badge');
+      if (diffBadge) {
+        const lv = q.difficulty || 1;
+        if (lv === 1) {
+          diffBadge.textContent = '🟢 Dễ';
+          diffBadge.className = 'px-1.5 py-0.2 rounded-md bg-emerald-500/25 text-emerald-300 border border-emerald-400/40 font-black text-[9px]';
+        } else if (lv === 2) {
+          diffBadge.textContent = '🟡 Trung bình';
+          diffBadge.className = 'px-1.5 py-0.2 rounded-md bg-amber-500/25 text-amber-300 border border-amber-400/40 font-black text-[9px]';
+        } else if (lv === 3) {
+          diffBadge.textContent = '🟠 Khó';
+          diffBadge.className = 'px-1.5 py-0.2 rounded-md bg-orange-500/25 text-orange-300 border border-orange-400/40 font-black text-[9px]';
+        } else {
+          diffBadge.textContent = '🔴 Siêu Boss';
+          diffBadge.className = 'px-1.5 py-0.2 rounded-md bg-rose-500/30 text-rose-300 border border-rose-400/50 font-black text-[9px] animate-pulse';
         }
       }
 
