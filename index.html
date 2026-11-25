@@ -66,7 +66,7 @@
       <!-- DÒNG 1: TRÁI TIM, COMBO, XU, ĐIỂM, SLOW-MO, NHÁP, PAUSE (CHUẨN MÀN HÌNH NHỎ) -->
       <div class="flex items-center justify-between gap-1 w-full pointer-events-auto">
         <!-- Cột Trái: Trái Tim & Combo Streak -->
-        <div class="flex items-center gap-1 sm:gap-2 min-w-0">
+        <div class="flex flex-wrap items-center gap-1 sm:gap-2 min-w-0">
           <!-- 3 Trái Tim -->
           <div class="glass-panel px-2 py-1 sm:px-3 sm:py-1.5 rounded-2xl flex items-center gap-1 shadow-lg border border-white/20 shrink-0">
             <span class="text-[10px] sm:text-xs font-black text-rose-300 mr-0.5 uppercase tracking-wider hidden sm:inline">Mạng</span>
@@ -136,7 +136,7 @@
       </div>
 
       <!-- DÒNG 2: THẺ CHƯỚNG NGẠI VẬT TOÁN 5 (CÓ 1 PHÚT SUY NGHĨ) -->
-      <div class="w-full max-w-xl mx-auto pointer-events-auto relative">
+      <div class="w-full max-w-lg mx-auto pointer-events-auto relative">
         
         <!-- Toast thưởng điểm tốc độ (Căn giữa tuyệt đối trên mọi màn hình) -->
         <div class="fixed inset-x-0 top-12 sm:top-14 flex justify-center pointer-events-none z-50 px-3">
@@ -250,24 +250,24 @@
           </div>
         </div>
 
-        <!-- Nhiệm Vụ Đường Đua (Micro-Mission tạo động lực lách làn & nhảy) -->
+        <!-- Nhiệm Vụ Đường Đua (Gọn nhẹ, tinh tế) -->
         <div class="flex justify-center mt-1 pointer-events-none">
-          <div id="hud-mission-pill" class="glass-panel px-3 py-0.5 rounded-full border border-emerald-400/50 bg-emerald-950/70 text-[10px] sm:text-xs font-black text-emerald-200 shadow-lg flex items-center gap-1.5">
+          <div id="hud-mission-pill" class="glass-panel px-2.5 py-0.5 rounded-full border border-white/15 bg-slate-900/70 text-[10px] font-bold text-slate-200 shadow flex items-center gap-1.5">
             <span>🎯</span>
             <span id="hud-mission-text">Nhiệm vụ: Nhặt 6 Xu (0/6)</span>
-            <span id="hud-mission-reward" class="px-1.5 py-0.2 rounded-full bg-amber-400/20 text-amber-300 text-[9px] border border-amber-400/40">+25🪙</span>
+            <span id="hud-mission-reward" class="px-1.5 py-0.2 rounded-full bg-amber-400/15 text-amber-300 text-[9px] border border-amber-400/30">+25🪙</span>
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- LỚP CHỮ BAY ARCADE (+XU / +ĐIỂM / NHẢY VÒNG / COMBO) -->
+    <!-- LỚP CHỮ BAY ARCADE (1 CHỮ MỘT LÚC CHO GỌN MẮT) -->
     <div id="hud-floating-layer" class="fixed inset-0 pointer-events-none z-30 overflow-hidden"></div>
 
-    <!-- THÔNG BÁO NỔI KHI ĂN VẬT PHẨM TRÊN ĐƯỜNG ĐUA 3D -->
-    <div class="fixed inset-x-0 bottom-24 sm:bottom-28 flex justify-center pointer-events-none z-30 px-4">
-      <div id="hud-track-toast" class="hidden px-4 py-1.5 rounded-2xl glass-panel border-2 border-amber-300 text-amber-200 font-black text-xs sm:text-sm shadow-2xl flex items-center gap-1.5">
+    <!-- THÔNG BÁO GỌN KHI NHẶT VẬT PHẨM ĐẶC BIỆT -->
+    <div class="fixed inset-x-0 bottom-20 sm:bottom-24 flex justify-center pointer-events-none z-30 px-4">
+      <div id="hud-track-toast" class="hidden px-3.5 py-1 rounded-full glass-panel border border-amber-300/60 bg-slate-950/85 text-amber-200 font-bold text-[11px] sm:text-xs shadow-lg flex items-center gap-1.5">
         <span>✨</span> <span id="hud-track-toast-text">+5 Xu</span>
       </div>
     </div>

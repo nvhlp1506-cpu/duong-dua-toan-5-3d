@@ -1267,31 +1267,31 @@
       }
     }
 
-    // Xây dựng Pool Vệt Tốc Độ 3D (Speed Lines tạo cảm giác phóng cực nhanh)
+    // Xây dựng Pool Vệt Tốc Độ 3D (Dịu mắt hơn ở 2 rìa bầu trời)
     buildSpeedLinePool() {
-      const geo = new THREE.BoxGeometry(0.04, 0.04, 5.0);
-      for (let i = 0; i < 16; i++) {
+      const geo = new THREE.BoxGeometry(0.035, 0.035, 4.5);
+      for (let i = 0; i < 12; i++) {
         const mat = new THREE.MeshBasicMaterial({
-          color: i % 2 === 0 ? 0x38bdf8 : 0xfef08a,
+          color: i % 2 === 0 ? 0xbae6fd : 0xfef08a,
           transparent: true,
-          opacity: 0.45
+          opacity: 0.14
         });
         const line = new THREE.Mesh(geo, mat);
         const side = i % 2 === 0 ? -1 : 1;
-        line.position.set(side * (4.8 + Math.random() * 4.5), 0.9 + Math.random() * 4.0, -Math.random() * 75);
+        line.position.set(side * (7.5 + Math.random() * 4.5), 1.6 + Math.random() * 3.5, -Math.random() * 75);
         this.scene.add(line);
         this.speedLinePool.push(line);
       }
     }
 
-    // Xây dựng Tia Dẫn Hướng Làn Đang Chọn tới Cổng 3D
+    // Xây dựng Tia Dẫn Hướng Làn Đang Chọn tới Cổng 3D (Mảnh, dịu mắt)
     buildLaneGuideBeam() {
-      const beamGeo = new THREE.PlaneGeometry(2.1, 1);
+      const beamGeo = new THREE.PlaneGeometry(1.3, 1);
       beamGeo.rotateX(-Math.PI / 2);
       const beamMat = new THREE.MeshBasicMaterial({
         color: 0xfbbf24,
         transparent: true,
-        opacity: 0.22,
+        opacity: 0.11,
         side: THREE.DoubleSide
       });
       this.laneGuideBeam = new THREE.Mesh(beamGeo, beamMat);
@@ -1514,16 +1514,16 @@
       this.playerAura.visible = false;
       this.playerGroup.add(this.playerAura);
 
-      // Bong bóng Khiên Năng Lượng 3D bảo vệ nhân vật
-      const shieldBubbleGeo = new THREE.SphereGeometry(1.18, 14, 12);
-      const shieldBubbleMat = new THREE.MeshBasicMaterial({
+      // Vòng Khiên Năng Lượng 3D thanh thoát quanh phi thuyền (Không che khuất thân tàu)
+      const shieldRingGeo = new THREE.TorusGeometry(1.12, 0.055, 6, 24);
+      shieldRingGeo.rotateX(Math.PI / 2.2);
+      const shieldRingMat = new THREE.MeshBasicMaterial({
         color: 0x34d399,
-        wireframe: true,
         transparent: true,
-        opacity: 0.45
+        opacity: 0.78
       });
-      this.playerShieldBubble = new THREE.Mesh(shieldBubbleGeo, shieldBubbleMat);
-      this.playerShieldBubble.position.set(0, 0.72, 0);
+      this.playerShieldBubble = new THREE.Mesh(shieldRingGeo, shieldRingMat);
+      this.playerShieldBubble.position.set(0, 0.55, 0);
       this.playerShieldBubble.visible = this.hasShield;
       this.playerGroup.add(this.playerShieldBubble);
 
@@ -2459,59 +2459,63 @@
         r.userData.triggered = false;
       });
 
-      // 1. Rải chuỗi Xu Vàng uốn lượn (Mưa Xu 3 làn khi đang Fever!)
+      // 1. Rải 1 dải Xu Vàng thoáng mắt (5-6 xu cách đều để dễ nhìn, Mưa Xu dày hơn khi Fever)
       let poolIdx = 0;
-      let laneIdx = Math.floor(Math.random() * 3);
-      const stepZ = this.isFeverActive ? 2.4 : 3.8;
-      for (let z = startZ + 7; z < endZ; z += stepZ) {
+      const coinLaneIdx = Math.floor(Math.random() * 3);
+      let laneIdx = coinLaneIdx;
+      const stepZ = this.isFeverActive ? 3.4 : 5.6;
+      for (let z = startZ + 8; z < endZ; z += stepZ) {
         if (poolIdx >= this.coinPool.length) break;
         const coin = this.coinPool[poolIdx++];
         coin.position.set(LANES[laneIdx], 0.85, z);
         coin.visible = true;
-        if (this.isFeverActive || Math.random() > 0.5) {
-          laneIdx = Math.max(0, Math.min(2, laneIdx + (Math.random() > 0.5 ? 1 : -1)));
+        if (this.isFeverActive) {
+          laneIdx = (laneIdx + 1) % 3;
         }
       }
 
-      // 2. Sinh Vật Phẩm Hỗ Trợ Toán Học (💎 Gợi Ý 50/50, 🛡️ Khiên, ⭐ Ngôi Sao Bay, 🎁 Hộp Bí Ẩn)
-      const spawnedTypes = [];
-      if (!this.hasShield && Math.random() > 0.4) {
-        spawnedTypes.push('shield');
-      } else {
-        spawnedTypes.push('hint');
-      }
-      spawnedTypes.push('skystar');
-      spawnedTypes.push(Math.random() > 0.35 ? 'mystery' : (spawnedTypes[0] === 'shield' ? 'hint' : 'shield'));
-
+      // 2. Sinh tối đa 1-2 Vật Phẩm Đặc Biệt tách làn rõ ràng (tránh rối mắt)
       const span = Math.max(8, endZ - startZ);
-      const zSlots = [
-        startZ + span * 0.24,
-        startZ + span * 0.50,
-        startZ + span * 0.78
-      ];
-      spawnedTypes.forEach((pType, idx) => {
-        const pu = this.powerupPool.find(item => !item.visible && item.userData.type === pType);
-        if (!pu || idx >= zSlots.length) return;
-        const lane = LANES[(idx + Math.floor(Math.random() * 3)) % 3];
-        pu.position.set(lane, pu.userData.baseY, zSlots[idx]);
-        pu.visible = true;
-      });
+      const laneOrder = [0, 1, 2].sort(() => Math.random() - 0.5);
+      const pattern = (this.questionIndex || 0) % 3;
 
-      // 3. Sinh Bàn Đạp Tăng Tốc (Boost Pad) & Vòng Nhảy Trên Không (Jump Ring)
-      const pad = this.boostPadPool[0];
-      if (pad) {
-        const padLane = randChoice(LANES);
-        pad.position.set(padLane, 0.06, startZ + span * 0.64);
-        pad.userData.triggered = false;
-        pad.visible = true;
-      }
-
-      const ring = this.jumpRingPool[0];
-      if (ring) {
-        const ringLane = randChoice(LANES);
-        ring.position.set(ringLane, 2.35, startZ + span * 0.40);
-        ring.userData.triggered = false;
-        ring.visible = true;
+      if (pattern === 0) {
+        const primaryType = (!this.hasShield && Math.random() > 0.4) ? 'shield' : 'hint';
+        const pu = this.powerupPool.find(item => !item.visible && item.userData.type === primaryType);
+        if (pu) {
+          pu.position.set(LANES[laneOrder[0]], pu.userData.baseY, startZ + span * 0.35);
+          pu.visible = true;
+        }
+        const ring = this.jumpRingPool[0];
+        if (ring) {
+          ring.position.set(LANES[laneOrder[1]], 2.35, startZ + span * 0.72);
+          ring.userData.triggered = false;
+          ring.visible = true;
+        }
+      } else if (pattern === 1) {
+        const star = this.powerupPool.find(item => !item.visible && item.userData.type === 'skystar');
+        if (star) {
+          star.position.set(LANES[laneOrder[0]], star.userData.baseY, startZ + span * 0.38);
+          star.visible = true;
+        }
+        const pad = this.boostPadPool[0];
+        if (pad) {
+          pad.position.set(LANES[laneOrder[1]], 0.06, startZ + span * 0.72);
+          pad.userData.triggered = false;
+          pad.visible = true;
+        }
+      } else {
+        const box = this.powerupPool.find(item => !item.visible && item.userData.type === 'mystery');
+        if (box) {
+          box.position.set(LANES[laneOrder[0]], box.userData.baseY, startZ + span * 0.38);
+          box.visible = true;
+        }
+        const helperType = !this.hasShield ? 'shield' : 'hint';
+        const pu2 = this.powerupPool.find(item => !item.visible && item.userData.type === helperType);
+        if (pu2) {
+          pu2.position.set(LANES[laneOrder[1]], pu2.userData.baseY, startZ + span * 0.72);
+          pu2.visible = true;
+        }
       }
     }
 
@@ -2803,15 +2807,17 @@
       }, 1600);
     }
 
-    // Tạo chữ bay Arcade ngay phía trên phi thuyền (chiếu tọa độ 3D -> 2D)
+    // Tạo chữ bay Arcade ngay phía trên phi thuyền (chỉ giữ 1 chữ một lúc để không đè lên nhau)
     spawnFloatingPopup(text, colorClass = 'text-amber-300 text-sm sm:text-base') {
       const layer = document.getElementById('hud-floating-layer');
       if (!layer || !this.camera) return;
 
+      layer.innerHTML = '';
+
       let screenX = window.innerWidth * 0.5;
       let screenY = window.innerHeight * 0.58;
       if (this.playerGroup) {
-        const proj = this.playerGroup.position.clone().add(new THREE.Vector3(0, 1.85, 0)).project(this.camera);
+        const proj = this.playerGroup.position.clone().add(new THREE.Vector3(0, 1.95, 0)).project(this.camera);
         screenX = (proj.x * 0.5 + 0.5) * window.innerWidth;
         screenY = (-proj.y * 0.5 + 0.5) * window.innerHeight;
       }
@@ -2822,7 +2828,7 @@
       el.style.left = `${Math.max(70, Math.min(window.innerWidth - 70, screenX))}px`;
       el.style.top = `${Math.max(120, Math.min(window.innerHeight - 100, screenY))}px`;
       layer.appendChild(el);
-      setTimeout(() => el.remove(), 1050);
+      setTimeout(() => el.remove(), 1000);
     }
 
     initNextMission(resetIndex = false) {
@@ -3431,8 +3437,7 @@
         if (this.playerShieldBubble) {
           this.playerShieldBubble.visible = this.hasShield;
           if (this.hasShield) {
-            this.playerShieldBubble.rotation.y += 1.6 * dt;
-            this.playerShieldBubble.rotation.x += 0.9 * dt;
+            this.playerShieldBubble.rotation.y += 1.8 * dt;
           }
         }
 
@@ -3527,7 +3532,7 @@
             this.laneGuideBeam.position.set(LANES[this.playerLaneIndex], 0.06, -distToGate * 0.5);
             this.laneGuideBeam.scale.set(1, 1, distToGate);
             this.laneGuideBeam.material.color.setHex(beamColors[this.playerLaneIndex] || 0xfbbf24);
-            this.laneGuideBeam.material.opacity = 0.18 + Math.sin(tNow * 6) * 0.06;
+            this.laneGuideBeam.material.opacity = 0.09 + Math.sin(tNow * 4) * 0.03;
           } else {
             this.laneGuideBeam.visible = false;
           }
@@ -3569,8 +3574,7 @@
             this.score += coinPts;
             this.addFeverEnergy(10);
             this.sound.playCoin(this.combo);
-            this.spawnExplosion(coin.position, 0xfbbf24, 12);
-            this.spawnFloatingPopup(`+5🪙`, 'text-amber-300 text-xs sm:text-sm');
+            this.spawnExplosion(coin.position, 0xfbbf24, 5);
             this.progressMission('coin', 1);
             this.updateHUD();
           }
@@ -3599,15 +3603,15 @@
             pu.visible = false;
             const pType = pu.userData.type;
             if (pType === 'hint') {
-              this.spawnExplosion(pu.position, 0x38bdf8, 22);
+              this.spawnExplosion(pu.position, 0x38bdf8, 12);
               this.spawnFloatingPopup('💎 50/50!', 'text-sky-300 text-base');
               this.triggerHintElimination();
             } else if (pType === 'shield') {
               this.hasShield = true;
               this.sound.playPowerup();
-              this.spawnExplosion(pu.position, 0x34d399, 22);
+              this.spawnExplosion(pu.position, 0x34d399, 12);
               this.spawnFloatingPopup('🛡️ +KHIÊN!', 'text-emerald-300 text-base');
-              this.showTrackToast('🛡️ Đã bật Khiên Năng Lượng Bảo Vệ!', '🛡️');
+              this.showTrackToast('🛡️ Đã bật Khiên Năng Lượng!', '🛡️');
               this.updateHUD();
             } else if (pType === 'skystar') {
               this.coins += 15;
@@ -3615,13 +3619,13 @@
               this.score += 30 * (this.isFeverActive ? 2 : 1);
               this.addFeverEnergy(30);
               this.sound.playPowerup();
-              this.spawnExplosion(pu.position, 0xfacc15, 26);
+              this.spawnExplosion(pu.position, 0xfacc15, 14);
               this.spawnFloatingPopup('⭐ +15🪙 +30%⚡', 'text-yellow-300 text-base');
               this.progressMission('air', 1);
               this.showTrackToast('⭐ Ngôi Sao Bay! +15 Xu & +30% Fever!', '⭐');
               this.updateHUD();
             } else if (pType === 'mystery') {
-              this.spawnExplosion(pu.position, 0xec4899, 28);
+              this.spawnExplosion(pu.position, 0xec4899, 14);
               this.triggerMysteryReward();
             }
           }
@@ -3645,10 +3649,10 @@
             this.score += 10 * (this.isFeverActive ? 2 : 1);
             this.addFeverEnergy(15);
             this.sound.playBoost();
-            this.spawnExplosion(pad.position, 0x38bdf8, 18);
+            this.spawnExplosion(pad.position, 0x38bdf8, 10);
             this.spawnFloatingPopup('🚀 TĂNG TỐC!', 'text-cyan-300 text-base');
             this.progressMission('boost', 1);
-            this.showTrackToast('🚀 BÀN ĐẠP TĂNG TỐC! +10 Điểm & +15% Fever!', '🚀');
+            this.showTrackToast('🚀 Tăng tốc! +10 Điểm & +15% Fever!', '🚀');
             this.updateHUD();
           }
         }
@@ -3676,7 +3680,7 @@
             this.score += ringPts;
             this.addFeverEnergy(25);
             this.sound.playRingJump();
-            this.spawnExplosion(ring.position, 0x38bdf8, 26);
+            this.spawnExplosion(ring.position, 0x38bdf8, 14);
             this.spawnFloatingPopup(`🌀 NHẢY VÒNG! +${ringPts}`, 'text-cyan-300 text-base sm:text-lg');
             this.progressMission('air', 1);
             this.showTrackToast(`🌀 Nhào lộn qua Vòng! +${ringPts} Điểm & +25% Fever!`, '🌀');
@@ -3687,27 +3691,28 @@
         if (ring.position.z > 14) ring.visible = false;
       });
 
-      // 7e. Vệt Tốc Độ 3D (Speed Lines)
+      // 7e. Vệt Tốc Độ 3D (Dịu mắt ở rìa bầu trời)
       const rushActive = (this.combo >= 2 || this.boostTimer > 0 || this.isFeverActive || this.isDashingToGate);
       this.speedLinePool.forEach(line => {
-        line.position.z += currentSpeed * (rushActive ? 3.2 : 1.7) * effectiveDt;
-        line.material.opacity = rushActive ? 0.72 : 0.25;
+        line.position.z += currentSpeed * (rushActive ? 3.0 : 1.5) * effectiveDt;
+        line.material.opacity = rushActive ? 0.34 : 0.08;
         if (line.position.z > 14) {
           line.position.z -= 82;
         }
       });
 
-      // Tự động rải thêm đợt xu / sao bay / boost pad liên tục khi đường đua trống (trong lúc cổng chưa áp sát)
+      // Tự động rải thêm đợt xu / vật phẩm thoáng khi đường đua trống (trong lúc cổng chưa áp sát)
       if (
         (this.state === STATES.PLAYING || this.state === STATES.BOSS) &&
         this.gateWave.active &&
         !this.gateWave.resolved &&
-        this.gateWave.z < -28
+        this.gateWave.z < -30
       ) {
         const hasAnyCoin = this.coinPool.some(c => c.visible);
         const hasAnyPowerup = this.powerupPool.some(p => p.visible);
-        if (!hasAnyCoin && !hasAnyPowerup) {
-          this.spawnCoinsBetweenGates(Math.min(-26, this.gateWave.z + 4), -14);
+        const hasAnyRing = this.jumpRingPool.some(r => r.visible);
+        if (!hasAnyCoin && !hasAnyPowerup && !hasAnyRing) {
+          this.spawnCoinsBetweenGates(Math.min(-28, this.gateWave.z + 5), -14);
         }
       }
 
