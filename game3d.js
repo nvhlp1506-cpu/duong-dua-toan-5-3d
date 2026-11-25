@@ -273,6 +273,23 @@
     playBoost() {
       this.playTone(420, 'triangle', 0.28, 0.16, 520);
     }
+
+    playPowerup() {
+      [587.33, 783.99, 1046.5].forEach((f, i) => {
+        this.playTone(f, 'sine', 0.18, 0.14, 0, i * 0.05);
+      });
+    }
+
+    playShieldBreak() {
+      this.playTone(620, 'triangle', 0.22, 0.16, -340);
+      this.playTone(420, 'sine', 0.25, 0.12, -180, 0.06);
+    }
+
+    playFever() {
+      [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) => {
+        this.playTone(f, 'triangle', 0.24, 0.14, 0, i * 0.055);
+      });
+    }
   }
 
   /* =========================================================================
@@ -298,6 +315,21 @@
       this.combo = 0;
       this.slowMoEnergy = 100;
       this.isSlowMoActive = false;
+
+      // Hệ thống Tương Tác Đường Đua: Fever x2, Khiên, Gợi ý 50/50, Boost & Warp Dash
+      this.gateStartZ = -56;
+      this.feverEnergy = 0;
+      this.isFeverActive = false;
+      this.feverTimer = 0;
+      this.hasShield = false;
+      this.playerShieldBubble = null;
+      this.eliminatedLanes = new Set();
+      this.pendingStartHint = false;
+      this.boostTimer = 0;
+      this.isDashingToGate = false;
+      this.dashTimer = 0;
+      this.dashOutcome = null;
+      this.toastTimeout = null;
 
       // HỆ THỐNG 1 PHÚT VƯỢT CHƯỚNG NGẠI VẬT (60 GIÂY/CÂU HỎI)
       this.questionTimeLimit = 60.0;
@@ -357,6 +389,10 @@
       this.trackSegments = [];
       this.segmentScenerySets = [];
       this.coinPool = [];
+      this.powerupPool = [];
+      this.boostPadPool = [];
+      this.bossOrbPool = [];
+      this.bossOrbTimer = 0;
       this.barrierPool = [];
       this.particlePool = [];
       this.particleIndex = 0;
@@ -364,7 +400,7 @@
       // Cổng năng lượng 3D
       this.gateWave = {
         active: false,
-        z: -100,
+        z: this.gateStartZ,
         resolved: false,
         meshes: [],
         questionData: null
@@ -397,7 +433,10 @@
         highScore: 0,
         coins: 0,
         unlockedSkins: [1],
-        selectedSkin: 1
+        selectedSkin: 1,
+        unlockedMagnet: false,
+        startShieldCount: 0,
+        startHintCount: 0
       };
       try {
         const raw = localStorage.getItem('dt5_save_data_v1');
@@ -471,6 +510,9 @@
       this.buildTrackPool();
       this.buildGateMeshes();
       this.buildCoinPool();
+      this.buildPowerupPool();
+      this.buildBoostPadPool();
+      this.buildBossOrbPool();
       this.buildParticlePool();
 
       // 9. Tạo Nhân vật, Boss 3D & Tia Laser 3D
@@ -1064,7 +1106,7 @@
         panel.position.set(0, 2.05, 0);
         gate.add(panel);
 
-        gate.position.set(LANES[i], 0, -100);
+        gate.position.set(LANES[i], 0, this.gateStartZ);
         gate.visible = false;
         this.scene.add(gate);
         this.gateWave.meshes.push(gate);
@@ -1085,7 +1127,7 @@
       });
       const gemMat = new THREE.MeshBasicMaterial({ color: 0xfef9c3 });
 
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 24; i++) {
         const coinGroup = new THREE.Group();
         const coin = new THREE.Mesh(coinGeo, coinMat);
         const gem = new THREE.Mesh(starGeo, gemMat);
@@ -1096,6 +1138,99 @@
         coinGroup.position.set(0, 0.85, 0);
         this.scene.add(coinGroup);
         this.coinPool.push(coinGroup);
+      }
+    }
+
+    // Xây dựng Pool Vật Phẩm Hỗ Trợ Toán Học 3D (Hint 50/50, Khiên Bảo Vệ, Ngôi Sao Bay)
+    buildPowerupPool() {
+      const types = [
+        { type: 'hint', color: 0x38bdf8, emissive: 0x0284c7, ringColor: 0xbae6fd, baseY: 1.05 },
+        { type: 'shield', color: 0x34d399, emissive: 0x059669, ringColor: 0xa7f3d0, baseY: 1.05 },
+        { type: 'skystar', color: 0xfacc15, emissive: 0xea580c, ringColor: 0xfef08a, baseY: 2.45 },
+        { type: 'hint', color: 0x38bdf8, emissive: 0x0284c7, ringColor: 0xbae6fd, baseY: 1.05 },
+        { type: 'shield', color: 0x34d399, emissive: 0x059669, ringColor: 0xa7f3d0, baseY: 1.05 },
+        { type: 'skystar', color: 0xfacc15, emissive: 0xea580c, ringColor: 0xfef08a, baseY: 2.45 }
+      ];
+
+      const gemGeo = new THREE.OctahedronGeometry(0.48, 0);
+      const shieldGeo = new THREE.DodecahedronGeometry(0.46, 0);
+      const starCoreGeo = new THREE.OctahedronGeometry(0.55, 0);
+      const ringGeo = new THREE.TorusGeometry(0.68, 0.06, 6, 18);
+
+      types.forEach(cfg => {
+        const grp = new THREE.Group();
+        const coreMat = new THREE.MeshLambertMaterial({
+          color: cfg.color,
+          emissive: cfg.emissive,
+          emissiveIntensity: 0.55,
+          flatShading: true
+        });
+        const ringMat = new THREE.MeshBasicMaterial({ color: cfg.ringColor });
+
+        let core;
+        if (cfg.type === 'shield') {
+          core = new THREE.Mesh(shieldGeo, coreMat);
+        } else if (cfg.type === 'skystar') {
+          core = new THREE.Mesh(starCoreGeo, coreMat);
+          const second = new THREE.Mesh(starCoreGeo, coreMat);
+          second.rotation.y = Math.PI / 4;
+          second.rotation.z = Math.PI / 4;
+          second.scale.set(0.82, 0.82, 0.82);
+          grp.add(second);
+        } else {
+          core = new THREE.Mesh(gemGeo, coreMat);
+        }
+
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2.4;
+
+        grp.add(core, ring);
+        grp.visible = false;
+        grp.userData = { type: cfg.type, baseY: cfg.baseY };
+        this.scene.add(grp);
+        this.powerupPool.push(grp);
+      });
+    }
+
+    // Xây dựng Pool Bàn Đạp Tăng Tốc (Boost Pads)
+    buildBoostPadPool() {
+      const baseGeo = new THREE.BoxGeometry(2.1, 0.08, 2.4);
+      const barGeo = new THREE.BoxGeometry(1.5, 0.1, 0.35);
+      const baseMat = new THREE.MeshBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.45 });
+      const barMat = new THREE.MeshBasicMaterial({ color: 0xfde047 });
+
+      for (let i = 0; i < 4; i++) {
+        const pad = new THREE.Group();
+        const base = new THREE.Mesh(baseGeo, baseMat);
+        const bar1 = new THREE.Mesh(barGeo, barMat);
+        bar1.position.set(0, 0.03, -0.5);
+        const bar2 = new THREE.Mesh(barGeo, barMat);
+        bar2.position.set(0, 0.03, 0.45);
+        pad.add(base, bar1, bar2);
+        pad.visible = false;
+        pad.position.set(0, 0.06, 0);
+        pad.userData = { triggered: false };
+        this.scene.add(pad);
+        this.boostPadPool.push(pad);
+      }
+    }
+
+    // Xây dựng Pool Cầu Năng Lượng Boss (Né để nhận điểm & Fever, không mất tim)
+    buildBossOrbPool() {
+      const orbGeo = new THREE.SphereGeometry(0.45, 10, 8);
+      const ringGeo = new THREE.TorusGeometry(0.62, 0.07, 6, 14);
+      const orbMat = new THREE.MeshBasicMaterial({ color: 0xf43f5e });
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
+
+      for (let i = 0; i < 5; i++) {
+        const grp = new THREE.Group();
+        const core = new THREE.Mesh(orbGeo, orbMat);
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        grp.add(core, ring);
+        grp.visible = false;
+        grp.userData = { dodgedAwarded: false, hitPlayer: false, speed: 18 };
+        this.scene.add(grp);
+        this.bossOrbPool.push(grp);
       }
     }
 
@@ -1270,6 +1405,19 @@
       this.playerAura.position.set(0, 0.08, 0);
       this.playerAura.visible = false;
       this.playerGroup.add(this.playerAura);
+
+      // Bong bóng Khiên Năng Lượng 3D bảo vệ nhân vật
+      const shieldBubbleGeo = new THREE.SphereGeometry(1.18, 14, 12);
+      const shieldBubbleMat = new THREE.MeshBasicMaterial({
+        color: 0x34d399,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.45
+      });
+      this.playerShieldBubble = new THREE.Mesh(shieldBubbleGeo, shieldBubbleMat);
+      this.playerShieldBubble.position.set(0, 0.72, 0);
+      this.playerShieldBubble.visible = this.hasShield;
+      this.playerGroup.add(this.playerShieldBubble);
 
       this.playerGroup.position.set(0, 0, 0);
       this.scene.add(this.playerGroup);
@@ -1585,6 +1733,27 @@
           ctx.shadowBlur = 0;
         }
 
+        // Nếu cổng bị loại bởi Viên Gợi Ý 50/50
+        if (this.eliminatedLanes && this.eliminatedLanes.has(i)) {
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+          ctx.fillRect(8, 8, canvas.width - 16, canvas.height - 16);
+
+          ctx.strokeStyle = 'rgba(244, 63, 94, 0.85)';
+          ctx.lineWidth = 14;
+          ctx.beginPath();
+          ctx.moveTo(40, 40);
+          ctx.lineTo(canvas.width - 40, canvas.height - 40);
+          ctx.moveTo(canvas.width - 40, 40);
+          ctx.lineTo(40, canvas.height - 40);
+          ctx.stroke();
+
+          ctx.fillStyle = '#fda4af';
+          ctx.font = 'bold 28px Nunito, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('ĐÃ LOẠI BỎ (50/50)', canvas.width / 2, canvas.height - 34);
+        }
+
         this.gateTextures[i].needsUpdate = true;
       }
     }
@@ -1771,7 +1940,7 @@
     }
 
     selectLaneDirectly(laneIndex) {
-      if (this.state !== STATES.PLAYING && this.state !== STATES.BOSS) return;
+      if ((this.state !== STATES.PLAYING && this.state !== STATES.BOSS) || this.isDashingToGate) return;
       if (laneIndex >= 0 && laneIndex <= 2) {
         this.playerLaneIndex = laneIndex;
         this.playerTargetX = LANES[this.playerLaneIndex];
@@ -1781,7 +1950,7 @@
     }
 
     moveLane(direction) {
-      if (this.state !== STATES.PLAYING && this.state !== STATES.BOSS) return;
+      if ((this.state !== STATES.PLAYING && this.state !== STATES.BOSS) || this.isDashingToGate) return;
       const nextIndex = this.playerLaneIndex + direction;
       if (nextIndex >= 0 && nextIndex <= 2) {
         this.playerLaneIndex = nextIndex;
@@ -1794,8 +1963,15 @@
     updateOptionsHUD(q) {
       for (let i = 0; i < 3; i++) {
         const textEl = document.getElementById(`hud-opt-text-${i}`);
+        const badge = document.getElementById(`hud-opt-badge-${i}`);
+        const isElim = this.eliminatedLanes && this.eliminatedLanes.has(i);
         if (textEl && q && q.options && q.options[i]) {
           textEl.innerHTML = formatMathHTML(q.options[i].text);
+          textEl.classList.toggle('line-through', isElim);
+          textEl.classList.toggle('text-slate-500', isElim);
+        }
+        if (badge) {
+          badge.textContent = isElim ? '✕' : '✓';
         }
       }
       this.updateSelectedOptionUI();
@@ -1807,13 +1983,19 @@
         const badge = document.getElementById(`hud-opt-badge-${i}`);
         if (!btn) continue;
 
+        const isElim = this.eliminatedLanes && this.eliminatedLanes.has(i);
         const isSelected = (this.playerLaneIndex === i);
+        btn.classList.toggle('opacity-45', isElim);
+
         if (isSelected) {
           btn.classList.add('ring-2', 'ring-white', 'scale-105', 'z-10');
           if (i === 0) btn.classList.add('bg-sky-500/40', 'border-sky-300', 'shadow-[0_0_15px_rgba(56,189,248,0.5)]');
           if (i === 1) btn.classList.add('bg-amber-500/40', 'border-amber-300', 'shadow-[0_0_15px_rgba(245,158,11,0.5)]');
           if (i === 2) btn.classList.add('bg-purple-500/40', 'border-purple-300', 'shadow-[0_0_15px_rgba(168,85,247,0.5)]');
-          if (badge) badge.classList.remove('hidden');
+          if (badge) {
+            badge.textContent = isElim ? '✕' : '✓';
+            badge.classList.remove('hidden');
+          }
         } else {
           btn.classList.remove(
             'ring-2', 'ring-white', 'scale-105', 'z-10',
@@ -1821,34 +2003,79 @@
             'bg-amber-500/40', 'border-amber-300', 'shadow-[0_0_15px_rgba(245,158,11,0.5)]',
             'bg-purple-500/40', 'border-purple-300', 'shadow-[0_0_15px_rgba(168,85,247,0.5)]'
           );
-          if (badge) badge.classList.add('hidden');
+          if (badge) {
+            if (isElim) {
+              badge.textContent = '✕';
+              badge.classList.remove('hidden');
+            } else {
+              badge.textContent = '✓';
+              badge.classList.add('hidden');
+            }
+          }
         }
       }
     }
 
+    triggerHintElimination() {
+      const q = this.gateWave && this.gateWave.questionData;
+      if (!q || !this.gateWave.active || this.gateWave.resolved) return;
+
+      if (this.eliminatedLanes.size >= 1) {
+        this.coins += 15;
+        this.savedData.coins += 15;
+        this.addFeverEnergy(20);
+        this.sound.playPowerup();
+        this.showTrackToast('💎 Đã có Gợi ý! Thưởng +15 Xu & +20% Fever', '💎');
+        this.updateHUD();
+        return;
+      }
+
+      const wrongIndices = [0, 1, 2].filter(idx => idx !== q.correctIndex && !this.eliminatedLanes.has(idx));
+      if (wrongIndices.length > 0) {
+        const chosenWrong = randChoice(wrongIndices);
+        this.eliminatedLanes.add(chosenWrong);
+        this.renderGateTextures(q);
+        this.updateOptionsHUD(q);
+        this.sound.playPowerup();
+        const letters = ['A', 'B', 'C'];
+        this.showTrackToast(`💎 Gợi Ý 50/50: Đã loại Cổng ${letters[chosenWrong]}!`, '💎');
+      }
+    }
+
     confirmObstaclePass() {
-      if ((this.state !== STATES.PLAYING && this.state !== STATES.BOSS) || !this.gateWave.active || this.gateWave.resolved) return;
+      if ((this.state !== STATES.PLAYING && this.state !== STATES.BOSS) || !this.gateWave.active || this.gateWave.resolved || this.isDashingToGate) return;
 
       this.toggleScratchpad(false);
       this.sound.playBoost();
       this.gateWave.resolved = true;
-      const chosenLane = this.playerLaneIndex;
-      const q = this.gateWave.questionData;
-      const isCorrect = (chosenLane === q.correctIndex);
+      this.isDashingToGate = true;
+      this.dashTimer = 0.28;
+      this.boostTimer = 0.35;
+      this.cameraShakeIntensity = 0.25;
 
-      const timeBonus = Math.max(0, Math.floor(this.questionTimeRemaining));
+      if (this.playerGroup) {
+        this.spawnExplosion(this.playerGroup.position, 0x38bdf8, 16);
+      }
 
-      this.gateWave.z = 0;
-      this.gateWave.meshes.forEach(m => m.position.z = 0);
+      this.dashOutcome = {
+        chosenLane: this.playerLaneIndex,
+        questionData: this.gateWave.questionData,
+        timeBonus: Math.max(0, Math.floor(this.questionTimeRemaining))
+      };
+    }
+
+    resolveGateOutcome(outcome) {
+      if (!outcome) return;
+      const isCorrect = (outcome.chosenLane === outcome.questionData.correctIndex);
 
       if (isCorrect) {
-        if (timeBonus > 0) {
-          this.score += timeBonus;
-          this.showTimeBonusToast(timeBonus);
+        if (outcome.timeBonus > 0) {
+          this.score += outcome.timeBonus;
+          this.showTimeBonusToast(outcome.timeBonus);
         }
         this.handleCorrectAnswer();
       } else {
-        this.handleWrongAnswer(q, false);
+        this.handleWrongAnswer(outcome.questionData, false);
       }
     }
 
@@ -1960,6 +2187,32 @@
       this.coins = 0;
       this.slowMoEnergy = 100;
       this.isSlowMoActive = false;
+      this.feverEnergy = 0;
+      this.isFeverActive = false;
+      this.feverTimer = 0;
+      this.hasShield = false;
+      this.eliminatedLanes.clear();
+      this.pendingStartHint = false;
+      this.boostTimer = 0;
+      this.isDashingToGate = false;
+      this.dashTimer = 0;
+      this.dashOutcome = null;
+      this.bossOrbTimer = 0;
+
+      const feverOverlay = document.getElementById('fever-overlay');
+      if (feverOverlay) feverOverlay.style.opacity = '0';
+
+      if (this.savedData.startShieldCount > 0) {
+        this.savedData.startShieldCount--;
+        this.hasShield = true;
+        this.saveData();
+      }
+      if (this.savedData.startHintCount > 0) {
+        this.savedData.startHintCount--;
+        this.pendingStartHint = true;
+        this.saveData();
+      }
+
       this.playerLaneIndex = 1;
       this.playerTargetX = LANES[1];
       this.playerPosY = 0;
@@ -1978,6 +2231,9 @@
 
       // Ẩn vật thể vòng cũ
       this.coinPool.forEach(c => c.visible = false);
+      this.powerupPool.forEach(p => p.visible = false);
+      this.boostPadPool.forEach(b => b.visible = false);
+      this.bossOrbPool.forEach(o => o.visible = false);
       this.particlePool.forEach(p => p.visible = false);
       if (this.laserMesh) this.laserMesh.visible = false;
       this.laserTimer = 0;
@@ -2044,8 +2300,13 @@
         this.applyStageTheme(q.stageId);
       }
 
+      this.eliminatedLanes.clear();
+      this.isDashingToGate = false;
+      this.dashTimer = 0;
+      this.dashOutcome = null;
+
       this.gateWave.questionData = q;
-      this.gateWave.z = -100;
+      this.gateWave.z = this.gateStartZ;
       this.gateWave.resolved = false;
       this.gateWave.active = true;
 
@@ -2053,12 +2314,19 @@
 
       for (let i = 0; i < 3; i++) {
         const mesh = this.gateWave.meshes[i];
-        mesh.position.set(LANES[i], 0, -100);
+        mesh.position.set(LANES[i], 0, this.gateStartZ);
         mesh.visible = true;
       }
 
-      this.spawnCoinsBetweenGates(-100, -25);
+      this.spawnCoinsBetweenGates(this.gateStartZ, -14);
       this.updateQuestionCard(q);
+
+      if (this.pendingStartHint) {
+        this.pendingStartHint = false;
+        this.triggerHintElimination();
+      } else if (this.hasShield && this.questionIndex === 1) {
+        this.showTrackToast('🛡️ Đã trang bị Khiên Khởi Đầu!', '🛡️');
+      }
     }
 
     spawnBossQuestion() {
@@ -2066,14 +2334,59 @@
     }
 
     spawnCoinsBetweenGates(startZ, endZ) {
+      this.coinPool.forEach(c => c.visible = false);
+      this.powerupPool.forEach(p => p.visible = false);
+      this.boostPadPool.forEach(b => {
+        b.visible = false;
+        b.userData.triggered = false;
+      });
+
+      // 1. Rải chuỗi Xu Vàng uốn lượn kích thích lách làn
       let poolIdx = 0;
-      for (let z = startZ + 18; z < endZ; z += 12) {
-        if (Math.random() > 0.25 && poolIdx < this.coinPool.length) {
-          const coin = this.coinPool[poolIdx++];
-          const lane = randChoice(LANES);
-          coin.position.set(lane, 0.85, z);
-          coin.visible = true;
+      let laneIdx = Math.floor(Math.random() * 3);
+      for (let z = startZ + 8; z < endZ; z += 4.2) {
+        if (poolIdx >= this.coinPool.length) break;
+        const coin = this.coinPool[poolIdx++];
+        coin.position.set(LANES[laneIdx], 0.85, z);
+        coin.visible = true;
+        if (Math.random() > 0.55) {
+          laneIdx = Math.max(0, Math.min(2, laneIdx + (Math.random() > 0.5 ? 1 : -1)));
         }
+      }
+
+      // 2. Sinh Vật Phẩm Hỗ Trợ Toán Học (💎 Gợi Ý 50/50, 🛡️ Khiên, ⭐ Ngôi Sao Bay trên cao)
+      const spawnedTypes = [];
+      if (!this.hasShield && Math.random() > 0.35) {
+        spawnedTypes.push('shield');
+      } else {
+        spawnedTypes.push('hint');
+      }
+      spawnedTypes.push('skystar');
+      if (Math.random() > 0.45) {
+        spawnedTypes.push(spawnedTypes[0] === 'shield' ? 'hint' : 'shield');
+      }
+
+      const span = Math.max(8, endZ - startZ);
+      const zSlots = [
+        startZ + span * 0.25,
+        startZ + span * 0.52,
+        startZ + span * 0.78
+      ];
+      spawnedTypes.forEach((pType, idx) => {
+        const pu = this.powerupPool.find(item => !item.visible && item.userData.type === pType);
+        if (!pu || idx >= zSlots.length) return;
+        const lane = LANES[(idx + Math.floor(Math.random() * 3)) % 3];
+        pu.position.set(lane, pu.userData.baseY, zSlots[idx]);
+        pu.visible = true;
+      });
+
+      // 3. Sinh Bàn Đạp Tăng Tốc (Boost Pad)
+      const pad = this.boostPadPool[0];
+      if (pad) {
+        const padLane = randChoice(LANES);
+        pad.position.set(padLane, 0.06, startZ + span * 0.65);
+        pad.userData.triggered = false;
+        pad.visible = true;
       }
     }
 
@@ -2158,11 +2471,13 @@
     handleCorrectAnswer() {
       this.combo++;
       const multiplier = this.combo >= 4 ? 3 : (this.combo >= 2 ? 2 : 1);
-      const earnedScore = 10 * multiplier;
+      const feverMul = this.isFeverActive ? 2 : 1;
+      const earnedScore = 10 * multiplier * feverMul;
       this.score += earnedScore;
-      this.coins += 2;
-      this.savedData.coins += 2;
+      this.coins += 4;
+      this.savedData.coins += 4;
       this.slowMoEnergy = Math.min(100, this.slowMoEnergy + 25);
+      this.addFeverEnergy(20);
 
       this.sound.playCorrect();
       this.spawnExplosion(new THREE.Vector3(LANES[this.playerLaneIndex], 1.5, 0), 0x34d399, 24);
@@ -2181,8 +2496,23 @@
     }
 
     handleWrongAnswer(questionData, isTimeout = false) {
-      this.hearts--;
       this.combo = 0;
+
+      // Nếu có Khiên Năng Lượng -> Chặn mất 1 tim!
+      if (this.hasShield) {
+        this.hasShield = false;
+        this.sound.playShieldBreak();
+        this.cameraShakeIntensity = 0.45;
+        this.invulnerableTimer = 1.2;
+        if (this.playerGroup) {
+          this.spawnExplosion(this.playerGroup.position, 0x34d399, 26);
+        }
+        this.updateHUD();
+        this.showExplainModal(questionData, isTimeout, true);
+        return;
+      }
+
+      this.hearts--;
       this.cameraShakeIntensity = 0.6;
       this.invulnerableTimer = 1.5;
       this.sound.playWrong();
@@ -2198,11 +2528,11 @@
       if (this.hearts <= 0) {
         this.gameOver();
       } else {
-        this.showExplainModal(questionData, isTimeout);
+        this.showExplainModal(questionData, isTimeout, false);
       }
     }
 
-    showExplainModal(q, isTimeout = false) {
+    showExplainModal(q, isTimeout = false, shieldSaved = false) {
       this.state = STATES.EXPLAIN;
       const modal = document.getElementById('explain-modal');
       const iconEl = document.getElementById('explain-icon');
@@ -2215,7 +2545,11 @@
       const svgEl = document.getElementById('explain-svg');
 
       if (iconEl && titleEl && subEl) {
-        if (isTimeout) {
+        if (shieldSaved) {
+          iconEl.textContent = '🛡️';
+          titleEl.textContent = isTimeout ? 'KHIÊN ĐÃ CỨU BẠN KHI HẾT GIỜ!' : 'KHIÊN BẢO VỆ ĐÃ CỨU 1 TIM!';
+          subEl.textContent = 'Nhờ nhặt Khiên trên đường đua, bạn KHÔNG bị mất mạng! Hãy đọc kỹ công thức chuẩn dưới đây nhé:';
+        } else if (isTimeout) {
           iconEl.textContent = '⏱️';
           titleEl.textContent = 'HẾT 1 PHÚT VƯỢT CHƯỚNG NGẠI VẬT!';
           subEl.textContent = 'Mỗi chướng ngại vật có 1 phút để tính nháp. Hãy xem công thức chuẩn dưới đây để sẵn sàng cho thử thách kế tiếp:';
@@ -2321,6 +2655,51 @@
     /* =========================================================================
      * 12. CẬP NHẬT GIAO DIỆN HUD & MODALS
      * ========================================================================= */
+    showTrackToast(message, icon = '✨') {
+      const toast = document.getElementById('hud-track-toast');
+      const textEl = document.getElementById('hud-track-toast-text');
+      if (!toast || !textEl) return;
+      textEl.textContent = message.includes(icon) ? message : `${icon} ${message}`;
+      toast.classList.remove('hidden');
+      toast.classList.remove('animate-pop-track');
+      void toast.offsetWidth;
+      toast.classList.add('animate-pop-track');
+      if (this.toastTimeout) clearTimeout(this.toastTimeout);
+      this.toastTimeout = setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 1600);
+    }
+
+    addFeverEnergy(amount) {
+      if (this.isFeverActive) return;
+      this.feverEnergy = Math.min(100, this.feverEnergy + amount);
+      if (this.feverEnergy >= 100) {
+        this.activateFeverMode();
+      } else {
+        this.updateHUD();
+      }
+    }
+
+    activateFeverMode() {
+      this.isFeverActive = true;
+      this.feverTimer = 10.0;
+      this.feverEnergy = 100;
+      const overlay = document.getElementById('fever-overlay');
+      if (overlay) overlay.style.opacity = '1';
+      this.sound.playFever();
+      this.showTrackToast('⚡ SIÊU NĂNG LƯỢNG FEVER x2 ĐIỂM & NAM CHÂM 3 LÀN!', '⚡');
+      this.updateHUD();
+    }
+
+    deactivateFeverMode() {
+      this.isFeverActive = false;
+      this.feverTimer = 0;
+      this.feverEnergy = 0;
+      const overlay = document.getElementById('fever-overlay');
+      if (overlay) overlay.style.opacity = '0';
+      this.updateHUD();
+    }
+
     updateHUD() {
       const heartsContainer = document.getElementById('hud-hearts');
       if (heartsContainer) {
@@ -2331,6 +2710,11 @@
             : '<span class="text-slate-600">🖤</span>';
         }
         heartsContainer.innerHTML = html;
+      }
+
+      const shieldBadge = document.getElementById('hud-shield-badge');
+      if (shieldBadge) {
+        shieldBadge.classList.toggle('hidden', !this.hasShield);
       }
 
       const comboBadge = document.getElementById('hud-combo-badge');
@@ -2353,6 +2737,20 @@
       const slowPct = document.getElementById('hud-slowmo-pct');
       if (slowBar) slowBar.style.width = `${this.slowMoEnergy}%`;
       if (slowPct) slowPct.textContent = `${Math.round(this.slowMoEnergy)}%`;
+
+      const feverBar = document.getElementById('hud-fever-bar');
+      const feverPct = document.getElementById('hud-fever-pct');
+      const feverLabel = document.getElementById('hud-fever-label');
+      if (feverBar) {
+        feverBar.style.width = `${Math.round(this.feverEnergy)}%`;
+      }
+      if (feverPct) {
+        feverPct.textContent = this.isFeverActive ? `x2 (${Math.ceil(this.feverTimer)}s)` : `${Math.round(this.feverEnergy)}%`;
+      }
+      if (feverLabel) {
+        feverLabel.textContent = this.isFeverActive ? '🔥 FEVER x2!' : '⚡ Năng Lượng';
+        feverLabel.classList.toggle('animate-pulse', this.isFeverActive);
+      }
     }
 
     updateMenuStats() {
@@ -2365,6 +2763,8 @@
     victory() {
       this.state = STATES.VICTORY;
       this.toggleScratchpad(false);
+      this.deactivateFeverMode();
+      this.bossOrbPool.forEach(o => o.visible = false);
       if (this.score > this.savedData.highScore) {
         this.savedData.highScore = this.score;
       }
@@ -2387,6 +2787,8 @@
     gameOver() {
       this.state = STATES.GAMEOVER;
       this.toggleScratchpad(false);
+      this.deactivateFeverMode();
+      this.bossOrbPool.forEach(o => o.visible = false);
       this.sound.playGameOver();
 
       if (this.score > this.savedData.highScore) {
@@ -2428,6 +2830,12 @@
       this.gateWave.active = false;
       this.gateWave.meshes.forEach(m => m.visible = false);
       this.coinPool.forEach(c => c.visible = false);
+      this.powerupPool.forEach(p => p.visible = false);
+      this.boostPadPool.forEach(b => b.visible = false);
+      this.bossOrbPool.forEach(o => o.visible = false);
+      this.hasShield = false;
+      this.isDashingToGate = false;
+      this.deactivateFeverMode();
 
       this.updateMenuStats();
     }
@@ -2476,7 +2884,36 @@
 
     renderSkinShopItems() {
       const container = document.getElementById('shop-items-container');
+      const shopCoinsEl = document.getElementById('shop-coins-display');
+      if (shopCoinsEl) shopCoinsEl.textContent = this.savedData.coins;
       if (!container) return;
+
+      const supportItems = [
+        {
+          id: 'shield',
+          name: "Khiên Năng Lượng Khởi Đầu",
+          price: 20,
+          desc: `Tự động bật Khiên chặn 1 lần mất tim (Đang có: ${this.savedData.startShieldCount || 0})`,
+          icon: "🛡️",
+          ownedForever: false
+        },
+        {
+          id: 'hint',
+          name: "Gợi Ý 50/50 Khởi Đầu",
+          price: 25,
+          desc: `Tự động loại 1 đáp án sai ở chướng ngại đầu (Đang có: ${this.savedData.startHintCount || 0})`,
+          icon: "💎",
+          ownedForever: false
+        },
+        {
+          id: 'magnet',
+          name: "Nam Châm Siêu Hút 3 Làn",
+          price: 60,
+          desc: "Hút Xu & Sao từ cả 3 làn vĩnh viễn khi đang chạy",
+          icon: "🧲",
+          ownedForever: !!this.savedData.unlockedMagnet
+        }
+      ];
 
       const skins = [
         { id: 1, name: "Chiến Hạm Tia Chớp", price: 0, desc: "Phi thuyền siêu thanh phản lực kép (Mặc định)", icon: "🚀" },
@@ -2484,7 +2921,35 @@
         { id: 3, name: "Phi Thuyền Hỏa Long Đỏ", price: 100, desc: "Chiến hạm vũ trụ 3 động cơ cánh kép viền vàng", icon: "🛸" }
       ];
 
-      let html = '';
+      let html = '<div class="text-[11px] font-black text-emerald-300 uppercase tracking-wider text-left px-1 pt-1">⚡ Trang Bị Hỗ Trợ Đường Đua</div>';
+
+      supportItems.forEach(item => {
+        html += `
+          <div class="glass-panel p-3 rounded-2xl border ${item.ownedForever ? 'border-emerald-400/60 bg-emerald-500/10' : 'border-white/10'} flex items-center justify-between gap-3 text-left">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">${item.icon}</span>
+              <div>
+                <div class="text-xs font-black text-white">${item.name}</div>
+                <div class="text-[10px] text-slate-300">${item.desc}</div>
+              </div>
+            </div>
+            <div>
+              ${item.ownedForever ? `
+                <span class="px-3 py-1.5 rounded-xl bg-emerald-400/20 text-emerald-300 border border-emerald-400/40 text-xs font-black">
+                  ĐÃ SỞ HỮU
+                </span>
+              ` : `
+                <button onclick="game3D.buySupportItem('${item.id}', ${item.price})" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black transition flex items-center gap-1 whitespace-nowrap">
+                  <span>🪙</span> ${item.price}
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      });
+
+      html += '<div class="text-[11px] font-black text-amber-300 uppercase tracking-wider text-left px-1 pt-2">🚀 Phi Thuyền & Nhân Vật 3D</div>';
+
       skins.forEach(s => {
         const isUnlocked = this.savedData.unlockedSkins.includes(s.id);
         const isSelected = this.savedData.selectedSkin === s.id;
@@ -2519,6 +2984,26 @@
       });
 
       container.innerHTML = html;
+    }
+
+    buySupportItem(itemId, price) {
+      if (this.savedData.coins < price) {
+        alert("Bạn chưa đủ xu vàng! Hãy lách làn nhặt thêm Xu & Ngôi Sao trên đường đua nhé.");
+        return;
+      }
+      if (itemId === 'magnet' && this.savedData.unlockedMagnet) return;
+
+      this.savedData.coins -= price;
+      if (itemId === 'shield') {
+        this.savedData.startShieldCount = (this.savedData.startShieldCount || 0) + 1;
+      } else if (itemId === 'hint') {
+        this.savedData.startHintCount = (this.savedData.startHintCount || 0) + 1;
+      } else if (itemId === 'magnet') {
+        this.savedData.unlockedMagnet = true;
+      }
+      this.saveData();
+      this.renderSkinShopItems();
+      this.sound.playPowerup();
     }
 
     buySkin(skinId, price) {
@@ -2568,7 +3053,25 @@
       const effectiveDt = dt * timeScale;
       const isPausedLike = (this.state === STATES.PAUSED || this.state === STATES.EXPLAIN || this.state === STATES.VICTORY || this.state === STATES.GAMEOVER);
       const speedMul = isPausedLike ? 0.15 : (this.state === STATES.MENU ? 0.45 : 1.0);
-      const currentSpeed = (BASE_SPEED + Math.min(this.combo, 6) * 1.2) * speedMul;
+
+      // Giảm dần thời gian Boost Pad & Fever Mode khi đang chạy
+      if (!isPausedLike && (this.state === STATES.PLAYING || this.state === STATES.BOSS)) {
+        if (this.boostTimer > 0) this.boostTimer = Math.max(0, this.boostTimer - dt);
+        if (this.isFeverActive) {
+          this.feverTimer -= dt;
+          this.feverEnergy = Math.max(0, (this.feverTimer / 10.0) * 100);
+          const feverBar = document.getElementById('hud-fever-bar');
+          const feverPct = document.getElementById('hud-fever-pct');
+          if (feverBar) feverBar.style.width = `${Math.round(this.feverEnergy)}%`;
+          if (feverPct) feverPct.textContent = `x2 (${Math.ceil(Math.max(0, this.feverTimer))}s)`;
+          if (this.feverTimer <= 0) {
+            this.deactivateFeverMode();
+          }
+        }
+      }
+
+      const boostMul = this.isDashingToGate ? 2.4 : (this.boostTimer > 0 ? 1.65 : (this.isFeverActive ? 1.2 : 1.0));
+      const currentSpeed = (BASE_SPEED + Math.min(this.combo, 6) * 1.2) * speedMul * boostMul;
 
       // 1. Cuộn phân đoạn đường đua & Cảnh quan 5 Thế Giới
       this.trackSegments.forEach(seg => {
@@ -2666,9 +3169,18 @@
         this.playerGroup.position.y = 0.65 + this.playerPosY;
 
         if (this.playerAura) {
-          this.playerAura.visible = (this.combo >= 2);
+          this.playerAura.visible = (this.combo >= 2 || this.isFeverActive);
           if (this.playerAura.visible) {
-            this.playerAura.rotation.z += 2.5 * dt;
+            this.playerAura.rotation.z += (this.isFeverActive ? 5.5 : 2.5) * dt;
+            this.playerAura.material.color.setHex(this.isFeverActive ? 0xf97316 : 0xfde047);
+          }
+        }
+
+        if (this.playerShieldBubble) {
+          this.playerShieldBubble.visible = this.hasShield;
+          if (this.hasShield) {
+            this.playerShieldBubble.rotation.y += 1.6 * dt;
+            this.playerShieldBubble.rotation.x += 0.9 * dt;
           }
         }
 
@@ -2693,7 +3205,8 @@
         this.camera.position.x = THREE.MathUtils.lerp(this.camera.position.x, camTargetX, 1 - Math.exp(-8 * dt));
 
         const isPortrait = window.innerWidth < window.innerHeight;
-        const targetFOV = isPortrait ? 78 : (this.combo >= 3 ? 68 : 60);
+        const fastRush = (this.combo >= 3 || this.boostTimer > 0 || this.isFeverActive || this.isDashingToGate);
+        const targetFOV = isPortrait ? (fastRush ? 83 : 78) : (fastRush ? 70 : 60);
         const targetCamY = isPortrait ? 5.2 : 4.2;
         const targetCamZ = isPortrait ? 9.6 : 7.8;
 
@@ -2731,7 +3244,17 @@
 
         if (!this.gateWave.resolved) {
           const timeProgress = Math.max(0, Math.min(1, 1 - (this.questionTimeRemaining / this.questionTimeLimit)));
-          this.gateWave.z = -100 + (timeProgress * 100);
+          this.gateWave.z = this.gateStartZ + (timeProgress * Math.abs(this.gateStartZ));
+        } else if (this.isDashingToGate) {
+          this.dashTimer -= dt;
+          this.gateWave.z = THREE.MathUtils.lerp(this.gateWave.z, 2.5, 1 - Math.exp(-15 * dt));
+          if (this.dashTimer <= 0 || this.gateWave.z >= -0.4) {
+            this.isDashingToGate = false;
+            this.gateWave.z = 0.5;
+            const outcome = this.dashOutcome;
+            this.dashOutcome = null;
+            this.resolveGateOutcome(outcome);
+          }
         } else {
           this.gateWave.z += (currentSpeed * 2.5) * effectiveDt;
         }
@@ -2748,7 +3271,8 @@
         }
       }
 
-      // 7. Xu Vàng 3D (Xoay + Nhún + Magnet)
+      // 7. Xu Vàng 3D (Xoay + Nhún + Nam Châm 3 Làn khi Fever/Trang bị)
+      const coinMagnetRadius = (this.isFeverActive || this.savedData.unlockedMagnet) ? 14.0 : 4.8;
       this.coinPool.forEach(coin => {
         if (!coin.visible) return;
         coin.position.z += currentSpeed * effectiveDt;
@@ -2760,15 +3284,19 @@
           const dz = this.playerGroup.position.z - coin.position.z;
           const dist = Math.sqrt(dx * dx + dz * dz);
 
-          if (dist < 4.5) {
-            coin.position.x += dx * 7.5 * dt;
+          if (dist < coinMagnetRadius) {
+            coin.position.x += dx * 9.5 * dt;
+            if (this.isFeverActive || this.savedData.unlockedMagnet) {
+              coin.position.z += dz * 5.0 * dt;
+            }
           }
 
-          if (dist < 1.15 && Math.abs(this.playerGroup.position.y - coin.position.y) < 1.25) {
+          if (dist < 1.3 && Math.abs(this.playerGroup.position.y - coin.position.y) < 1.4) {
             coin.visible = false;
-            this.coins++;
-            this.savedData.coins++;
-            this.score += 5;
+            this.coins += 5;
+            this.savedData.coins += 5;
+            this.score += 15 * (this.isFeverActive ? 2 : 1);
+            this.addFeverEnergy(10);
             this.sound.playCoin(this.combo);
             this.spawnExplosion(coin.position, 0xfbbf24, 12);
             this.updateHUD();
@@ -2778,7 +3306,89 @@
         if (coin.position.z > 14) coin.visible = false;
       });
 
-      // 8. Boss 3D & Tia Laser
+      // 7b. Vật Phẩm Hỗ Trợ 3D (💎 Gợi Ý 50/50, 🛡️ Khiên Bảo Vệ, ⭐ Ngôi Sao Bay)
+      this.powerupPool.forEach(pu => {
+        if (!pu.visible) return;
+        pu.position.z += currentSpeed * effectiveDt;
+        pu.rotation.y += 2.8 * effectiveDt;
+        pu.position.y = pu.userData.baseY + Math.sin(tNow * 3.0 + pu.position.z) * 0.15;
+
+        if (this.playerGroup && (this.state === STATES.PLAYING || this.state === STATES.BOSS)) {
+          const dx = Math.abs(this.playerGroup.position.x - pu.position.x);
+          const dz = Math.abs(this.playerGroup.position.z - pu.position.z);
+          const playerCenterY = this.playerGroup.position.y + 0.5;
+          const dy = Math.abs(playerCenterY - pu.position.y);
+
+          const catchRadiusX = (this.isFeverActive || this.savedData.unlockedMagnet) ? 1.8 : 1.3;
+          const catchHeightY = pu.userData.type === 'skystar' ? 1.25 : 1.45;
+
+          if (dx < catchRadiusX && dz < 1.35 && dy < catchHeightY) {
+            pu.visible = false;
+            const pType = pu.userData.type;
+            if (pType === 'hint') {
+              this.spawnExplosion(pu.position, 0x38bdf8, 22);
+              this.triggerHintElimination();
+            } else if (pType === 'shield') {
+              this.hasShield = true;
+              this.sound.playPowerup();
+              this.spawnExplosion(pu.position, 0x34d399, 22);
+              this.showTrackToast('🛡️ Đã bật Khiên Năng Lượng Bảo Vệ!', '🛡️');
+              this.updateHUD();
+            } else if (pType === 'skystar') {
+              this.coins += 15;
+              this.savedData.coins += 15;
+              this.score += 30 * (this.isFeverActive ? 2 : 1);
+              this.addFeverEnergy(30);
+              this.sound.playPowerup();
+              this.spawnExplosion(pu.position, 0xfacc15, 26);
+              this.showTrackToast('⭐ Ngôi Sao Bay! +15 Xu & +30% Fever!', '⭐');
+              this.updateHUD();
+            }
+          }
+        }
+
+        if (pu.position.z > 14) pu.visible = false;
+      });
+
+      // 7c. Bàn Đạp Tăng Tốc (Boost Pads)
+      this.boostPadPool.forEach(pad => {
+        if (!pad.visible) return;
+        pad.position.z += currentSpeed * effectiveDt;
+
+        if (this.playerGroup && !pad.userData.triggered && (this.state === STATES.PLAYING || this.state === STATES.BOSS)) {
+          const dx = Math.abs(this.playerGroup.position.x - pad.position.x);
+          const dz = Math.abs(this.playerGroup.position.z - pad.position.z);
+          if (dx < 1.25 && dz < 1.4 && this.playerPosY < 0.85) {
+            pad.userData.triggered = true;
+            pad.visible = false;
+            this.boostTimer = 2.0;
+            this.score += 10 * (this.isFeverActive ? 2 : 1);
+            this.addFeverEnergy(15);
+            this.sound.playBoost();
+            this.spawnExplosion(pad.position, 0x38bdf8, 18);
+            this.showTrackToast('🚀 BÀN ĐẠP TĂNG TỐC! +10 Điểm & +15% Fever!', '🚀');
+            this.updateHUD();
+          }
+        }
+
+        if (pad.position.z > 14) pad.visible = false;
+      });
+
+      // Tự động rải thêm đợt xu / sao bay / boost pad liên tục khi đường đua trống (trong lúc cổng chưa áp sát)
+      if (
+        (this.state === STATES.PLAYING || this.state === STATES.BOSS) &&
+        this.gateWave.active &&
+        !this.gateWave.resolved &&
+        this.gateWave.z < -28
+      ) {
+        const hasAnyCoin = this.coinPool.some(c => c.visible);
+        const hasAnyPowerup = this.powerupPool.some(p => p.visible);
+        if (!hasAnyCoin && !hasAnyPowerup) {
+          this.spawnCoinsBetweenGates(Math.min(-26, this.gateWave.z + 4), -14);
+        }
+      }
+
+      // 8. Boss 3D, Cầu Năng Lượng Boss & Tia Laser
       if (this.state === STATES.BOSS && this.bossMesh && this.bossMesh.visible) {
         this.bossMoveTimer += effectiveDt;
         if (this.bossMoveTimer > 2.2) {
@@ -2797,7 +3407,55 @@
         if (this.bossHalo) {
           this.bossHalo.rotation.z += 2.0 * dt;
         }
+
+        // Boss bắn cầu năng lượng (Né hoặc nhảy qua để nhận điểm & Fever, chạm vào KHÔNG mất mạng)
+        this.bossOrbTimer += effectiveDt;
+        if (this.bossOrbTimer >= 2.4 && !this.isDashingToGate) {
+          this.bossOrbTimer = 0;
+          const orb = this.bossOrbPool.find(o => !o.visible);
+          if (orb) {
+            orb.position.set(this.bossMesh.position.x, 1.0, -20);
+            orb.userData.dodgedAwarded = false;
+            orb.userData.hitPlayer = false;
+            orb.visible = true;
+          }
+        }
       }
+
+      // Di chuyển & kiểm tra va chạm Cầu Năng Lượng Boss (Không bao giờ trừ tim!)
+      this.bossOrbPool.forEach(orb => {
+        if (!orb.visible) return;
+        orb.position.z += 18 * effectiveDt;
+        orb.rotation.z += 5.0 * dt;
+        orb.rotation.y += 3.0 * dt;
+
+        if (this.playerGroup && !orb.userData.hitPlayer && (this.state === STATES.BOSS)) {
+          const dx = Math.abs(this.playerGroup.position.x - orb.position.x);
+          const dz = Math.abs(this.playerGroup.position.z - orb.position.z);
+          if (dx < 1.1 && dz < 1.15 && this.playerPosY < 1.15) {
+            orb.userData.hitPlayer = true;
+            orb.visible = false;
+            this.cameraShakeIntensity = 0.35;
+            if (!this.isFeverActive) {
+              this.feverEnergy = Math.max(0, this.feverEnergy - 15);
+            }
+            this.sound.playShieldBreak();
+            this.spawnExplosion(orb.position, 0xf43f5e, 16);
+            this.showTrackToast('💥 Trúng cầu Boss! -15% Năng lượng (Không mất tim)', '💥');
+            this.updateHUD();
+          }
+        }
+
+        if (!orb.userData.dodgedAwarded && !orb.userData.hitPlayer && orb.position.z > 1.8 && this.state === STATES.BOSS) {
+          orb.userData.dodgedAwarded = true;
+          this.score += 10 * (this.isFeverActive ? 2 : 1);
+          this.addFeverEnergy(15);
+          this.showTrackToast('💨 Né đòn Boss! +10 Điểm & +15% Fever!', '💨');
+          this.updateHUD();
+        }
+
+        if (orb.position.z > 14) orb.visible = false;
+      });
 
       if (this.laserTimer > 0 && this.laserMesh) {
         this.laserTimer -= dt;
