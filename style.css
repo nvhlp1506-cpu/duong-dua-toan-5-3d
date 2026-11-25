@@ -89,6 +89,22 @@ html, body {
   animation: popTrack 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes floatUpFade {
+  0% { opacity: 0; transform: translate(-50%, 6px) scale(0.65); }
+  18% { opacity: 1; transform: translate(-50%, -14px) scale(1.12); }
+  75% { opacity: 1; transform: translate(-50%, -44px) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -68px) scale(0.92); }
+}
+.arcade-float-popup {
+  position: fixed;
+  pointer-events: none;
+  z-index: 35;
+  font-weight: 900;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85), 0 0 12px rgba(255, 255, 255, 0.25);
+  animation: floatUpFade 1.05s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  white-space: nowrap;
+}
+
 /* HOẠT ẢNH MƯỢT MÀ */
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.96); }

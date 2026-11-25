@@ -167,6 +167,8 @@
     constructor() {
       this.ctx = null;
       this.isMuted = localStorage.getItem('dt5_muted') === 'true';
+      this.musicTimer = 0;
+      this.musicStep = 0;
     }
 
     init() {
@@ -290,6 +292,43 @@
         this.playTone(f, 'triangle', 0.24, 0.14, 0, i * 0.055);
       });
     }
+
+    playMysteryBox() {
+      [440, 554.37, 659.25, 880, 1174.66].forEach((f, i) => {
+        this.playTone(f, 'sine', 0.12, 0.12, 0, i * 0.05);
+      });
+    }
+
+    playRingJump() {
+      this.playTone(660, 'triangle', 0.16, 0.13, 280);
+      this.playTone(990, 'sine', 0.2, 0.11, 180, 0.06);
+    }
+
+    // Nhạc nền Arcade chiptune tự động theo nhịp Fever / Boss (chỉ phát khi đã có tương tác người dùng)
+    tickMusic(dt, isFever = false, isBoss = false) {
+      if (this.isMuted || !this.ctx || this.ctx.state !== 'running') return;
+      const stepDur = isFever ? 0.14 : (isBoss ? 0.16 : 0.20);
+      this.musicTimer += dt;
+      if (this.musicTimer < stepDur) return;
+      this.musicTimer -= stepDur;
+
+      const idx = this.musicStep % 16;
+      this.musicStep++;
+
+      // Giai điệu bass & arpeggio vui nhộn nhẹ nhàng (gain thấp 0.025-0.035 để không át SFX)
+      const normalBass = [130.81, 0, 130.81, 164.81, 174.61, 0, 174.61, 196.00, 146.83, 0, 146.83, 196.00, 196.00, 164.81, 146.83, 130.81];
+      const bossBass   = [110.00, 110.00, 0, 130.81, 146.83, 0, 130.81, 110.00, 98.00, 98.00, 0, 110.00, 123.47, 130.81, 146.83, 164.81];
+      const melody     = [523.25, 659.25, 783.99, 659.25, 587.33, 698.46, 880.00, 783.99, 659.25, 783.99, 1046.50, 880.00, 783.99, 659.25, 587.33, 523.25];
+
+      const bassFreq = (isBoss ? bossBass : normalBass)[idx];
+      if (bassFreq > 0) {
+        this.playTone(bassFreq * (isFever ? 1.12 : 1.0), 'triangle', 0.11, 0.028);
+      }
+      if (idx % 2 === 0 || isFever) {
+        const leadFreq = melody[idx] * (isFever ? 1.12 : 1.0);
+        this.playTone(leadFreq, 'sine', 0.09, isFever ? 0.028 : 0.02);
+      }
+    }
   }
 
   /* =========================================================================
@@ -326,10 +365,12 @@
       this.eliminatedLanes = new Set();
       this.pendingStartHint = false;
       this.boostTimer = 0;
+      this.barrelRollTimer = 0;
       this.isDashingToGate = false;
       this.dashTimer = 0;
       this.dashOutcome = null;
       this.toastTimeout = null;
+      this.currentMission = null;
 
       // HỆ THỐNG 1 PHÚT VƯỢT CHƯỚNG NGẠI VẬT (60 GIÂY/CÂU HỎI)
       this.questionTimeLimit = 60.0;
@@ -391,6 +432,9 @@
       this.coinPool = [];
       this.powerupPool = [];
       this.boostPadPool = [];
+      this.jumpRingPool = [];
+      this.speedLinePool = [];
+      this.laneGuideBeam = null;
       this.bossOrbPool = [];
       this.bossOrbTimer = 0;
       this.barrierPool = [];
@@ -512,6 +556,9 @@
       this.buildCoinPool();
       this.buildPowerupPool();
       this.buildBoostPadPool();
+      this.buildJumpRingPool();
+      this.buildSpeedLinePool();
+      this.buildLaneGuideBeam();
       this.buildBossOrbPool();
       this.buildParticlePool();
 
@@ -1141,20 +1188,23 @@
       }
     }
 
-    // Xây dựng Pool Vật Phẩm Hỗ Trợ Toán Học 3D (Hint 50/50, Khiên Bảo Vệ, Ngôi Sao Bay)
+    // Xây dựng Pool Vật Phẩm Hỗ Trợ Toán Học 3D (Hint 50/50, Khiên Bảo Vệ, Ngôi Sao Bay, Hộp Bí Ẩn)
     buildPowerupPool() {
       const types = [
         { type: 'hint', color: 0x38bdf8, emissive: 0x0284c7, ringColor: 0xbae6fd, baseY: 1.05 },
         { type: 'shield', color: 0x34d399, emissive: 0x059669, ringColor: 0xa7f3d0, baseY: 1.05 },
         { type: 'skystar', color: 0xfacc15, emissive: 0xea580c, ringColor: 0xfef08a, baseY: 2.45 },
+        { type: 'mystery', color: 0xec4899, emissive: 0xbe185d, ringColor: 0xfde047, baseY: 1.15 },
         { type: 'hint', color: 0x38bdf8, emissive: 0x0284c7, ringColor: 0xbae6fd, baseY: 1.05 },
         { type: 'shield', color: 0x34d399, emissive: 0x059669, ringColor: 0xa7f3d0, baseY: 1.05 },
-        { type: 'skystar', color: 0xfacc15, emissive: 0xea580c, ringColor: 0xfef08a, baseY: 2.45 }
+        { type: 'skystar', color: 0xfacc15, emissive: 0xea580c, ringColor: 0xfef08a, baseY: 2.45 },
+        { type: 'mystery', color: 0xec4899, emissive: 0xbe185d, ringColor: 0xfde047, baseY: 1.15 }
       ];
 
       const gemGeo = new THREE.OctahedronGeometry(0.48, 0);
       const shieldGeo = new THREE.DodecahedronGeometry(0.46, 0);
       const starCoreGeo = new THREE.OctahedronGeometry(0.55, 0);
+      const boxGeo = new THREE.BoxGeometry(0.86, 0.86, 0.86);
       const ringGeo = new THREE.TorusGeometry(0.68, 0.06, 6, 18);
 
       types.forEach(cfg => {
@@ -1177,6 +1227,11 @@
           second.rotation.z = Math.PI / 4;
           second.scale.set(0.82, 0.82, 0.82);
           grp.add(second);
+        } else if (cfg.type === 'mystery') {
+          core = new THREE.Mesh(boxGeo, coreMat);
+          const bandMat = new THREE.MeshBasicMaterial({ color: 0xfde047, wireframe: true });
+          const band = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.95, 0.95), bandMat);
+          grp.add(band);
         } else {
           core = new THREE.Mesh(gemGeo, coreMat);
         }
@@ -1190,6 +1245,59 @@
         this.scene.add(grp);
         this.powerupPool.push(grp);
       });
+    }
+
+    // Xây dựng Pool Vòng Nhảy Trên Không 3D (Jump Rings - nhào lộn thưởng điểm & Fever)
+    buildJumpRingPool() {
+      const hoopGeo = new THREE.TorusGeometry(1.15, 0.11, 8, 22);
+      const innerGeo = new THREE.TorusGeometry(0.92, 0.04, 6, 18);
+      const hoopMat = new THREE.MeshBasicMaterial({ color: 0xfacc15 });
+      const innerMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+
+      for (let i = 0; i < 3; i++) {
+        const grp = new THREE.Group();
+        const hoop = new THREE.Mesh(hoopGeo, hoopMat);
+        const inner = new THREE.Mesh(innerGeo, innerMat);
+        grp.add(hoop, inner);
+        grp.visible = false;
+        grp.position.set(0, 2.35, -30);
+        grp.userData = { triggered: false };
+        this.scene.add(grp);
+        this.jumpRingPool.push(grp);
+      }
+    }
+
+    // Xây dựng Pool Vệt Tốc Độ 3D (Speed Lines tạo cảm giác phóng cực nhanh)
+    buildSpeedLinePool() {
+      const geo = new THREE.BoxGeometry(0.04, 0.04, 5.0);
+      for (let i = 0; i < 16; i++) {
+        const mat = new THREE.MeshBasicMaterial({
+          color: i % 2 === 0 ? 0x38bdf8 : 0xfef08a,
+          transparent: true,
+          opacity: 0.45
+        });
+        const line = new THREE.Mesh(geo, mat);
+        const side = i % 2 === 0 ? -1 : 1;
+        line.position.set(side * (4.8 + Math.random() * 4.5), 0.9 + Math.random() * 4.0, -Math.random() * 75);
+        this.scene.add(line);
+        this.speedLinePool.push(line);
+      }
+    }
+
+    // Xây dựng Tia Dẫn Hướng Làn Đang Chọn tới Cổng 3D
+    buildLaneGuideBeam() {
+      const beamGeo = new THREE.PlaneGeometry(2.1, 1);
+      beamGeo.rotateX(-Math.PI / 2);
+      const beamMat = new THREE.MeshBasicMaterial({
+        color: 0xfbbf24,
+        transparent: true,
+        opacity: 0.22,
+        side: THREE.DoubleSide
+      });
+      this.laneGuideBeam = new THREE.Mesh(beamGeo, beamMat);
+      this.laneGuideBeam.position.set(0, 0.05, -25);
+      this.laneGuideBeam.visible = false;
+      this.scene.add(this.laneGuideBeam);
     }
 
     // Xây dựng Pool Bàn Đạp Tăng Tốc (Boost Pads)
@@ -2194,10 +2302,12 @@
       this.eliminatedLanes.clear();
       this.pendingStartHint = false;
       this.boostTimer = 0;
+      this.barrelRollTimer = 0;
       this.isDashingToGate = false;
       this.dashTimer = 0;
       this.dashOutcome = null;
       this.bossOrbTimer = 0;
+      this.initNextMission(true);
 
       const feverOverlay = document.getElementById('fever-overlay');
       if (feverOverlay) feverOverlay.style.opacity = '0';
@@ -2233,8 +2343,12 @@
       this.coinPool.forEach(c => c.visible = false);
       this.powerupPool.forEach(p => p.visible = false);
       this.boostPadPool.forEach(b => b.visible = false);
+      this.jumpRingPool.forEach(r => { r.visible = false; r.userData.triggered = false; });
       this.bossOrbPool.forEach(o => o.visible = false);
       this.particlePool.forEach(p => p.visible = false);
+      if (this.laneGuideBeam) this.laneGuideBeam.visible = false;
+      const floatLayer = document.getElementById('hud-floating-layer');
+      if (floatLayer) floatLayer.innerHTML = '';
       if (this.laserMesh) this.laserMesh.visible = false;
       this.laserTimer = 0;
 
@@ -2340,36 +2454,39 @@
         b.visible = false;
         b.userData.triggered = false;
       });
+      this.jumpRingPool.forEach(r => {
+        r.visible = false;
+        r.userData.triggered = false;
+      });
 
-      // 1. Rải chuỗi Xu Vàng uốn lượn kích thích lách làn
+      // 1. Rải chuỗi Xu Vàng uốn lượn (Mưa Xu 3 làn khi đang Fever!)
       let poolIdx = 0;
       let laneIdx = Math.floor(Math.random() * 3);
-      for (let z = startZ + 8; z < endZ; z += 4.2) {
+      const stepZ = this.isFeverActive ? 2.4 : 3.8;
+      for (let z = startZ + 7; z < endZ; z += stepZ) {
         if (poolIdx >= this.coinPool.length) break;
         const coin = this.coinPool[poolIdx++];
         coin.position.set(LANES[laneIdx], 0.85, z);
         coin.visible = true;
-        if (Math.random() > 0.55) {
+        if (this.isFeverActive || Math.random() > 0.5) {
           laneIdx = Math.max(0, Math.min(2, laneIdx + (Math.random() > 0.5 ? 1 : -1)));
         }
       }
 
-      // 2. Sinh Vật Phẩm Hỗ Trợ Toán Học (💎 Gợi Ý 50/50, 🛡️ Khiên, ⭐ Ngôi Sao Bay trên cao)
+      // 2. Sinh Vật Phẩm Hỗ Trợ Toán Học (💎 Gợi Ý 50/50, 🛡️ Khiên, ⭐ Ngôi Sao Bay, 🎁 Hộp Bí Ẩn)
       const spawnedTypes = [];
-      if (!this.hasShield && Math.random() > 0.35) {
+      if (!this.hasShield && Math.random() > 0.4) {
         spawnedTypes.push('shield');
       } else {
         spawnedTypes.push('hint');
       }
       spawnedTypes.push('skystar');
-      if (Math.random() > 0.45) {
-        spawnedTypes.push(spawnedTypes[0] === 'shield' ? 'hint' : 'shield');
-      }
+      spawnedTypes.push(Math.random() > 0.35 ? 'mystery' : (spawnedTypes[0] === 'shield' ? 'hint' : 'shield'));
 
       const span = Math.max(8, endZ - startZ);
       const zSlots = [
-        startZ + span * 0.25,
-        startZ + span * 0.52,
+        startZ + span * 0.24,
+        startZ + span * 0.50,
         startZ + span * 0.78
       ];
       spawnedTypes.forEach((pType, idx) => {
@@ -2380,13 +2497,21 @@
         pu.visible = true;
       });
 
-      // 3. Sinh Bàn Đạp Tăng Tốc (Boost Pad)
+      // 3. Sinh Bàn Đạp Tăng Tốc (Boost Pad) & Vòng Nhảy Trên Không (Jump Ring)
       const pad = this.boostPadPool[0];
       if (pad) {
         const padLane = randChoice(LANES);
-        pad.position.set(padLane, 0.06, startZ + span * 0.65);
+        pad.position.set(padLane, 0.06, startZ + span * 0.64);
         pad.userData.triggered = false;
         pad.visible = true;
+      }
+
+      const ring = this.jumpRingPool[0];
+      if (ring) {
+        const ringLane = randChoice(LANES);
+        ring.position.set(ringLane, 2.35, startZ + span * 0.40);
+        ring.userData.triggered = false;
+        ring.visible = true;
       }
     }
 
@@ -2480,7 +2605,15 @@
       this.addFeverEnergy(20);
 
       this.sound.playCorrect();
-      this.spawnExplosion(new THREE.Vector3(LANES[this.playerLaneIndex], 1.5, 0), 0x34d399, 24);
+      this.spawnExplosion(new THREE.Vector3(LANES[this.playerLaneIndex], 1.5, 0), 0x34d399, 28);
+      if (this.combo >= 2) {
+        this.spawnExplosion(new THREE.Vector3(LANES[this.playerLaneIndex] - 1.5, 2.6, -2), 0xfde047, 16);
+        this.spawnExplosion(new THREE.Vector3(LANES[this.playerLaneIndex] + 1.5, 2.6, -2), 0x38bdf8, 16);
+        this.spawnFloatingPopup(`🔥 CHUỖI x${this.combo}! +${earnedScore}đ`, 'text-amber-300 text-lg sm:text-xl');
+      } else {
+        this.spawnFloatingPopup(`✨ CHÍNH XÁC! +${earnedScore}đ`, 'text-emerald-300 text-base sm:text-lg');
+      }
+      this.progressMission('combo', this.combo >= 2 ? 1 : 0);
 
       if (this.state === STATES.BOSS) {
         this.fireLaserAtBoss();
@@ -2670,6 +2803,108 @@
       }, 1600);
     }
 
+    // Tạo chữ bay Arcade ngay phía trên phi thuyền (chiếu tọa độ 3D -> 2D)
+    spawnFloatingPopup(text, colorClass = 'text-amber-300 text-sm sm:text-base') {
+      const layer = document.getElementById('hud-floating-layer');
+      if (!layer || !this.camera) return;
+
+      let screenX = window.innerWidth * 0.5;
+      let screenY = window.innerHeight * 0.58;
+      if (this.playerGroup) {
+        const proj = this.playerGroup.position.clone().add(new THREE.Vector3(0, 1.85, 0)).project(this.camera);
+        screenX = (proj.x * 0.5 + 0.5) * window.innerWidth;
+        screenY = (-proj.y * 0.5 + 0.5) * window.innerHeight;
+      }
+
+      const el = document.createElement('div');
+      el.className = `arcade-float-popup ${colorClass}`;
+      el.textContent = text;
+      el.style.left = `${Math.max(70, Math.min(window.innerWidth - 70, screenX))}px`;
+      el.style.top = `${Math.max(120, Math.min(window.innerHeight - 100, screenY))}px`;
+      layer.appendChild(el);
+      setTimeout(() => el.remove(), 1050);
+    }
+
+    initNextMission(resetIndex = false) {
+      const templates = [
+        { type: 'coin', target: 6, label: 'Nhặt 6 Xu', rewardCoins: 25, rewardScore: 40 },
+        { type: 'air', target: 1, label: 'Nhảy bắt Sao hoặc Vòng', rewardCoins: 30, rewardScore: 50 },
+        { type: 'boost', target: 1, label: 'Đạp Bàn Tăng Tốc', rewardCoins: 25, rewardScore: 40 },
+        { type: 'combo', target: 2, label: 'Trả lời đúng 2 câu', rewardCoins: 35, rewardScore: 60 }
+      ];
+      if (resetIndex || typeof this.missionCursor !== 'number') {
+        this.missionCursor = 0;
+      } else {
+        this.missionCursor = (this.missionCursor + 1) % templates.length;
+      }
+      const tpl = templates[this.missionCursor];
+      this.currentMission = { ...tpl, progress: 0 };
+      this.updateMissionHUD();
+    }
+
+    progressMission(eventType, amount = 1) {
+      if (!this.currentMission || amount <= 0 || this.currentMission.type !== eventType) return;
+      this.currentMission.progress = Math.min(this.currentMission.target, this.currentMission.progress + amount);
+      this.updateMissionHUD();
+
+      if (this.currentMission.progress >= this.currentMission.target) {
+        const m = this.currentMission;
+        this.coins += m.rewardCoins;
+        this.savedData.coins += m.rewardCoins;
+        this.score += m.rewardScore;
+        this.addFeverEnergy(25);
+        this.sound.playPowerup();
+        this.spawnFloatingPopup(`🏆 NHIỆM VỤ +${m.rewardCoins}🪙`, 'text-emerald-300 text-base sm:text-lg');
+        this.showTrackToast(`🏆 Hoàn thành "${m.label}"! +${m.rewardCoins} Xu & +${m.rewardScore}đ!`, '🏆');
+        this.updateHUD();
+        this.initNextMission(false);
+      }
+    }
+
+    updateMissionHUD() {
+      const textEl = document.getElementById('hud-mission-text');
+      const rewEl = document.getElementById('hud-mission-reward');
+      if (!this.currentMission) return;
+      if (textEl) {
+        textEl.textContent = `Nhiệm vụ: ${this.currentMission.label} (${this.currentMission.progress}/${this.currentMission.target})`;
+      }
+      if (rewEl) {
+        rewEl.textContent = `+${this.currentMission.rewardCoins}🪙`;
+      }
+    }
+
+    triggerMysteryReward() {
+      this.sound.playMysteryBox();
+      const pool = ['coins', 'fever', 'shield', 'hint', 'time'];
+      const chosen = randChoice(pool);
+
+      if (chosen === 'fever' && !this.isFeverActive) {
+        this.activateFeverMode();
+        this.spawnFloatingPopup('🎁 ĐẦY 100% FEVER!', 'text-fuchsia-300 text-lg');
+      } else if (chosen === 'shield' && !this.hasShield) {
+        this.hasShield = true;
+        this.showTrackToast('🎁 HỘP BÍ ẨN: Nhận Khiên Năng Lượng!', '🎁');
+        this.spawnFloatingPopup('🎁 +KHIÊN BẢO VỆ!', 'text-emerald-300 text-lg');
+        this.updateHUD();
+      } else if (chosen === 'hint' && this.eliminatedLanes.size === 0) {
+        this.triggerHintElimination();
+        this.spawnFloatingPopup('🎁 +GỢI Ý 50/50!', 'text-sky-300 text-lg');
+      } else if (chosen === 'time') {
+        this.questionTimeRemaining = Math.min(this.questionTimeLimit, this.questionTimeRemaining + 15);
+        this.updateTimerHUD();
+        this.showTrackToast('🎁 HỘP BÍ ẨN: +15 Giây Suy Nghĩ!', '🎁');
+        this.spawnFloatingPopup('🎁 +15 GIÂY!', 'text-cyan-300 text-lg');
+      } else {
+        this.coins += 30;
+        this.savedData.coins += 30;
+        this.score += 50 * (this.isFeverActive ? 2 : 1);
+        this.addFeverEnergy(25);
+        this.showTrackToast('🎁 HỘP BÍ ẨN: Trúng +30 Xu & +50 Điểm!', '🎁');
+        this.spawnFloatingPopup('🎁 +30 XU!', 'text-amber-300 text-lg');
+        this.updateHUD();
+      }
+    }
+
     addFeverEnergy(amount) {
       if (this.isFeverActive) return;
       this.feverEnergy = Math.min(100, this.feverEnergy + amount);
@@ -2687,7 +2922,11 @@
       const overlay = document.getElementById('fever-overlay');
       if (overlay) overlay.style.opacity = '1';
       this.sound.playFever();
-      this.showTrackToast('⚡ SIÊU NĂNG LƯỢNG FEVER x2 ĐIỂM & NAM CHÂM 3 LÀN!', '⚡');
+      this.spawnFloatingPopup('🔥 SIÊU NĂNG LƯỢNG x2!', 'text-orange-300 text-xl');
+      this.showTrackToast('⚡ SIÊU NĂNG LƯỢNG FEVER x2 ĐIỂM & MƯA XU!', '⚡');
+      if (this.gateWave.active && !this.gateWave.resolved && this.gateWave.z < -26) {
+        this.spawnCoinsBetweenGates(Math.min(-26, this.gateWave.z + 4), -14);
+      }
       this.updateHUD();
     }
 
@@ -2765,6 +3004,7 @@
       this.toggleScratchpad(false);
       this.deactivateFeverMode();
       this.bossOrbPool.forEach(o => o.visible = false);
+      if (this.laneGuideBeam) this.laneGuideBeam.visible = false;
       if (this.score > this.savedData.highScore) {
         this.savedData.highScore = this.score;
       }
@@ -2789,6 +3029,7 @@
       this.toggleScratchpad(false);
       this.deactivateFeverMode();
       this.bossOrbPool.forEach(o => o.visible = false);
+      if (this.laneGuideBeam) this.laneGuideBeam.visible = false;
       this.sound.playGameOver();
 
       if (this.score > this.savedData.highScore) {
@@ -2832,7 +3073,11 @@
       this.coinPool.forEach(c => c.visible = false);
       this.powerupPool.forEach(p => p.visible = false);
       this.boostPadPool.forEach(b => b.visible = false);
+      this.jumpRingPool.forEach(r => r.visible = false);
       this.bossOrbPool.forEach(o => o.visible = false);
+      if (this.laneGuideBeam) this.laneGuideBeam.visible = false;
+      const floatLayer = document.getElementById('hud-floating-layer');
+      if (floatLayer) floatLayer.innerHTML = '';
       this.hasShield = false;
       this.isDashingToGate = false;
       this.deactivateFeverMode();
@@ -3054,9 +3299,11 @@
       const isPausedLike = (this.state === STATES.PAUSED || this.state === STATES.EXPLAIN || this.state === STATES.VICTORY || this.state === STATES.GAMEOVER);
       const speedMul = isPausedLike ? 0.15 : (this.state === STATES.MENU ? 0.45 : 1.0);
 
-      // Giảm dần thời gian Boost Pad & Fever Mode khi đang chạy
+      // Giảm dần thời gian Boost Pad & Fever Mode + Phát nhạc nền Arcade
       if (!isPausedLike && (this.state === STATES.PLAYING || this.state === STATES.BOSS)) {
+        this.sound.tickMusic(dt, this.isFeverActive, this.state === STATES.BOSS);
         if (this.boostTimer > 0) this.boostTimer = Math.max(0, this.boostTimer - dt);
+        if (this.barrelRollTimer > 0) this.barrelRollTimer = Math.max(0, this.barrelRollTimer - dt);
         if (this.isFeverActive) {
           this.feverTimer -= dt;
           this.feverEnergy = Math.max(0, (this.feverTimer / 10.0) * 100);
@@ -3138,11 +3385,16 @@
         );
 
         const rollTarget = (this.playerTargetX - this.playerGroup.position.x) * -0.22;
-        this.playerGroup.rotation.z = THREE.MathUtils.lerp(
-          this.playerGroup.rotation.z,
-          rollTarget,
-          1 - Math.exp(-12 * dt)
-        );
+        if (this.barrelRollTimer > 0) {
+          const spinProgress = 1 - (this.barrelRollTimer / 0.45);
+          this.playerGroup.rotation.z = spinProgress * Math.PI * 2;
+        } else {
+          this.playerGroup.rotation.z = THREE.MathUtils.lerp(
+            this.playerGroup.rotation.z,
+            rollTarget,
+            1 - Math.exp(-12 * dt)
+          );
+        }
 
         if (this.isJumping) {
           this.playerVelY += GRAVITY * effectiveDt;
@@ -3259,9 +3511,27 @@
           this.gateWave.z += (currentSpeed * 2.5) * effectiveDt;
         }
 
-        this.gateWave.meshes.forEach(m => {
+        this.gateWave.meshes.forEach((m, idx) => {
           m.position.z = this.gateWave.z;
+          const targetScale = (!this.gateWave.resolved && idx === this.playerLaneIndex) ? 1.07 : 1.0;
+          m.scale.x = THREE.MathUtils.lerp(m.scale.x, targetScale, 1 - Math.exp(-12 * dt));
+          m.scale.y = THREE.MathUtils.lerp(m.scale.y, targetScale, 1 - Math.exp(-12 * dt));
         });
+
+        // Tia dẫn hướng trên mặt đường kết nối phi thuyền tới Cổng 3D đang ngắm
+        if (this.laneGuideBeam) {
+          if (!this.gateWave.resolved && (this.state === STATES.PLAYING || this.state === STATES.BOSS) && this.gateWave.z < -2) {
+            const beamColors = [0x38bdf8, 0xfbbf24, 0xc084fc];
+            const distToGate = Math.max(2, Math.abs(this.gateWave.z));
+            this.laneGuideBeam.visible = true;
+            this.laneGuideBeam.position.set(LANES[this.playerLaneIndex], 0.06, -distToGate * 0.5);
+            this.laneGuideBeam.scale.set(1, 1, distToGate);
+            this.laneGuideBeam.material.color.setHex(beamColors[this.playerLaneIndex] || 0xfbbf24);
+            this.laneGuideBeam.material.opacity = 0.18 + Math.sin(tNow * 6) * 0.06;
+          } else {
+            this.laneGuideBeam.visible = false;
+          }
+        }
 
         this.checkGateCollision();
 
@@ -3295,10 +3565,13 @@
             coin.visible = false;
             this.coins += 5;
             this.savedData.coins += 5;
-            this.score += 15 * (this.isFeverActive ? 2 : 1);
+            const coinPts = 15 * (this.isFeverActive ? 2 : 1);
+            this.score += coinPts;
             this.addFeverEnergy(10);
             this.sound.playCoin(this.combo);
             this.spawnExplosion(coin.position, 0xfbbf24, 12);
+            this.spawnFloatingPopup(`+5🪙`, 'text-amber-300 text-xs sm:text-sm');
+            this.progressMission('coin', 1);
             this.updateHUD();
           }
         }
@@ -3306,7 +3579,7 @@
         if (coin.position.z > 14) coin.visible = false;
       });
 
-      // 7b. Vật Phẩm Hỗ Trợ 3D (💎 Gợi Ý 50/50, 🛡️ Khiên Bảo Vệ, ⭐ Ngôi Sao Bay)
+      // 7b. Vật Phẩm Hỗ Trợ 3D (💎 Gợi Ý 50/50, 🛡️ Khiên Bảo Vệ, ⭐ Ngôi Sao Bay, 🎁 Hộp Bí Ẩn)
       this.powerupPool.forEach(pu => {
         if (!pu.visible) return;
         pu.position.z += currentSpeed * effectiveDt;
@@ -3327,11 +3600,13 @@
             const pType = pu.userData.type;
             if (pType === 'hint') {
               this.spawnExplosion(pu.position, 0x38bdf8, 22);
+              this.spawnFloatingPopup('💎 50/50!', 'text-sky-300 text-base');
               this.triggerHintElimination();
             } else if (pType === 'shield') {
               this.hasShield = true;
               this.sound.playPowerup();
               this.spawnExplosion(pu.position, 0x34d399, 22);
+              this.spawnFloatingPopup('🛡️ +KHIÊN!', 'text-emerald-300 text-base');
               this.showTrackToast('🛡️ Đã bật Khiên Năng Lượng Bảo Vệ!', '🛡️');
               this.updateHUD();
             } else if (pType === 'skystar') {
@@ -3341,8 +3616,13 @@
               this.addFeverEnergy(30);
               this.sound.playPowerup();
               this.spawnExplosion(pu.position, 0xfacc15, 26);
+              this.spawnFloatingPopup('⭐ +15🪙 +30%⚡', 'text-yellow-300 text-base');
+              this.progressMission('air', 1);
               this.showTrackToast('⭐ Ngôi Sao Bay! +15 Xu & +30% Fever!', '⭐');
               this.updateHUD();
+            } else if (pType === 'mystery') {
+              this.spawnExplosion(pu.position, 0xec4899, 28);
+              this.triggerMysteryReward();
             }
           }
         }
@@ -3366,12 +3646,55 @@
             this.addFeverEnergy(15);
             this.sound.playBoost();
             this.spawnExplosion(pad.position, 0x38bdf8, 18);
+            this.spawnFloatingPopup('🚀 TĂNG TỐC!', 'text-cyan-300 text-base');
+            this.progressMission('boost', 1);
             this.showTrackToast('🚀 BÀN ĐẠP TĂNG TỐC! +10 Điểm & +15% Fever!', '🚀');
             this.updateHUD();
           }
         }
 
         if (pad.position.z > 14) pad.visible = false;
+      });
+
+      // 7d. Vòng Nhảy Trên Không 3D (Jump Rings -> Nhào lộn 360 độ!)
+      this.jumpRingPool.forEach(ring => {
+        if (!ring.visible) return;
+        ring.position.z += currentSpeed * effectiveDt;
+        ring.rotation.z += 2.2 * dt;
+
+        if (this.playerGroup && !ring.userData.triggered && (this.state === STATES.PLAYING || this.state === STATES.BOSS)) {
+          const dx = Math.abs(this.playerGroup.position.x - ring.position.x);
+          const dz = Math.abs(this.playerGroup.position.z - ring.position.z);
+          const playerCenterY = this.playerGroup.position.y + 0.5;
+          const dy = Math.abs(playerCenterY - ring.position.y);
+
+          if (dx < 1.3 && dz < 1.35 && dy < 1.35) {
+            ring.userData.triggered = true;
+            ring.visible = false;
+            this.barrelRollTimer = 0.45;
+            const ringPts = 25 * (this.isFeverActive ? 2 : 1);
+            this.score += ringPts;
+            this.addFeverEnergy(25);
+            this.sound.playRingJump();
+            this.spawnExplosion(ring.position, 0x38bdf8, 26);
+            this.spawnFloatingPopup(`🌀 NHẢY VÒNG! +${ringPts}`, 'text-cyan-300 text-base sm:text-lg');
+            this.progressMission('air', 1);
+            this.showTrackToast(`🌀 Nhào lộn qua Vòng! +${ringPts} Điểm & +25% Fever!`, '🌀');
+            this.updateHUD();
+          }
+        }
+
+        if (ring.position.z > 14) ring.visible = false;
+      });
+
+      // 7e. Vệt Tốc Độ 3D (Speed Lines)
+      const rushActive = (this.combo >= 2 || this.boostTimer > 0 || this.isFeverActive || this.isDashingToGate);
+      this.speedLinePool.forEach(line => {
+        line.position.z += currentSpeed * (rushActive ? 3.2 : 1.7) * effectiveDt;
+        line.material.opacity = rushActive ? 0.72 : 0.25;
+        if (line.position.z > 14) {
+          line.position.z -= 82;
+        }
       });
 
       // Tự động rải thêm đợt xu / sao bay / boost pad liên tục khi đường đua trống (trong lúc cổng chưa áp sát)
